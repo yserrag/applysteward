@@ -289,6 +289,7 @@ footer strong{color:var(--ink);font-weight:500}
   }
 
   function load(text, remember){
+    if(remember && location.hash === "#demo") history.replaceState(null, "", location.pathname);
     try{ data = parse(text); $("err").hidden = true; render(); $("paste").hidden = true;
       if(remember){ try{ localStorage.setItem(KEY, text); }catch(e){} }
       $("today-h").focus && $("today-h").setAttribute("tabindex", "-1");
@@ -321,7 +322,8 @@ footer strong{color:var(--ink);font-weight:500}
   $("clear").addEventListener("click", function(){ try{ localStorage.removeItem(KEY); }catch(e){} data = []; $("board").hidden = true; $("roles").hidden = true; $("clear").hidden = true; $("lede").textContent = "Cleared from this device. Open your tracker to begin again."; });
   $("filters").addEventListener("click", function(e){ var b = e.target.closest("button"); if(!b) return; filter = b.getAttribute("data-f"); render(); });
 
-  try{ var saved = localStorage.getItem(KEY); if(saved) load(saved, false); }catch(e){}
+  var saved = null; try{ saved = localStorage.getItem(KEY); }catch(e){}
+  if(location.hash === "#demo") sample(); else if(saved) load(saved, false);
 })();
 </script>
 </body>
