@@ -288,7 +288,7 @@ footer .legal strong{color:var(--ink);font-weight:500}
   .mobile-sheet .sheet{max-height:none}
   .row,.row-2{grid-template-columns:minmax(0,1fr)}
   .span2{grid-column:auto}
-  .top a.gh{display:none}
+  .top a.gh{font-size:14px}
   .brand span{display:block;margin:2px 0 0}
   footer{padding:20px 16px}
 }
@@ -298,6 +298,7 @@ footer .legal strong{color:var(--ink);font-weight:500}
 
 <header class="top">
   <a class="brand" href="./">ApplySteward™<span>AI job-search aide</span></a>
+  <a class="gh" href="desk/">Your desk</a>
 </header>
 
 <main class="wrap">
@@ -636,7 +637,7 @@ footer .legal strong{color:var(--ink);font-weight:500}
     <ul class="also">
       <li><b>Works with the AI you already use:</b> Claude, ChatGPT, Gemini or Microsoft Copilot.</li>
       <li><b>Points you to the right job boards</b> for your country and your field.</li>
-      <li><b>Keeps a tidy tracker</b> in Google Sheets or Excel, with every role and next step.</li>
+      <li><b>Shows your search at a glance</b> on <a href="desk/">your desk</a>: today's three actions, follow-ups due and your pipeline, from a tracker in Google Sheets or Excel.</li>
       <li><b>Never applies or sends anything</b> without you.</li>
     </ul>
     <p><button class="btn btn-primary" type="button" id="start2">Start setup, free</button></p>
@@ -980,7 +981,7 @@ footer .legal strong{color:var(--ink);font-weight:500}
     } else {
       items.push(item("Add the skills and your rules", 'Follow the <a href="https://github.com/yserrag/applysteward#install-the-free-core">install steps</a>, then upload fit-rules.md to a Claude project so every chat can read it. Using another AI later? The <a href="https://github.com/yserrag/applysteward/tree/main/any-ai">any-AI guide</a> covers it.'));
     }
-    items.push(item("Copy the tracker", 'Import <a href="https://github.com/yserrag/applysteward/blob/main/templates/tracker.csv">tracker.csv</a> into Google Sheets or Excel. Scans give you rows to paste straight in.'));
+    items.push(item("Copy the tracker", 'Import <a href="https://github.com/yserrag/applysteward/blob/main/templates/tracker.csv">tracker.csv</a> into Google Sheets or Excel. Scans give you rows to paste straight in, and <a href="desk/">your desk</a> turns it into today's to-do list.'));
     if(state.cv === "PDF only" || state.cv === "I need a new one")
       items.push(item(state.cv === "PDF only" ? "Make an editable copy of your CV" : "Start a master CV", "Keep one full, honest version in Word or Google Docs. Tailoring works from this copy and never adds things that aren't true.", true));
     items.push(item("Run your first scan", other ? "In your " + aiName + " project, type scan and paste three or four recent job alerts. You'll get a verdict on each, and rows for your tracker." : "Open a chat, type /scan and paste three or four recent job alerts. You'll get a verdict on each, and rows for your tracker."));

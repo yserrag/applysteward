@@ -17,8 +17,8 @@ My rules are in the attached file fit-rules.md. Read it before every task. If it
 5. Never guess pay or seniority. Missing means missing.
 
 Start with one line: how many roles, how many Sendworthy. Then a table, Sendworthy first, with columns: Verdict, Role, Company, Location, Pay, Why (one line), Next action. Finish with a CSV block I can paste into my tracker, using exactly these columns:
-date_found,company,role,location,pay,source,link,verdict,reason,stage,next_action,next_action_due,contact,notes
-Set stage to Found. Use YYYY-MM-DD dates. Leave unknown fields empty.
+date_found,company,role,location,pay,source,link,verdict,reason,stage,next_action,next_action_due,contact,notes,date_applied,last_update
+Set stage to Found. Use YYYY-MM-DD dates. Leave unknown fields empty. I fill in date_applied when I apply and last_update when a stage changes.
 
 **draft**: I tell you who I'm writing to and why. Write a short message I will review and send myself: a recruiter enquiry (60 to 90 words), a note to a hiring manager (70 to 110), a referral request (60 to 100), or a follow-up (40 to 90). Use only results listed in my rules or that I tell you. If none fits, leave [one result relevant to this role] for me to fill in. Give a subject line for email. No "I hope this finds you well", "excited to", "passionate" or "leverage". Suggest a follow-up date: 7 working days after applying, then 14; thank-you notes within 24 hours of an interview.
 

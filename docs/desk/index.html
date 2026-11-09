@@ -1,0 +1,328 @@
+<!doctype html>
+<!-- © 2026 Yousef Serrag. All rights reserved. ApplySteward™. Personal use only; copying, adapting, reselling or redistributing is not permitted without written permission. -->
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your desk: today's job-search actions at a glance | ApplySteward</title>
+<meta name="description" content="See your whole job search at a glance: today's three actions, roles worth applying for, follow-ups due and your pipeline. Runs in your browser; your tracker never leaves your device.">
+<meta name="copyright" content="© 2026 Yousef Serrag. All rights reserved.">
+<meta name="author" content="Yousef Serrag">
+<link rel="canonical" href="https://applysteward.com/desk/">
+<meta name="theme-color" content="#1F5C47">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ApplySteward">
+<meta property="og:url" content="https://applysteward.com/desk/">
+<meta property="og:title" content="Your desk: your job search at a glance">
+<meta property="og:description" content="Today's three actions, roles worth applying for, follow-ups due and your pipeline. Private to your device.">
+<meta property="og:image" content="https://applysteward.com/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%276%27 fill=%27%231F5C47%27/%3E%3Crect x=%277%27 y=%278%27 width=%2718%27 height=%274%27 rx=%272%27 fill=%27%23fff%27/%3E%3Crect x=%277%27 y=%2714%27 width=%2713%27 height=%274%27 rx=%272%27 fill=%27%23E2B762%27/%3E%3Crect x=%277%27 y=%2720%27 width=%278%27 height=%274%27 rx=%272%27 fill=%27%23B3B7B2%27/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF0EA; --ink:#1C2621; --muted:#58625B; --line:#D2D7CD; --field:#FFFFFF;
+  --green:#1F5C47; --green-soft:#E1EBE5; --btn:#1F5C47; --btn-ink:#FFFFFF;
+  --amber:#8C5F0E; --amber-soft:#F5ECD8; --focus:#2B6CB0;
+  --s-bg:#FBFAF6; --s-ink:#1C2621; --s-muted:#6A726C; --s-line:#E3E1D8;
+  --s-green:#1F5C47; --s-green-soft:#E1EBE5; --s-amber:#8C5F0E; --s-amber-soft:#F6EBD3; --s-red:#A23A2E; --s-red-soft:#F8E3DF;
+  --bar:#1F5C47; --track:#E6E5DE;
+  --sans:"Atkinson Hyperlegible Next","Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#26292D; --ink:#ECEAE4; --muted:#AAAEA9; --line:#3D4247; --field:#2E3237;
+  --green:#93CDB3; --green-soft:#2F3E37; --btn:#2F7A5F; --btn-ink:#FFFFFF;
+  --amber:#E2B762; --amber-soft:#3A3528; --focus:#8DB8F2;}}
+:root[data-theme="dark"]{--paper:#26292D; --ink:#ECEAE4; --muted:#AAAEA9; --line:#3D4247; --field:#2E3237;
+  --green:#93CDB3; --green-soft:#2F3E37; --btn:#2F7A5F; --btn-ink:#FFFFFF; --amber:#E2B762; --amber-soft:#3A3528; --focus:#8DB8F2;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.55}
+a{color:var(--green)}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.top{display:flex;justify-content:space-between;align-items:center;max-width:1200px;margin:0 auto;padding:20px 24px}
+.brand{font-weight:700;font-size:19px;color:var(--ink);text-decoration:none}
+.brand span{color:var(--muted);font-weight:400;margin-left:8px;font-size:15px}
+.top nav a{color:var(--muted);font-size:15px;margin-left:18px}
+.top nav a[aria-current]{color:var(--ink);font-weight:500;text-decoration:none}
+main{max-width:1200px;margin:0 auto;padding:8px 24px 56px}
+h1{font-size:clamp(30px,4vw,42px);line-height:1.1;letter-spacing:-0.025em;margin:0 0 10px}
+.lede{font-size:18px;color:var(--muted);max-width:60ch;margin:0 0 24px}
+.btn{font:inherit;font-size:16px;font-weight:700;border-radius:6px;padding:11px 18px;cursor:pointer;border:1px solid transparent}
+.btn-primary{background:var(--btn);color:var(--btn-ink)}
+.btn-quiet{background:none;border-color:var(--line);color:var(--ink)}
+.btn-link{background:none;border:0;color:var(--muted);text-decoration:underline;padding:11px 6px;font:inherit;font-size:15px;cursor:pointer}
+.load{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.load input[type=file]{position:absolute;width:1px;height:1px;opacity:0}
+.paste{margin:14px 0 0;max-width:760px}
+.paste[hidden]{display:none}
+.paste textarea{width:100%;min-height:140px;font:inherit;font-size:14px;border:1px solid var(--line);border-radius:6px;padding:10px 12px;background:var(--field);color:var(--ink)}
+.paste p{font-size:14px;color:var(--muted);margin:6px 0 10px}
+.note{font-size:14px;color:var(--muted);margin:12px 0 0}
+.err{color:#B3261E;font-size:15px;margin:10px 0 0}
+.empty{max-width:760px}
+
+.board{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:32px;align-items:start;margin-top:8px}
+.board[hidden]{display:none}
+.sheet{background:var(--s-bg);color:var(--s-ink);border-radius:3px;padding:22px 24px;
+  box-shadow:0 0 0 1px rgba(28,38,33,.08),0 2px 4px rgba(28,38,33,.06),0 24px 48px -24px rgba(20,30,25,.35)}
+.sheet h2{font-size:21px;letter-spacing:-0.01em;margin:0 0 4px}
+.sheet .sub{font-size:14.5px;color:var(--s-muted);margin:0 0 16px}
+.today{list-style:none;margin:0;padding:0;counter-reset:t}
+.today li{counter-increment:t;display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:12px;align-items:start;padding:12px 0;border-top:1px solid var(--s-line)}
+.today li::before{content:counter(t);width:26px;height:26px;border-radius:50%;border:1.5px solid var(--s-ink);display:grid;place-items:center;font-size:13px;font-weight:700;margin-top:1px}
+.today b{display:block;font-size:16px;line-height:1.35}
+.today span{display:block;font-size:14px;color:var(--s-muted)}
+.pill{font-size:12.5px;font-weight:700;border-radius:4px;padding:3px 8px;white-space:nowrap}
+.pill.due{background:var(--s-red-soft);color:var(--s-red)}
+.pill.apply{background:var(--s-green-soft);color:var(--s-green)}
+.pill.follow{background:var(--s-amber-soft);color:var(--s-amber)}
+.more-actions{margin:10px 0 0;font-size:14px}
+.more-actions summary{cursor:pointer;color:var(--s-muted)}
+.cheer{margin:16px 0 0;padding-top:14px;border-top:1px solid var(--s-line);font-size:15px;color:var(--s-green);font-weight:500}
+.cheer:empty{display:none}
+
+.side h2{font-size:19px;margin:0 0 4px}
+.side .sub{font-size:14.5px;color:var(--muted);margin:0 0 14px}
+.week-line{font-size:16px;margin:0 0 26px;max-width:42ch}
+.week-line b{font-weight:700}
+.pipe{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.pipe li{display:grid;grid-template-columns:96px minmax(0,1fr) 36px;gap:10px;align-items:center;font-size:15px}
+.pipe .lab{color:var(--muted)}
+.pipe .num{text-align:right;font-weight:700}
+.track{height:12px;background:var(--line);border-radius:0 4px 4px 0;position:relative}
+.fill{height:12px;background:var(--green);border-radius:0 4px 4px 0;min-width:2px}
+.pipe li.zero .fill{background:transparent}
+.closed{font-size:14px;color:var(--muted);margin:12px 0 0}
+
+.roles{margin-top:44px}
+.roles h2{font-size:22px;margin:0 0 10px}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}
+.filters button{font:inherit;font-size:14.5px;border:1px solid var(--line);background:var(--field);color:var(--ink);border-radius:6px;padding:6px 12px;cursor:pointer}
+.filters button[aria-pressed="true"]{border-color:var(--green);background:var(--green-soft);color:var(--green);font-weight:500}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--field)}
+table{border-collapse:collapse;width:100%;font-size:14.5px;min-width:760px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:700;color:var(--muted);font-size:13.5px;background:var(--paper)}
+tr:last-child td{border-bottom:0}
+td a{font-weight:500}
+.v{font-weight:700}
+.v-send{color:var(--green)} .v-not{color:var(--amber)} .v-skip{color:var(--muted)}
+.overdue{color:#B3261E;font-weight:500}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .overdue,:root:not([data-theme="light"]) .err{color:#F2A49E}}
+
+footer{max-width:1200px;margin:0 auto;padding:24px;color:var(--muted);font-size:14px;border-top:1px solid var(--line)}
+footer p{margin:4px 0;max-width:80ch}
+footer strong{color:var(--ink);font-weight:500}
+@media (max-width:900px){
+  .top{padding:16px}.top nav a{margin-left:12px}
+  main{padding:4px 16px 40px}
+  .board{grid-template-columns:minmax(0,1fr)}
+  .today li{grid-template-columns:30px minmax(0,1fr)}
+  .today .pill{grid-column:2;justify-self:start}
+  .brand span{display:none}
+  footer{padding:20px 16px}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="/">ApplySteward™<span>AI job-search aide</span></a>
+  <nav><a href="/">Setup</a><a href="/desk/" aria-current="page">Your desk</a></nav>
+</header>
+
+<main>
+  <h1>Your desk</h1>
+  <p class="lede" id="lede">Your whole search at a glance: what to do today, what's worth applying for, and who you're waiting on. Open your tracker to begin.</p>
+
+  <div class="load" id="load">
+    <label class="btn btn-primary" for="file" tabindex="0" id="file-label">Open my tracker file</label>
+    <input type="file" id="file" accept=".csv,.tsv,.txt,text/csv">
+    <button class="btn btn-quiet" type="button" id="paste-btn">Paste from my spreadsheet</button>
+    <button class="btn-link" type="button" id="sample">Try it with example data</button>
+    <button class="btn-link" type="button" id="clear" hidden>Clear this device</button>
+  </div>
+  <div class="paste" id="paste" hidden>
+    <p>In Google Sheets or Excel, select your tracker including the header row, copy, and paste it here.</p>
+    <textarea id="paste-text" aria-label="Paste your tracker"></textarea>
+    <p><button class="btn btn-primary" type="button" id="paste-go">Show my desk</button></p>
+  </div>
+  <p class="err" id="err" hidden></p>
+  <p class="note">Your tracker is read in this browser and kept only on this device. Nothing is uploaded. To export from Google Sheets: File, Download, Comma-separated values.</p>
+
+  <div class="board" id="board" hidden>
+    <section class="sheet" aria-labelledby="today-h">
+      <h2 id="today-h">Today</h2>
+      <p class="sub" id="today-sub"></p>
+      <ol class="today" id="today"></ol>
+      <details class="more-actions" id="more-actions" hidden><summary></summary><ol class="today" id="today-more"></ol></details>
+      <p class="cheer" id="cheer"></p>
+    </section>
+    <section class="side" aria-labelledby="pipe-h">
+      <h2 id="pipe-h">This week</h2>
+      <p class="week-line" id="week-line"></p>
+      <h2>Where things stand</h2>
+      <p class="sub">Active roles by stage</p>
+      <ul class="pipe" id="pipe"></ul>
+      <p class="closed" id="closed"></p>
+    </section>
+  </div>
+
+  <section class="roles" id="roles" hidden aria-labelledby="roles-h">
+    <h2 id="roles-h">All roles</h2>
+    <div class="filters" id="filters" role="group" aria-label="Filter roles"></div>
+    <div class="tablewrap"><table><thead><tr><th>Role</th><th>Company</th><th>Verdict</th><th>Stage</th><th>Next action</th><th>Due</th><th>Pay</th></tr></thead><tbody id="rows"></tbody></table></div>
+  </section>
+</main>
+
+<footer>
+  <p>Runs entirely in your browser. ApplySteward is an independent project and is not affiliated with or endorsed by Anthropic.</p>
+  <p><strong>© 2026 Yousef Serrag. All rights reserved.</strong> ApplySteward™, this site, its design, wording, skills and instructions are protected by copyright. You may use them for your own job search. Copying, adapting, reselling or redistributing any part of ApplySteward, or using it in a commercial product or service, is not permitted without written permission.</p>
+</footer>
+
+<script>
+(function(){
+  var KEY = "applysteward.desk.v1";
+  var CLOSED = ["rejected","withdrawn","waiting cold","skipped","offer declined","closed"];
+  var STAGES = [["found","Found"],["applied","Applied"],["replied","Replied"],["interview","Interview"],["offer","Offer"]];
+  var data = [], filter = "all";
+  var $ = function(id){ return document.getElementById(id); };
+
+  function parse(text){
+    text = text.replace(/^﻿/, "");
+    var first = text.split(/\r?\n/)[0] || "";
+    var d = (first.split("\t").length > first.split(",").length) ? "\t" : ",";
+    var rows = [], row = [], cell = "", q = false;
+    for(var i = 0; i < text.length; i++){
+      var c = text[i];
+      if(q){ if(c === '"'){ if(text[i+1] === '"'){ cell += '"'; i++; } else q = false; } else cell += c; }
+      else if(c === '"') q = true;
+      else if(c === d){ row.push(cell); cell = ""; }
+      else if(c === "\n" || c === "\r"){ if(c === "\r" && text[i+1] === "\n") i++; row.push(cell); rows.push(row); row = []; cell = ""; }
+      else cell += c;
+    }
+    if(cell !== "" || row.length){ row.push(cell); rows.push(row); }
+    rows = rows.filter(function(r){ return r.some(function(x){ return x.trim(); }); });
+    if(rows.length < 2) throw new Error("That file has no rows yet. Add a few roles, or try the example data.");
+    var head = rows[0].map(function(h){ return h.trim().toLowerCase().replace(/\s+/g, "_"); });
+    if(head.indexOf("role") < 0 || head.indexOf("company") < 0) throw new Error("This doesn't look like an ApplySteward tracker. It needs at least a role and a company column.");
+    return rows.slice(1).map(function(r){ var o = {}; head.forEach(function(h, j){ o[h] = (r[j] || "").trim(); }); return o; });
+  }
+
+  function day(s){ if(!s) return null; var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s); if(m) return new Date(+m[1], m[2]-1, +m[3]); var m2 = /^(\d{1,2})\/(\d{1,2})\/(\d{4})/.exec(s); if(m2) return new Date(+m2[3], m2[2]-1, +m2[1]); return null; }
+  function today(){ var t = new Date(); return new Date(t.getFullYear(), t.getMonth(), t.getDate()); }
+  function addDays(d, n){ var x = new Date(d); x.setDate(x.getDate() + n); return x; }
+  function workingDaysSince(d){ var n = 0, x = new Date(d), t = today(); while(x < t){ x.setDate(x.getDate() + 1); var w = x.getDay(); if(w && w !== 6) n++; } return n; }
+  function fmt(d){ return d ? d.toLocaleDateString("en-GB", { day:"numeric", month:"short" }) : ""; }
+  function esc(t){ return String(t || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+  function stage(r){ var s = (r.stage || "Found").toLowerCase(); if(s === "found" && /skip/i.test(r.verdict || "")) return "skipped"; return s; }
+  function isClosed(r){ return CLOSED.indexOf(stage(r)) > -1; }
+  function verdictClass(v){ return /send/i.test(v) ? "v-send" : /not/i.test(v) ? "v-not" : /skip/i.test(v) ? "v-skip" : ""; }
+  function title(r){ return esc(r.role) + (r.company ? ", " + esc(r.company) : ""); }
+
+  function actions(){
+    var t = today(), out = [];
+    data.forEach(function(r){
+      if(isClosed(r)) return;
+      var due = day(r.next_action_due), st = stage(r);
+      if(due && due <= t && r.next_action){
+        out.push({ rank: 0, sort: due, html: "<b>" + esc(r.next_action) + "</b><span>" + title(r) + "</span>", pill: '<span class="pill due">' + (due < t ? "Overdue" : "Due today") + "</span>" });
+      } else if(st === "found" && /send/i.test(r.verdict || "")){
+        out.push({ rank: 1, sort: day(r.date_found) || t, html: "<b>Apply: " + esc(r.role) + "</b><span>" + esc(r.company) + (r.pay ? ", " + esc(r.pay) : "") + "</span>", pill: '<span class="pill apply">Sendworthy</span>' });
+      } else if(st === "applied" && !due){
+        var ap = day(r.date_applied) || day(r.last_update);
+        if(ap && workingDaysSince(ap) >= 7) out.push({ rank: 2, sort: ap, html: "<b>Follow up: " + esc(r.role) + "</b><span>" + esc(r.company) + ", applied " + fmt(ap) + "</span>", pill: '<span class="pill follow">Follow up</span>' });
+      }
+    });
+    return out.sort(function(a, b){ return a.rank - b.rank || a.sort - b.sort; });
+  }
+
+  function render(){
+    var a = actions(), t = today();
+    $("today-sub").textContent = a.length ? (a.length <= 3 ? "Everything that needs you today." : "Start with these three. The rest can wait.") : "";
+    $("today").innerHTML = a.length ? a.slice(0, 3).map(function(x){ return "<li><div>" + x.html + "</div>" + x.pill + "</li>"; }).join("")
+      : '<li><div><b>Nothing urgent today</b><span>No follow-ups due and no Sendworthy roles waiting. A good day to run a fresh scan, or to rest.</span></div></li>';
+    var rest = a.slice(3);
+    $("more-actions").hidden = !rest.length;
+    if(rest.length){ $("more-actions").querySelector("summary").textContent = rest.length + " more when you have time"; $("today-more").innerHTML = rest.map(function(x){ return "<li><div>" + x.html + "</div>" + x.pill + "</li>"; }).join(""); }
+
+    var wk = addDays(t, -6), prev = addDays(t, -13);
+    function inRange(s, from, to){ var d = day(s); return d && d >= from && d <= to; }
+    var found = data.filter(function(r){ return inRange(r.date_found, wk, t); }).length;
+    var applied = data.filter(function(r){ return inRange(r.date_applied, wk, t); }).length;
+    var appliedPrev = data.filter(function(r){ return inRange(r.date_applied, prev, addDays(wk, -1)); }).length;
+    var send = data.filter(function(r){ return inRange(r.date_found, wk, t) && /send/i.test(r.verdict || ""); }).length;
+    var iv = data.filter(function(r){ return stage(r) === "interview"; }).length;
+    $("week-line").innerHTML = "You found <b>" + found + "</b> role" + (found === 1 ? "" : "s") + ", <b>" + send + "</b> worth sending, and applied to <b>" + applied + "</b>." + (iv ? " <b>" + iv + "</b> interview" + (iv === 1 ? "" : "s") + " in progress." : "");
+
+    var cheer = "";
+    if(iv) cheer = iv === 1 ? "You have an interview in progress. That's a real step forward." : "You have " + iv + " interviews in progress. That's real momentum.";
+    else if(applied && applied > appliedPrev && appliedPrev > 0) cheer = "More applications than last week, and every one was chosen on purpose.";
+    else if(applied) cheer = applied + " well-chosen application" + (applied === 1 ? "" : "s") + " this week. Steady beats frantic.";
+    $("cheer").textContent = cheer;
+
+    var counts = {}; STAGES.forEach(function(s){ counts[s[0]] = 0; });
+    var closed = 0, skipped = 0;
+    data.forEach(function(r){ var s = stage(r); if(s === "skipped") skipped++; else if(isClosed(r)) closed++; else if(counts[s] !== undefined) counts[s]++; });
+    var max = Math.max(1, Math.max.apply(null, STAGES.map(function(s){ return counts[s[0]]; })));
+    $("pipe").innerHTML = STAGES.map(function(s){ var n = counts[s[0]];
+      return '<li class="' + (n ? "" : "zero") + '" title="' + s[1] + ": " + n + '"><span class="lab">' + s[1] + '</span><span class="track" aria-hidden="true"><span class="fill" style="display:block;width:' + (n / max * 100) + '%"></span></span><span class="num">' + n + "</span></li>"; }).join("");
+    $("closed").textContent = (skipped ? skipped + " skipped by screening. " : "") + (closed ? closed + " closed or no longer active." : "");
+
+    var defs = [["all","All"],["apply","To apply"],["live","In progress"],["closed","Closed"],["skip","Skipped"]];
+    $("filters").innerHTML = defs.map(function(f){ return '<button type="button" data-f="' + f[0] + '" aria-pressed="' + (filter === f[0]) + '">' + f[1] + "</button>"; }).join("");
+    var rows = data.filter(function(r){ var s = stage(r);
+      if(filter === "apply") return s === "found" && /send/i.test(r.verdict || "");
+      if(filter === "live") return ["applied","replied","interview","offer"].indexOf(s) > -1;
+      if(filter === "closed") return isClosed(r) && s !== "skipped";
+      if(filter === "skip") return s === "skipped";
+      return true; });
+    rows.sort(function(a, b){ var x = day(a.next_action_due), y = day(b.next_action_due); if(x && y) return x - y; if(x) return -1; if(y) return 1; return 0; });
+    $("rows").innerHTML = rows.length ? rows.map(function(r){ var due = day(r.next_action_due), od = due && due < t && !isClosed(r);
+      var role = r.link && /^https?:\/\//.test(r.link) ? '<a href="' + esc(r.link) + '" target="_blank" rel="noopener">' + esc(r.role) + "</a>" : esc(r.role);
+      return "<tr><td>" + role + "</td><td>" + esc(r.company) + '</td><td class="v ' + verdictClass(r.verdict) + '">' + esc(r.verdict) + "</td><td>" + esc(r.stage || "Found") + "</td><td>" + esc(r.next_action) + '</td><td class="' + (od ? "overdue" : "") + '">' + fmt(due) + "</td><td>" + esc(r.pay) + "</td></tr>"; }).join("")
+      : '<tr><td colspan="7">Nothing here yet.</td></tr>';
+
+    $("board").hidden = false; $("roles").hidden = false; $("clear").hidden = false;
+    $("lede").textContent = "Your whole search at a glance. Update your tracker, then open it here again to refresh.";
+  }
+
+  function load(text, remember){
+    try{ data = parse(text); $("err").hidden = true; render(); $("paste").hidden = true;
+      if(remember){ try{ localStorage.setItem(KEY, text); }catch(e){} }
+      $("today-h").focus && $("today-h").setAttribute("tabindex", "-1");
+    }catch(e){ $("err").textContent = e.message; $("err").hidden = false; }
+  }
+
+  function sample(){
+    var t = today(); function d(n){ var x = addDays(t, n); return x.getFullYear() + "-" + String(x.getMonth()+1).padStart(2,"0") + "-" + String(x.getDate()).padStart(2,"0"); }
+    var rows = [
+      "date_found,company,role,location,pay,source,link,verdict,reason,stage,next_action,next_action_due,contact,notes,date_applied,last_update",
+      d(-1)+",Fabrikam Energy,Delivery Lead,Birmingham (hybrid),£65000,LinkedIn alert,,Sendworthy,Second choice; strong match,Found,Tailor CV and apply,"+d(2)+",,,,",
+      d(0)+",Northwind Health,Senior Project Manager,Manchester (hybrid),£62000,Indeed alert,,Sendworthy,First choice; above pay floor,Found,,,,,,",
+      d(-2)+",Tailspin Logistics,Programme Manager,Remote UK,,LinkedIn alert,,Not yet,Pay not stated,Found,Ask recruiter for pay band,"+d(0)+",Sam (recruiter),,,",
+      d(-14)+",Contoso,Project Lead,London (hybrid),£60000,Reed,,Sendworthy,Lane 1,Applied,,,,,"+d(-12)+","+d(-12),
+      d(-10)+",Litware,Senior Project Manager,Leeds (hybrid),£58000,Totaljobs,,Sendworthy,Lane 1,Interview,Prepare for second interview,"+d(1)+",Priya (hiring manager),,"+d(-9)+","+d(-3),
+      d(-6)+",Adatum,PMO Manager,Remote UK,£61000,LinkedIn alert,,Sendworthy,Lane 2,Applied,Follow up with recruiter,"+d(-1)+",,,"+d(-5)+","+d(-5),
+      d(-4)+",Woodgrove,Delivery Manager,Bristol (hybrid),£63000,Indeed alert,,Sendworthy,Lane 2,Replied,Book screening call,"+d(3)+",,,"+d(-3)+","+d(-1),
+      d(-3)+",Contoso,Project Coordinator,Leeds (on-site),£31000,Indeed alert,,Skip,Below level and pay floor,Found,,,,,,",
+      d(-3)+",Unnamed,Project Manager urgent start,,,Job board,,Skip,Red flag: no company named,Found,,,,,,",
+      d(-20)+",Proseware,Programme Manager,London,£64000,LinkedIn,,Sendworthy,Lane 1,Rejected,,,,,"+d(-18)+","+d(-8)
+    ];
+    load(rows.join("\n"), false);
+  }
+
+  $("file").addEventListener("change", function(e){ var f = e.target.files[0]; if(!f) return; var rd = new FileReader(); rd.onload = function(){ load(String(rd.result), true); }; rd.readAsText(f); e.target.value = ""; });
+  $("file-label").addEventListener("keydown", function(e){ if(e.key === "Enter" || e.key === " "){ e.preventDefault(); $("file").click(); } });
+  $("paste-btn").addEventListener("click", function(){ $("paste").hidden = !$("paste").hidden; if(!$("paste").hidden) $("paste-text").focus(); });
+  $("paste-go").addEventListener("click", function(){ load($("paste-text").value, true); });
+  $("sample").addEventListener("click", sample);
+  $("clear").addEventListener("click", function(){ try{ localStorage.removeItem(KEY); }catch(e){} data = []; $("board").hidden = true; $("roles").hidden = true; $("clear").hidden = true; $("lede").textContent = "Cleared from this device. Open your tracker to begin again."; });
+  $("filters").addEventListener("click", function(e){ var b = e.target.closest("button"); if(!b) return; filter = b.getAttribute("data-f"); render(); });
+
+  try{ var saved = localStorage.getItem(KEY); if(saved) load(saved, false); }catch(e){}
+})();
+</script>
+</body>
+</html>

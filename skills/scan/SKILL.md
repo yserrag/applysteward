@@ -41,10 +41,10 @@ Keep "Why" to the single deciding reason. "Next action" is concrete: "Tailor CV 
 Finish with a fenced CSV block the user can paste into their tracker, using exactly these columns:
 
 ```
-date_found,company,role,location,pay,source,link,verdict,reason,stage,next_action,next_action_due,contact,notes
+date_found,company,role,location,pay,source,link,verdict,reason,stage,next_action,next_action_due,contact,notes,date_applied,last_update
 ```
 
-Set `stage` to `Found` for every new row. Use ISO dates (YYYY-MM-DD). Leave unknown fields empty rather than writing "N/A".
+Set `stage` to `Found` for every new row. Use ISO dates (YYYY-MM-DD). Leave unknown fields empty rather than writing "N/A". When the user applies, they fill in `date_applied`; whenever a stage changes, `last_update`. These let the desk at applysteward.com/desk show follow-ups due.
 
 ## Style
 

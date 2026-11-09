@@ -75,6 +75,7 @@ This repository is the free core. It is enough to see how ApplySteward thinks an
 | Setup wizard and fit-rules file | Yes | Yes |
 | Tracker template | Yes | Yes |
 | Any-AI guide for ChatGPT, Gemini and Copilot | Yes | Yes |
+| Your desk: today's actions, follow-ups due and pipeline | Yes | Yes |
 | Manual `/scan` skill (paste emails, get verdicts) | Yes | Yes |
 | Outreach drafts skill | Yes | Yes |
 | Weekly rejection review | Yes | Yes |
