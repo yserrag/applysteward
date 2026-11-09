@@ -175,6 +175,24 @@ input:focus,select:focus,textarea:focus{border-color:var(--green);outline:none;b
 .sheet-note{font-size:14px;color:var(--muted);margin:12px 2px 0}
 .sheet-note[hidden]{display:none}
 
+/* suggested boards */
+.boards{margin:14px 0 0;padding:16px 18px;border:1px solid var(--line);border-radius:6px;background:var(--field)}
+.boards[hidden]{display:none}
+.boards h3{font-size:16px;margin:0 0 4px}
+.boards > p{margin:0 0 10px;font-size:14.5px;color:var(--muted)}
+.boards ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.boards li{font-size:15px;line-height:1.4}
+.boards li a{font-weight:700}
+.boards li span{display:block;color:var(--muted);font-size:14px}
+.boards h4{font-size:14px;margin:14px 0 6px;color:var(--green)}
+
+/* founder note */
+.founder[hidden]{display:none}
+.founder{margin:40px 0 0;padding-top:24px;border-top:1px solid var(--line);max-width:58ch}
+.founder h3{font-size:17px;margin:0 0 8px}
+.founder p{margin:0 0 10px;font-size:15.5px;color:var(--muted)}
+.founder p.sig{color:var(--ink);font-weight:500;margin:0}
+
 /* encouragement */
 .cheer{color:var(--green);font-weight:500;font-size:15.5px;margin:0 0 6px;min-height:1.4em}
 .care{margin:36px 0 0;padding:20px 22px;border-radius:6px;background:var(--green-soft);font-size:15.5px}
@@ -245,6 +263,7 @@ footer p{margin:4px 0;max-width:80ch}
         <li>Nothing you type leaves this page. There is no account and no server.</li>
         <li>It never applies for you. You decide what to send.</li>
       </ul>
+    
     </section>
 
     <!-- 1 about you -->
@@ -414,13 +433,32 @@ footer p{margin:4px 0;max-width:80ch}
         </div>
       </fieldset>
 
+      <div class="field">
+        <label class="label" for="region">Where are you job hunting?</label>
+        <span class="hint">We'll suggest the boards worth setting alerts on, based on this and your career area.</span>
+        <select id="region" data-key="region">
+          <option value="">Choose a country or region</option>
+          <option value="uk">United Kingdom</option>
+          <option value="ie">Ireland</option>
+          <option value="us">United States</option>
+          <option value="ca">Canada</option>
+          <option value="au">Australia</option>
+          <option value="nz">New Zealand</option>
+          <option value="gcc">UAE, Saudi Arabia and the Gulf</option>
+          <option value="in">India</option>
+          <option value="eu">Elsewhere in Europe</option>
+          <option value="other">Somewhere else, or remote anywhere</option>
+        </select>
+        <div class="boards" id="boards" hidden></div>
+      </div>
+
       <fieldset>
         <legend>Where do you find jobs now?</legend>
         <span class="hint">Tick all that apply.</span>
         <div class="chips" data-group="sources">
           <label><input type="checkbox" value="LinkedIn"><span>LinkedIn</span></label>
           <label><input type="checkbox" value="Indeed"><span>Indeed</span></label>
-          <label><input type="checkbox" value="Reed or Totaljobs"><span>Reed or Totaljobs</span></label>
+          <label><input type="checkbox" value="Other job boards"><span>Other job boards</span></label>
           <label><input type="checkbox" value="Company career pages"><span>Company career pages</span></label>
           <label><input type="checkbox" value="Recruiters"><span>Recruiters</span></label>
           <label><input type="checkbox" value="Specialist boards"><span>Specialist boards</span></label>
@@ -460,9 +498,13 @@ footer p{margin:4px 0;max-width:80ch}
           <strong>You can start today, and automate later</strong>
           The free skills work by pasting alerts into a chat. Automatic daily scans need a paid Claude plan, which you can add when you're ready.
         </div>
+        <div class="nudge" id="n-new" hidden>
+          <strong>New to AI? You're in the right place</strong>
+          Lots of people are, and it can feel like everyone else got there first. You don't need to be technical. You type in plain English, and you stay in charge of every decision. We'll suggest a simple place to start at the end.
+        </div>
         <div class="nudge" id="n-gpt" hidden>
-          <strong>Your rules work with any AI</strong>
-          The rules file is plain text. Paste it into a chat with your job alerts and ask which are worth applying for. The ready-made skills and automatic daily scans currently run in Claude.
+          <strong>Works with your AI</strong>
+          We'll point you to a short copy-and-paste guide for it at the end. Screening, outreach drafts and weekly reviews all work. Automatic daily scans currently need Claude.
         </div>
       </fieldset>
 
@@ -501,6 +543,13 @@ footer p{margin:4px 0;max-width:80ch}
       <button class="btn btn-primary" type="button" id="next">Start setup</button>
       <span class="count" id="count"></span>
     </div>
+
+    <div class="founder" id="founder">
+        <h3>Why I built this</h3>
+        <p>I built ApplySteward for my own job search, and it has helped me look for work with less noise and more focus. I'm sharing it at a low, one-off price because it works out well three ways.</p>
+        <p>You get calm, practical help without another monthly subscription. The income supports my family while I search. And more people get comfortable using AI, at a time when so many employers already are and it can all feel overwhelming.</p>
+        <p class="sig">Yousef Serrag, <a href="https://www.linkedin.com/in/yserrag">LinkedIn</a></p>
+      </div>
 
     <details class="mobile-sheet" id="mobile-sheet">
       <summary>See your rules so far</summary>
@@ -632,6 +681,7 @@ footer p{margin:4px 0;max-width:80ch}
     md.push("## Setup");
     md.push("- Job alerts arrive in: " + v(state.email));
     md.push("- Where I find jobs: " + (state.sources || []).join(", "));
+    md.push("- Suggested job boards: " + boardNames().join(", "));
     md.push("- Master CV format: " + v(state.cv));
     md.push("- AI: " + v(state.ai));
     md.push("");
@@ -681,20 +731,95 @@ footer p{margin:4px 0;max-width:80ch}
     prevVals.__init = true;
   }
 
+  var B = {
+    linkedin:["LinkedIn Jobs","https://www.linkedin.com/jobs/","Save a search, then set its alert to daily email"],
+    indeed:["Indeed","https://www.indeed.com/","Create a job alert from any search"],
+    reed:["Reed","https://www.reed.co.uk/","Large UK board with email alerts"],
+    totaljobs:["Totaljobs","https://www.totaljobs.com/","Wide UK coverage across most fields"],
+    cvlib:["CV-Library","https://www.cv-library.co.uk/","Strong for regional UK roles"],
+    csj:["Civil Service Jobs","https://www.civilservicejobs.service.gov.uk/","UK government roles"],
+    nhs:["NHS Jobs","https://www.jobs.nhs.uk/","Every NHS vacancy in England and Wales"],
+    irishjobs:["IrishJobs.ie","https://www.irishjobs.ie/","Ireland's largest dedicated job board"],
+    publicjobs:["publicjobs.ie","https://www.publicjobs.ie/","Irish public sector roles"],
+    zip:["ZipRecruiter","https://www.ziprecruiter.com/","Broad US coverage with email alerts"],
+    glassdoor:["Glassdoor","https://www.glassdoor.com/","Jobs plus salary and company reviews"],
+    usajobs:["USAJOBS","https://www.usajobs.gov/","US federal government roles"],
+    jobbank:["Job Bank","https://www.jobbank.gc.ca/","Government of Canada's national job board"],
+    seekau:["SEEK","https://www.seek.com.au/","Australia's largest job board"],
+    seeknz:["SEEK NZ","https://www.seek.co.nz/","New Zealand's largest job board"],
+    trademe:["Trade Me Jobs","https://www.trademe.co.nz/a/jobs","Popular NZ alternative"],
+    bayt:["Bayt","https://www.bayt.com/","Largest board across the Gulf and Middle East"],
+    gulftalent:["GulfTalent","https://www.gulftalent.com/","Professional and mid-senior Gulf roles"],
+    naukrigulf:["Naukrigulf","https://www.naukrigulf.com/","Wide Gulf coverage"],
+    naukri:["Naukri","https://www.naukri.com/","India's largest job board"],
+    foundit:["foundit","https://www.foundit.in/","Large Indian board, formerly Monster India"],
+    stepstone:["StepStone","https://www.stepstone.de/","Major board in Germany, Belgium, the Netherlands and more"],
+    eures:["EURES","https://eures.europa.eu/","EU portal for working in another European country"],
+    wttj:["Welcome to the Jungle","https://www.welcometothejungle.com/","Tech and startup roles, formerly Otta"],
+    dice:["Dice","https://www.dice.com/","US tech roles"],
+    wellfound:["Wellfound","https://wellfound.com/","Startup roles worldwide"],
+    efc:["eFinancialCareers","https://www.efinancialcareers.com/","Finance, banking and fintech"],
+    tes:["Tes","https://www.tes.com/jobs/","Teaching, in the UK and international schools"],
+    jobsac:["jobs.ac.uk","https://www.jobs.ac.uk/","Universities and research"],
+    higheredjobs:["HigherEdJobs","https://www.higheredjobs.com/","US universities and colleges"],
+    charityjob:["CharityJob","https://www.charityjob.co.uk/","UK charity and not-for-profit roles"],
+    guardian:["Guardian Jobs","https://jobs.theguardian.com/","Charity, media, public sector and education"],
+    idealist:["Idealist","https://www.idealist.org/","Non-profit and mission-led roles"],
+    totallylegal:["TotallyLegal","https://www.totallylegal.com/","UK legal roles"],
+    caterer:["Caterer.com","https://www.caterer.com/","UK hospitality and catering"],
+    thedots:["The Dots","https://the-dots.com/","Creative and media roles"]
+  };
+  var REGION = {
+    uk:["linkedin","indeed","reed","totaljobs","cvlib"], ie:["linkedin","irishjobs","indeed"],
+    us:["linkedin","indeed","zip","glassdoor"], ca:["linkedin","indeed","jobbank"],
+    au:["seekau","linkedin","indeed"], nz:["seeknz","trademe","linkedin"],
+    gcc:["linkedin","bayt","gulftalent","naukrigulf"], "in":["naukri","linkedin","foundit","indeed"],
+    eu:["linkedin","indeed","stepstone","eures"], other:["linkedin","indeed"]
+  };
+  var AREA = {
+    "Software and IT":{uk:["wttj"],eu:["wttj"],us:["dice","wttj"],all:["wellfound"]},
+    "Data and analytics":{uk:["wttj"],eu:["wttj"],us:["dice"],all:["wellfound"]},
+    "Product and design":{uk:["wttj"],eu:["wttj"],us:["wttj"],all:["wellfound"]},
+    "Finance and accounting":{all:["efc"]},
+    "Healthcare":{uk:["nhs"]},
+    "Education":{uk:["tes","jobsac"],us:["higheredjobs"],all:["tes"]},
+    "Public sector and charity":{uk:["csj","charityjob","guardian"],ie:["publicjobs"],us:["usajobs","idealist"],ca:["jobbank"],all:["idealist"]},
+    "Legal":{uk:["totallylegal"]},
+    "Hospitality and retail":{uk:["caterer"]},
+    "Creative and media":{uk:["thedots","guardian"],all:["thedots"]},
+    "Marketing and communications":{uk:["guardian"]}
+  };
+  function suggest(){
+    var r = state.region; if(!r) return null;
+    var main = (REGION[r] || REGION.other).slice();
+    var a = AREA[state.area] || {}, extra = (a[r] || a.all || []).filter(function(k){ return main.indexOf(k) < 0; });
+    return { main: main, extra: extra.slice(0, 3) };
+  }
+  function renderBoards(){
+    var box = document.getElementById("boards"), sg = suggest();
+    if(!sg){ box.hidden = true; return; }
+    function li(k){ var b = B[k]; return '<li><a href="' + b[1] + '" target="_blank" rel="noopener">' + b[0] + '</a><span>' + b[2] + '</span></li>'; }
+    var h = '<h3>Worth setting alerts on</h3><p>Start with these. Save a search on each and turn on daily email alerts, so new roles come to you.</p><ul>' + sg.main.map(li).join("") + '</ul>';
+    if(sg.extra.length) h += '<h4>For ' + esc(state.area.toLowerCase()) + '</h4><ul>' + sg.extra.map(li).join("") + '</ul>';
+    box.innerHTML = h; box.hidden = false;
+  }
+  function boardNames(){ var sg = suggest(); if(!sg) return []; return sg.main.concat(sg.extra).map(function(k){ return B[k][0]; }); }
+
   function nudges(){
     var e = state.email;
     show("n-email", e && e !== "Gmail" && e !== "Work or other");
     show("n-work", e === "Work or other");
     var s = state.sources || [];
-    show("n-sources", s.length > 0 && !(s.length === 1 && s[0] === "People I know"));
+    show("n-sources", !state.region && s.length > 0 && !(s.length === 1 && s[0] === "People I know"));
     show("n-cv", state.cv === "PDF only");
-    show("n-ai", state.ai === "Claude, free plan" || state.ai === "None yet");
+    show("n-ai", state.ai === "Claude, free plan");
+    show("n-new", state.ai === "None yet");
     show("n-gpt", ["ChatGPT","Gemini","Microsoft Copilot"].indexOf(state.ai) > -1);
   }
   function show(id, on){ var n = document.getElementById(id); if(n) n.hidden = !on; }
 
   var t;
-  function changed(){ nudges(); renderSheet(); clearTimeout(t); t = setTimeout(save, 250); }
+  function changed(){ nudges(); renderBoards(); renderSheet(); clearTimeout(t); t = setTimeout(save, 250); }
 
   function renderSteps(){
     var ol = document.getElementById("steps");
@@ -720,6 +845,7 @@ footer p{margin:4px 0;max-width:80ch}
     document.getElementById("doc").hidden = onDemo;
     document.getElementById("sheet-note").hidden = onDemo;
     document.getElementById("mobile-sheet").hidden = onDemo;
+    document.getElementById("founder").hidden = !onDemo;
   }
 
   function validate(i){
@@ -766,18 +892,29 @@ footer p{margin:4px 0;max-width:80ch}
   function finish(){
     document.getElementById("done-name").textContent = v(state.name) ? ", " + v(state.name) : "";
     var items = [];
-    items.push(item("Save your rules file", "Download it and keep it somewhere you'll find it. You will add it to Claude when you install the skills."));
-    if(state.email && state.email !== "Gmail")
+    var claude = state.ai === "Claude, paid plan" || state.ai === "Claude, free plan";
+    var other = ["ChatGPT","Gemini","Microsoft Copilot"].indexOf(state.ai) > -1;
+    var aiName = other ? (state.ai === "Microsoft Copilot" ? "Copilot" : state.ai) : "Claude";
+    items.push(item("Save your rules file", "Download it and keep it somewhere you'll find it. You'll give it to " + aiName + " in a moment."));
+    if(state.email && state.email !== "Gmail" && !other)
       items.push(item("Set up a Gmail address for job alerts", "Create a free Gmail account, then forward alerts to it from your current inbox. Daily scans read alerts from Gmail.", true));
-    if((state.sources || []).length)
+    var names = boardNames();
+    if(names.length){
+      var sg = suggest(), links = sg.main.concat(sg.extra).map(function(k){ return '<a href="' + B[k][1] + '" target="_blank" rel="noopener">' + B[k][0] + '</a>'; });
+      items.push(item("Set up daily email alerts", "On " + links.join(", ").replace(/, ([^,]*)$/, " and $1") + ". Save one search per role you're aiming for, with your location and pay floor."));
+    } else if((state.sources || []).length)
       items.push(item("Turn your searches into daily email alerts", "On " + (state.sources || []).filter(function(s){ return s !== "People I know"; }).join(", ").replace(/, ([^,]*)$/, " and $1") + ", save each search as an email alert so new roles reach your inbox."));
     if(state.ai === "None yet")
-      items.push(item("Get set up with Claude", "The skills run in Claude. The free plan is enough to try them by pasting alerts. Daily automatic scans need a paid plan.", true));
-    items.push(item("Add the skills and your rules", 'Follow the <a href="https://github.com/yserrag/applysteward#install-the-free-core">install steps</a>, then upload fit-rules.md to a Claude project so every chat can read it.'));
-    items.push(item("Copy the tracker", 'Import <a href="https://github.com/yserrag/applysteward/blob/main/templates/tracker.csv">tracker.csv</a> into Google Sheets. Scans give you rows to paste straight in.'));
+      items.push(item("Choose an AI assistant", "Any of the big ones will do. Claude runs everything, including automatic daily scans. ChatGPT, Gemini and Copilot work with our copy-and-paste guide. Free plans are enough to start.", true));
+    if(other){
+      items.push(item("Set up " + aiName, 'Follow the short <a href="https://github.com/yserrag/applysteward/tree/main/any-ai">guide for ' + aiName + '</a>: paste one block of instructions and add your rules file. About five minutes.'));
+    } else {
+      items.push(item("Add the skills and your rules", 'Follow the <a href="https://github.com/yserrag/applysteward#install-the-free-core">install steps</a>, then upload fit-rules.md to a Claude project so every chat can read it. Using another AI later? The <a href="https://github.com/yserrag/applysteward/tree/main/any-ai">any-AI guide</a> covers it.'));
+    }
+    items.push(item("Copy the tracker", 'Import <a href="https://github.com/yserrag/applysteward/blob/main/templates/tracker.csv">tracker.csv</a> into Google Sheets or Excel. Scans give you rows to paste straight in.'));
     if(state.cv === "PDF only" || state.cv === "I need a new one")
       items.push(item(state.cv === "PDF only" ? "Make an editable copy of your CV" : "Start a master CV", "Keep one full, honest version in Word or Google Docs. Tailoring works from this copy and never adds things that aren't true.", true));
-    items.push(item("Run your first scan", "Open a chat, type /scan and paste three or four recent job alerts. You'll get a verdict on each, and rows for your tracker."));
+    items.push(item("Run your first scan", other ? "In your " + aiName + " project, type scan and paste three or four recent job alerts. You'll get a verdict on each, and rows for your tracker." : "Open a chat, type /scan and paste three or four recent job alerts. You'll get a verdict on each, and rows for your tracker."));
     var ol = document.getElementById("todo");
     ol.innerHTML = items.map(function(x){ return '<li' + (x.f ? ' class="flag"' : "") + '><div><h3>' + x.t + "</h3><p>" + x.b + "</p></div></li>"; }).join("");
   }
@@ -805,7 +942,7 @@ footer p{margin:4px 0;max-width:80ch}
     function fallback(){ var ta = document.createElement("textarea"); ta.value = txt; document.body.appendChild(ta); ta.select(); try{ document.execCommand("copy"); done(); }catch(e){ toast("Select the text in the preview to copy it"); } ta.remove(); }
   });
 
-  load(); bind(); nudges(); renderSheet();
+  load(); bind(); nudges(); renderBoards(); renderSheet();
   var tm = document.getElementById("tray-mobile"); tm.appendChild(document.getElementById("tray").cloneNode(true)); tm.firstChild.removeAttribute("id"); tm.firstChild.className = "sheet panel tray";
   document.querySelectorAll(".tray").forEach(function(t){ t.classList.add("play"); });
   go(0);

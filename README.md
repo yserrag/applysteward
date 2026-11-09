@@ -72,6 +72,7 @@ This repository is the free core. It is enough to see how ApplySteward thinks an
 |---|---|---|
 | Setup wizard and fit-rules file | Yes | Yes |
 | Tracker template | Yes | Yes |
+| Any-AI guide for ChatGPT, Gemini and Copilot | Yes | Yes |
 | Manual `/scan` skill (paste emails, get verdicts) | Yes | Yes |
 | Outreach drafts skill | Yes | Yes |
 | Weekly rejection review | Yes | Yes |
@@ -123,6 +124,9 @@ applysteward/
 │   ├── fit-rules.md            # Blank rules file, if you'd rather not use the wizard
 │   ├── tracker.csv             # Tracker columns (import into Google Sheets)
 │   └── brief-example.md        # What a morning brief looks like
+├── any-ai/                     # Copy-and-paste setup for ChatGPT, Gemini and Copilot
+│   ├── README.md
+│   └── instructions.md
 └── docs/                       # The setup wizard, served at applysteward.com
     ├── index.html
     └── CNAME
@@ -139,8 +143,14 @@ No tool can promise that. ApplySteward saves time on admin and helps you focus o
 **Do you see my emails or CV?**
 No. Everything runs inside your own AI account and spreadsheet.
 
-**Does it work with ChatGPT?**
-Not yet. A lighter ChatGPT version may follow.
+**Does it work with ChatGPT, Gemini or Copilot?**
+Yes. The wizard and rules file work with any AI, and the [any-AI guide](any-ai/) sets up screening, outreach drafts and weekly reviews in ChatGPT, Gemini or Copilot in about five minutes. Automatic daily scans of your inbox currently need Claude.
+
+**Which job boards should I use?**
+The setup wizard suggests the main boards for your country and any specialist ones for your field, such as NHS Jobs, eFinancialCareers or Tes. Set up daily email alerts on those, and your aide does the sorting.
+
+**I'm new to AI. Is this for me?**
+Yes. You type in plain English and stay in charge of every decision. Free plans are enough to start.
 
 **Can I get a refund?**
 Pro comes with a 14-day "it didn't work for me" refund.
@@ -151,6 +161,10 @@ The free core is released under the [PolyForm Noncommercial License 1.0.0](https
 
 ApplySteward Pro is sold separately under its own licence.
 
-## About
+## Why I built this
 
-Built by [Yousef Serrag](https://linkedin.com/in/yserrag) while running his own job search with it, every day. Feedback and issues are welcome.
+I built ApplySteward for my own job search, and it has helped me look for work with less noise and more focus. I'm sharing it at a low, one-off price because it works out well three ways: you get calm, practical help without another monthly subscription; the income supports my family while I search; and more people get comfortable using AI, at a time when so many employers already are and it can all feel overwhelming.
+
+Feedback and issues are welcome.
+
+[Yousef Serrag](https://linkedin.com/in/yserrag)
