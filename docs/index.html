@@ -5,34 +5,38 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ApplySteward setup</title>
 <meta name="description" content="Set up ApplySteward, an AI job-search aide. Answer a few questions and download the rules file your AI uses to sort job alerts.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%276%27 fill=%27%231F5C47%27/%3E%3Crect x=%277%27 y=%278%27 width=%2718%27 height=%274%27 rx=%272%27 fill=%27%23fff%27/%3E%3Crect x=%277%27 y=%2714%27 width=%2713%27 height=%274%27 rx=%272%27 fill=%27%23E2B762%27/%3E%3Crect x=%277%27 y=%2720%27 width=%278%27 height=%274%27 rx=%272%27 fill=%27%23B3B7B2%27/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;500;700&family=Atkinson+Hyperlegible+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
-  --paper:#F2F3EE; --ink:#1C2621; --muted:#5B665F; --line:#D3D8CF;
-  --field:#FFFFFF; --sheet:#FFFFFF; --sheet-line:#E6E9E2;
-  --green:#1F5C47; --green-ink:#FFFFFF; --green-soft:#E1EBE5;
-  --amber:#9A6A12; --amber-soft:#F5ECD8; --slate:#5B665F; --slate-soft:#E7E9E5;
+  --paper:#EEF0EA; --ink:#1C2621; --muted:#58625B; --line:#D2D7CD;
+  --field:#FFFFFF;
+  --green:#1F5C47; --green-soft:#E1EBE5; --btn:#1F5C47; --btn-ink:#FFFFFF;
+  --amber:#8C5F0E; --amber-soft:#F5ECD8; --slate:#58625B; --slate-soft:#E5E8E3;
   --focus:#2B6CB0;
+  /* the paper sheet keeps its own light palette in both themes */
+  --s-bg:#FBFAF6; --s-ink:#1C2621; --s-muted:#6A726C; --s-line:#E3E1D8;
+  --s-green:#1F5C47; --s-green-soft:#E1EBE5; --s-amber:#8C5F0E; --s-amber-soft:#F6EBD3; --s-slate:#6A726C;
   --sans:"Atkinson Hyperlegible Next", "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono:"Atkinson Hyperlegible Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --paper:#151B18; --ink:#E6EBE7; --muted:#A3AEA7; --line:#33403A;
-    --field:#1C2420; --sheet:#1C2420; --sheet-line:#2A3530;
-    --green:#6FB596; --green-ink:#10241B; --green-soft:#1F3A2F;
-    --amber:#D9A94E; --amber-soft:#3A2E17; --slate:#A3AEA7; --slate-soft:#2A322E;
-    --focus:#7FB2F0;
+    --paper:#26292D; --ink:#ECEAE4; --muted:#AAAEA9; --line:#3D4247;
+    --field:#2E3237;
+    --green:#93CDB3; --green-soft:#2F3E37; --btn:#2F7A5F; --btn-ink:#FFFFFF;
+    --amber:#E2B762; --amber-soft:#3A3528; --slate:#B3B7B2; --slate-soft:#34383C;
+    --focus:#8DB8F2;
   }
 }
 :root[data-theme="dark"]{
-  --paper:#151B18; --ink:#E6EBE7; --muted:#A3AEA7; --line:#33403A;
-  --field:#1C2420; --sheet:#1C2420; --sheet-line:#2A3530;
-  --green:#6FB596; --green-ink:#10241B; --green-soft:#1F3A2F;
-  --amber:#D9A94E; --amber-soft:#3A2E17; --slate:#A3AEA7; --slate-soft:#2A322E;
-  --focus:#7FB2F0;
+  --paper:#26292D; --ink:#ECEAE4; --muted:#AAAEA9; --line:#3D4247;
+  --field:#2E3237;
+  --green:#93CDB3; --green-soft:#2F3E37; --btn:#2F7A5F; --btn-ink:#FFFFFF;
+  --amber:#E2B762; --amber-soft:#3A3528; --slate:#B3B7B2; --slate-soft:#34383C;
+  --focus:#8DB8F2;
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
@@ -48,12 +52,17 @@ a{color:var(--green)}
 .wrap{max-width:1200px;margin:0 auto;padding:8px 24px 64px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,460px);gap:56px;align-items:start}
 
 /* progress */
-.steps{list-style:none;margin:0 0 36px;padding:0;display:flex;gap:6px;flex-wrap:wrap}
-.steps li button{font:inherit;font-size:14px;background:none;border:1px solid var(--line);color:var(--muted);border-radius:999px;padding:4px 12px;cursor:pointer}
-.steps[hidden]{display:none}
-.steps li button[disabled]{cursor:default;opacity:.55}
-.steps li button[aria-current="step"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
-.steps li button.done{border-color:var(--green);color:var(--green)}
+.prog{margin:0 0 36px}
+.prog[hidden]{display:none}
+.prog-label{font-size:14px;color:var(--muted);margin:0 0 8px}
+.prog-label b{color:var(--ink);font-weight:700}
+.steps{list-style:none;margin:0;padding:0;display:flex;gap:6px;max-width:420px}
+.steps li{flex:1}
+.steps button{display:block;width:100%;height:6px;border:0;border-radius:3px;background:var(--line);padding:0;cursor:pointer}
+.steps button[disabled]{cursor:default}
+.steps button.done{background:var(--green)}
+.steps button[aria-current="step"]{background:var(--ink)}
+.steps button:hover:not([disabled]){filter:brightness(1.1)}
 
 /* step content */
 .step{display:none}
@@ -65,13 +74,6 @@ h1{font-size:clamp(32px,4.4vw,48px);line-height:1.08;letter-spacing:-0.025em;mar
 h2{font-size:28px;line-height:1.2;letter-spacing:-0.015em;margin:0 0 8px;font-weight:700}
 .lede{font-size:19px;color:var(--muted);max-width:58ch;margin:0 0 28px}
 .intro p{max-width:58ch}
-
-.verdicts{display:flex;gap:10px;flex-wrap:wrap;margin:28px 0 32px}
-.v{display:inline-flex;align-items:center;gap:8px;font-weight:500;font-size:15px;padding:6px 12px;border-radius:6px}
-.v::before{content:"";width:9px;height:9px;border-radius:50%;background:currentColor}
-.v-send{background:var(--green-soft);color:var(--green)}
-.v-not{background:var(--amber-soft);color:var(--amber)}
-.v-skip{background:var(--slate-soft);color:var(--slate)}
 
 .facts{margin:0 0 32px;padding:0;list-style:none;color:var(--muted);font-size:15px;display:grid;gap:6px}
 
@@ -106,23 +108,69 @@ input:focus,select:focus,textarea:focus{border-color:var(--green);outline:none;b
 
 .nav{display:flex;gap:12px;align-items:center;margin-top:36px;padding-top:24px;border-top:1px solid var(--line)}
 .btn{font:inherit;font-size:16px;font-weight:700;border-radius:6px;padding:12px 20px;cursor:pointer;border:1px solid transparent}
-.btn-primary{background:var(--green);color:var(--green-ink)}
+.btn-primary{background:var(--btn);color:var(--btn-ink)}
 .btn-primary:hover{filter:brightness(1.08)}
 .btn-quiet{background:none;border-color:var(--line);color:var(--ink)}
 .nav .count{margin-left:auto;color:var(--muted);font-size:14px}
 
-/* the sheet */
+/* the sheet: a lit page, light in both themes */
 .sheet-col{position:sticky;top:24px}
-.sheet{background:var(--sheet);border:1px solid var(--line);border-radius:2px;
-  box-shadow:0 1px 0 var(--line),0 18px 40px -28px rgba(20,40,30,.35);
-  max-height:calc(100vh - 80px);display:flex;flex-direction:column}
-.sheet-head{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--sheet-line);font-size:14px;color:var(--muted)}
-.sheet-head b{color:var(--ink);font-family:var(--mono);font-weight:500}
-.sheet pre{margin:0;padding:18px 20px 24px;overflow:auto;font-family:var(--mono);font-size:13.5px;line-height:1.7;white-space:pre-wrap;word-break:break-word;color:var(--ink)}
-.sheet pre .h{font-weight:500;color:var(--green)}
-.sheet pre .e{color:var(--muted)}
-.sheet pre .new{background:var(--green-soft)}
-.sheet-note{font-size:14px;color:var(--muted);margin:12px 2px 0}
+.sheet{background:var(--s-bg);color:var(--s-ink);border-radius:3px;
+  box-shadow:0 0 0 1px rgba(28,38,33,.08),0 2px 4px rgba(28,38,33,.06),0 24px 48px -24px rgba(20,30,25,.35);
+  max-height:calc(100vh - 56px);overflow:auto}
+.sheet a{color:var(--s-green)}
+.panel[hidden]{display:none}
+
+/* sorted alerts demo */
+.tray{padding:22px 22px 18px}
+.tray-kicker{font-size:14px;color:var(--s-muted);margin:0 0 2px}
+.tray-title{font-size:20px;font-weight:700;margin:0 0 16px;letter-spacing:-0.01em}
+.slips{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.slip{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;
+  background:#FFFFFF;border:1px solid var(--s-line);border-radius:3px;padding:12px 14px;
+  transition:opacity .4s ease}
+.slip:nth-child(even){transform:rotate(.35deg)}
+.slip:nth-child(3n){transform:rotate(-.3deg)}
+.slip b{display:block;font-size:15.5px;line-height:1.3}
+.slip span{display:block;font-size:13.5px;color:var(--s-muted);line-height:1.4}
+.stamp{margin:0;justify-self:end;text-align:center;border:2px solid currentColor;border-radius:4px;padding:4px 8px 5px;
+  font-weight:700;font-size:13.5px;line-height:1.2;transform:rotate(-4deg);max-width:150px}
+.stamp small{display:block;font-weight:400;font-size:11.5px;margin-top:2px;line-height:1.25}
+.stamp.send{color:var(--s-green);background:var(--s-green-soft)}
+.stamp.not{color:var(--s-amber);background:var(--s-amber-soft)}
+.stamp.skip{color:var(--s-slate);background:#F1F0EC}
+.slip.skipped{opacity:.62}
+.tray-sum{margin:16px 2px 0;font-size:14.5px;color:var(--s-muted)}
+.tray-sum b{color:var(--s-ink)}
+.tray.play .stamp{opacity:0;transform:rotate(-4deg) scale(1.35);animation:stamp .28s cubic-bezier(.2,.9,.3,1.3) forwards}
+.tray.play .slip:nth-child(1) .stamp{animation-delay:.6s}
+.tray.play .slip:nth-child(2) .stamp{animation-delay:1.0s}
+.tray.play .slip:nth-child(3) .stamp{animation-delay:1.4s}
+.tray.play .slip:nth-child(4) .stamp{animation-delay:1.8s}
+.tray.play .slip:nth-child(5) .stamp{animation-delay:2.2s}
+.tray.play .tray-sum{opacity:0;animation:fade .4s ease 2.7s forwards}
+@keyframes stamp{to{opacity:1;transform:rotate(var(--rot,-4deg)) scale(1)}}
+@keyframes fade{to{opacity:1}}
+@media (prefers-reduced-motion: reduce){
+  .tray.play .stamp,.tray.play .tray-sum{animation:none;opacity:1;transform:rotate(-4deg)}
+  .tray.play .tray-sum{transform:none}
+}
+
+/* rules document */
+.doc{padding:24px 26px 28px}
+.doc-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;border-bottom:2px solid var(--s-ink);padding-bottom:10px;margin-bottom:18px}
+.doc-head h3{margin:0;font-size:22px;letter-spacing:-0.01em}
+.doc-head span{font-size:13px;color:var(--s-muted)}
+.doc h4{font-size:14px;font-weight:700;color:var(--s-green);margin:20px 0 6px}
+.doc h4:first-of-type{margin-top:0}
+.doc ol,.doc ul{margin:0;padding-left:20px;font-size:15px}
+.doc li{margin:2px 0}
+.doc dl{margin:0;display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:14px;row-gap:5px;font-size:15px}
+.doc dt{color:var(--s-muted)}
+.doc dd{margin:0}
+.blank{display:inline-block;min-width:90px;border-bottom:1px dotted #B9BDB4;height:1em;vertical-align:-2px}
+.fresh{background:#FFF4C2;border-radius:2px;transition:background 1.2s ease}
+.doc-foot{margin:22px 0 0;font-size:13px;color:var(--s-muted)}
 
 /* finish */
 .done-actions{display:flex;flex-wrap:wrap;gap:10px;margin:8px 0 32px}
@@ -133,18 +181,29 @@ input:focus,select:focus,textarea:focus{border-color:var(--green);outline:none;b
 .todo p{margin:0;color:var(--muted);font-size:15px}
 .todo li.flag::before{border-color:var(--amber);color:var(--amber)}
 
-.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:10px 16px;border-radius:6px;font-size:15px;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--s-ink);color:var(--s-bg);padding:10px 16px;border-radius:6px;font-size:15px;opacity:0;pointer-events:none;transition:opacity .2s}
 .toast.show{opacity:1}
 
 footer{max-width:1200px;margin:0 auto;padding:24px;color:var(--muted);font-size:14px;border-top:1px solid var(--line)}
 footer p{margin:4px 0;max-width:80ch}
 
 .mobile-sheet{display:none}
+.tray-mobile{display:none}
+.mobile-sheet[hidden]{display:none !important}
 @media (max-width: 900px){
   .wrap{grid-template-columns:minmax(0,1fr);gap:0;padding:4px 16px 48px}
   .top{padding:16px}
   .sheet-col{display:none}
   .mobile-sheet{display:block;margin-top:32px}
+  .tray-mobile{display:block;margin:8px 0 28px}
+  .tray-mobile .sheet,.tray-mobile.sheet{max-height:none}
+  .tray{padding:18px 16px 14px}
+  .slip{grid-template-columns:minmax(0,1fr);gap:8px}
+  .slip span{display:inline}
+  .slip span + span::before{content:", "}
+  .stamp{justify-self:start;max-width:none;transform:rotate(-2deg);--rot:-2deg}
+  .tray.play .stamp{transform:rotate(-2deg) scale(1.35)}
+  .stamp small{display:inline;margin:0 0 0 6px}
   .mobile-sheet summary{cursor:pointer;font-weight:700;padding:12px 0}
   .mobile-sheet .sheet{max-height:none}
   .row,.row-2{grid-template-columns:minmax(0,1fr)}
@@ -164,17 +223,13 @@ footer p{margin:4px 0;max-width:80ch}
 
 <main class="wrap">
   <div>
-    <ol class="steps" id="steps" aria-label="Setup steps"></ol>
+    <div class="prog" id="prog"><p class="prog-label" id="prog-label"></p><ol class="steps" id="steps" aria-label="Setup steps"></ol></div>
 
     <!-- 0 welcome -->
     <section class="step intro" data-step="0" data-name="Start">
       <h1>Tell your job search what a good job looks like.</h1>
       <p class="lede">Answer a few questions and you'll leave with a short rules file. Your AI reads it every time it checks your job alerts, and sorts each role into one of three piles.</p>
-      <div class="verdicts" aria-label="The three verdicts">
-        <span class="v v-send">Sendworthy</span>
-        <span class="v v-not">Not yet</span>
-        <span class="v v-skip">Skip</span>
-      </div>
+      <div class="tray-mobile" id="tray-mobile"></div>
       <ul class="facts">
         <li>Takes about six minutes. You can change anything later.</li>
         <li>Nothing you type leaves this page. There is no account and no server.</li>
@@ -425,18 +480,29 @@ footer p{margin:4px 0;max-width:80ch}
       <span class="count" id="count"></span>
     </div>
 
-    <details class="mobile-sheet">
-      <summary>See your rules file so far</summary>
-      <div class="sheet"><div class="sheet-head"><b>fit-rules.md</b><span>Updates as you type</span></div><pre class="m-out"></pre></div>
+    <details class="mobile-sheet" id="mobile-sheet">
+      <summary>See your rules so far</summary>
+      <div class="sheet"><div class="m-doc"></div></div>
     </details>
   </div>
 
-  <aside class="sheet-col" aria-label="Preview of your rules file">
+  <aside class="sheet-col" aria-label="Preview">
     <div class="sheet">
-      <div class="sheet-head"><b>fit-rules.md</b><span>Updates as you type</span></div>
-      <pre id="out" aria-live="off"></pre>
+      <div class="panel tray" id="tray" aria-label="Example: one morning of job alerts, sorted">
+        <p class="tray-kicker">An example morning</p>
+        <p class="tray-title">Five alerts in, sorted for you</p>
+        <ol class="slips">
+          <li class="slip"><div><b>Senior Project Manager</b><span>Northwind Health</span><span>Manchester, hybrid, £62,000</span></div><p class="stamp send">Sendworthy<small>Your first choice, above your pay floor</small></p></li>
+          <li class="slip"><div><b>Programme Manager</b><span>Tailspin Logistics</span><span>Remote UK, pay not stated</span></div><p class="stamp not">Not yet<small>Ask the recruiter for the pay band</small></p></li>
+          <li class="slip skipped"><div><b>Project Coordinator</b><span>Contoso</span><span>Leeds, on-site, £31,000</span></div><p class="stamp skip">Skip<small>Below your level and pay floor</small></p></li>
+          <li class="slip"><div><b>Delivery Lead</b><span>Fabrikam Energy</span><span>Birmingham, hybrid, £65,000</span></div><p class="stamp send">Sendworthy<small>Second choice, strong match</small></p></li>
+          <li class="slip skipped"><div><b>Project Manager, urgent start</b><span>Company not named</span><span>pay "competitive"</span></div><p class="stamp skip">Skip<small>Red flag: no company named</small></p></li>
+        </ol>
+        <p class="tray-sum"><b>2 worth sending, 1 to check, 2 skipped.</b> You read two adverts instead of five.</p>
+      </div>
+      <div class="panel" id="doc" hidden></div>
     </div>
-    <p class="sheet-note">This file stays on your device. Your AI reads it before every scan.</p>
+    <p class="sheet-note" id="sheet-note" hidden>Stays on your device. Your AI reads it before every scan.</p>
   </aside>
 </main>
 
@@ -455,7 +521,6 @@ footer p{margin:4px 0;max-width:80ch}
   var last = steps.length - 1;
   var cur = 0, maxReached = 0;
   var state = {};
-  var prevText = "";
 
   function load(){
     try{ var s = JSON.parse(localStorage.getItem(KEY) || "null"); if(s){ state = s.state || {}; maxReached = s.max || 0; } }catch(e){}
@@ -555,20 +620,43 @@ footer p{margin:4px 0;max-width:80ch}
     return md.join("\n");
   }
 
-  function esc(s){ return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+  function esc(t){ return String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+  var prevVals = {};
+  function val(key, text){
+    var t = v(text);
+    var fresh = prevVals.__init && prevVals[key] !== t && t;
+    prevVals[key] = t;
+    return t ? '<span' + (fresh ? ' class="fresh"' : '') + '>' + esc(t) + '</span>' : '<span class="blank" aria-label="Not set"></span>';
+  }
+  function bullets(key, arr){
+    if(!arr.length) return '<ul><li><span class="blank" aria-label="Not set"></span></li></ul>';
+    return '<ul>' + arr.map(function(x, i){ return '<li>' + val(key + i, x) + '</li>'; }).join("") + '</ul>';
+  }
   function renderSheet(){
-    var text = build();
-    var old = prevText.split("\n");
-    var html = text.split("\n").map(function(line, i){
-      var cls = "";
-      if(/^#/.test(line)) cls = "h";
-      else if(/^(- |\d\. )?[^:]*: ?$/.test(line) || /^- $/.test(line) || /^\d\. $/.test(line)) cls = "e";
-      if(prevText && old[i] !== line && cls !== "h") cls += " new";
-      return cls ? '<span class="' + cls.trim() + '">' + esc(line) + "</span>" : esc(line);
-    }).join("\n");
-    document.getElementById("out").innerHTML = html;
-    document.querySelectorAll(".m-out").forEach(function(p){ p.innerHTML = html; });
-    prevText = text;
+    var lanes = [state.lane1, state.lane2, state.lane3].map(v).filter(Boolean);
+    var pattern = (state.pattern || []).join(", ");
+    if(state.officeDays) pattern += (pattern ? "; " : "") + "up to " + state.officeDays + " office day" + (state.officeDays === "1" ? "" : "s");
+    var h = [];
+    h.push('<div class="doc"><div class="doc-head"><h3>' + (v(state.name) ? esc(v(state.name)) + "&#8217;s rules" : "Your rules") + '</h3><span>Saved as fit-rules.md</span></div>');
+    h.push('<h4>Roles I want, best first</h4>');
+    h.push(lanes.length ? '<ol>' + lanes.map(function(l, i){ return '<li>' + val("lane" + i, l) + '</li>'; }).join("") + '</ol>' : '<ol><li><span class="blank" aria-label="Not set"></span></li></ol>');
+    h.push('<h4>Ground rules</h4><dl>');
+    h.push('<dt>Pay floor</dt><dd>' + val("pay", money()) + '</dd>');
+    h.push('<dt>Where</dt><dd>' + val("loc", state.locations) + '</dd>');
+    h.push('<dt>Pattern</dt><dd>' + val("pat", pattern) + '</dd>');
+    h.push('<dt>Contracts</dt><dd>' + val("con", (state.contracts || []).join(", ")) + '</dd>');
+    h.push('<dt>Lowest level</dt><dd>' + val("sen", state.seniority) + '</dd>');
+    h.push('<dt>Right to work</dt><dd>' + val("rtw", state.rtw) + '</dd>');
+    h.push('</dl>');
+    h.push('<h4>Must-haves</h4>' + bullets("must", lines(state.must)));
+    h.push('<h4>Deal-breakers</h4>' + bullets("deal", lines(state.deal)));
+    h.push('<h4>Red flags</h4>' + bullets("flag", state.flags || []));
+    h.push('<h4>Results I can point to</h4>' + bullets("proof", lines(state.proof)));
+    h.push('<p class="doc-foot">Your AI reads this before every scan and sorts each role into Sendworthy, Not yet or Skip.</p></div>');
+    var html = h.join("");
+    document.getElementById("doc").innerHTML = html;
+    document.querySelectorAll(".m-doc").forEach(function(d){ d.innerHTML = html; });
+    prevVals.__init = true;
   }
 
   function nudges(){
@@ -589,19 +677,27 @@ footer p{margin:4px 0;max-width:80ch}
   function renderSteps(){
     var ol = document.getElementById("steps");
     ol.innerHTML = "";
-    steps.forEach(function(s, i){
+    var total = last;
+    steps.forEach(function(st, i){
       if(i === 0) return;
       var li = document.createElement("li");
       var b = document.createElement("button");
       b.type = "button";
-      b.textContent = i + " " + s.getAttribute("data-name");
+      b.setAttribute("aria-label", "Step " + i + ": " + st.getAttribute("data-name"));
+      b.title = st.getAttribute("data-name");
       if(i === cur) b.setAttribute("aria-current", "step");
-      if(i < cur || (i <= maxReached && i !== cur)) b.className = "done";
+      else if(i <= maxReached) b.className = "done";
       if(i > maxReached) b.disabled = true;
       b.addEventListener("click", function(){ go(i); });
       li.appendChild(b); ol.appendChild(li);
     });
-    ol.hidden = cur === 0;
+    document.getElementById("prog").hidden = cur === 0;
+    document.getElementById("prog-label").innerHTML = cur === last ? "<b>All done</b>" : "Step " + cur + " of " + (total - 1) + ": <b>" + steps[cur].getAttribute("data-name") + "</b>";
+    var onDemo = cur === 0;
+    document.getElementById("tray").hidden = !onDemo;
+    document.getElementById("doc").hidden = onDemo;
+    document.getElementById("sheet-note").hidden = onDemo;
+    document.getElementById("mobile-sheet").hidden = onDemo;
   }
 
   function validate(i){
@@ -623,7 +719,7 @@ footer p{margin:4px 0;max-width:80ch}
     back.hidden = cur === 0;
     next.hidden = cur === last;
     next.textContent = cur === 0 ? (maxReached > 0 ? "Carry on where I left off" : "Start setup") : (cur === last - 1 ? "Finish" : "Continue");
-    document.getElementById("count").textContent = cur > 0 && cur < last ? "Step " + cur + " of " + (last - 1) : "";
+    document.getElementById("count").textContent = "";
     if(cur === last) finish();
     renderSteps();
     save();
@@ -675,7 +771,9 @@ footer p{margin:4px 0;max-width:80ch}
     function fallback(){ var ta = document.createElement("textarea"); ta.value = txt; document.body.appendChild(ta); ta.select(); try{ document.execCommand("copy"); done(); }catch(e){ toast("Select the text in the preview to copy it"); } ta.remove(); }
   });
 
-  load(); bind(); nudges(); prevText = ""; renderSheet(); prevText = build();
+  load(); bind(); nudges(); renderSheet();
+  var tm = document.getElementById("tray-mobile"); tm.appendChild(document.getElementById("tray").cloneNode(true)); tm.firstChild.removeAttribute("id"); tm.firstChild.className = "sheet panel tray";
+  document.querySelectorAll(".tray").forEach(function(t){ t.classList.add("play"); });
   go(0);
 })();
 </script>
