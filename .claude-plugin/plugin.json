@@ -1,0 +1,13 @@
+{
+  "name": "applysteward",
+  "version": "0.1.0",
+  "description": "AI job-search aide. Screens job alerts against your fit rules, drafts outreach and reviews what is working. You make the calls.",
+  "author": {
+    "name": "Yousef Serrag",
+    "url": "https://applysteward.com"
+  },
+  "homepage": "https://applysteward.com",
+  "repository": "https://github.com/yserrag/applysteward",
+  "license": "PolyForm-Noncommercial-1.0.0",
+  "keywords": ["job search", "careers", "applications", "tracker"]
+}

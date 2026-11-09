@@ -1,0 +1,683 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ApplySteward setup</title>
+<meta name="description" content="Set up ApplySteward, an AI job-search aide. Answer a few questions and download the rules file your AI uses to sort job alerts.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;500;700&family=Atkinson+Hyperlegible+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F2F3EE; --ink:#1C2621; --muted:#5B665F; --line:#D3D8CF;
+  --field:#FFFFFF; --sheet:#FFFFFF; --sheet-line:#E6E9E2;
+  --green:#1F5C47; --green-ink:#FFFFFF; --green-soft:#E1EBE5;
+  --amber:#9A6A12; --amber-soft:#F5ECD8; --slate:#5B665F; --slate-soft:#E7E9E5;
+  --focus:#2B6CB0;
+  --sans:"Atkinson Hyperlegible Next", "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono:"Atkinson Hyperlegible Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#151B18; --ink:#E6EBE7; --muted:#A3AEA7; --line:#33403A;
+    --field:#1C2420; --sheet:#1C2420; --sheet-line:#2A3530;
+    --green:#6FB596; --green-ink:#10241B; --green-soft:#1F3A2F;
+    --amber:#D9A94E; --amber-soft:#3A2E17; --slate:#A3AEA7; --slate-soft:#2A322E;
+    --focus:#7FB2F0;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#151B18; --ink:#E6EBE7; --muted:#A3AEA7; --line:#33403A;
+  --field:#1C2420; --sheet:#1C2420; --sheet-line:#2A3530;
+  --green:#6FB596; --green-ink:#10241B; --green-soft:#1F3A2F;
+  --amber:#D9A94E; --amber-soft:#3A2E17; --slate:#A3AEA7; --slate-soft:#2A322E;
+  --focus:#7FB2F0;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.55}
+a{color:var(--green)}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+
+.top{display:flex;justify-content:space-between;align-items:center;max-width:1200px;margin:0 auto;padding:20px 24px}
+.brand{font-weight:700;font-size:19px;letter-spacing:-0.01em;color:var(--ink);text-decoration:none}
+.brand span{color:var(--muted);font-weight:400;margin-left:8px;font-size:15px}
+.top a.gh{color:var(--muted);font-size:15px}
+
+.wrap{max-width:1200px;margin:0 auto;padding:8px 24px 64px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,460px);gap:56px;align-items:start}
+
+/* progress */
+.steps{list-style:none;margin:0 0 36px;padding:0;display:flex;gap:6px;flex-wrap:wrap}
+.steps li button{font:inherit;font-size:14px;background:none;border:1px solid var(--line);color:var(--muted);border-radius:999px;padding:4px 12px;cursor:pointer}
+.steps[hidden]{display:none}
+.steps li button[disabled]{cursor:default;opacity:.55}
+.steps li button[aria-current="step"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.steps li button.done{border-color:var(--green);color:var(--green)}
+
+/* step content */
+.step{display:none}
+.step.on{display:block;animation:in .25s ease-out}
+@keyframes in{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){.step.on{animation:none}}
+
+h1{font-size:clamp(32px,4.4vw,48px);line-height:1.08;letter-spacing:-0.025em;margin:0 0 20px;font-weight:700;max-width:16ch}
+h2{font-size:28px;line-height:1.2;letter-spacing:-0.015em;margin:0 0 8px;font-weight:700}
+.lede{font-size:19px;color:var(--muted);max-width:58ch;margin:0 0 28px}
+.intro p{max-width:58ch}
+
+.verdicts{display:flex;gap:10px;flex-wrap:wrap;margin:28px 0 32px}
+.v{display:inline-flex;align-items:center;gap:8px;font-weight:500;font-size:15px;padding:6px 12px;border-radius:6px}
+.v::before{content:"";width:9px;height:9px;border-radius:50%;background:currentColor}
+.v-send{background:var(--green-soft);color:var(--green)}
+.v-not{background:var(--amber-soft);color:var(--amber)}
+.v-skip{background:var(--slate-soft);color:var(--slate)}
+
+.facts{margin:0 0 32px;padding:0;list-style:none;color:var(--muted);font-size:15px;display:grid;gap:6px}
+
+fieldset{border:0;margin:0 0 28px;padding:0;min-width:0}
+legend,.label{display:block;font-weight:700;font-size:16px;margin:0 0 4px;padding:0}
+.hint{display:block;color:var(--muted);font-size:15px;margin:0 0 10px}
+.field{margin:0 0 24px}
+input[type=text],input[type=number],select,textarea{
+  width:100%;font:inherit;font-size:16px;color:var(--ink);background:var(--field);
+  border:1px solid var(--line);border-radius:6px;padding:10px 12px}
+textarea{min-height:88px;resize:vertical}
+input:focus,select:focus,textarea:focus{border-color:var(--green);outline:none;box-shadow:0 0 0 3px var(--green-soft)}
+.row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.row-2{grid-template-columns:140px minmax(0,1fr) 140px}
+.span2{grid-column:span 2}
+.lanes{display:grid;gap:8px}
+.lanes label{display:grid;grid-template-columns:28px minmax(0,1fr);align-items:center;gap:8px;color:var(--muted);font-size:15px}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips label{position:relative}
+.chips input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.chips span{display:inline-block;border:1px solid var(--line);background:var(--field);border-radius:6px;padding:7px 12px;font-size:15px;cursor:pointer;user-select:none}
+.chips input:checked + span{border-color:var(--green);background:var(--green-soft);color:var(--green);font-weight:500}
+.chips input:focus-visible + span{outline:3px solid var(--focus);outline-offset:2px}
+
+.nudge{border-left:3px solid var(--amber);background:var(--amber-soft);padding:12px 14px;margin:10px 0 0;font-size:15px;border-radius:0 6px 6px 0}
+.nudge strong{display:block;margin-bottom:2px}
+.nudge[hidden]{display:none}
+
+.err{color:#B3261E;font-size:15px;margin:8px 0 0}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .err{color:#F2A49E}}
+
+.nav{display:flex;gap:12px;align-items:center;margin-top:36px;padding-top:24px;border-top:1px solid var(--line)}
+.btn{font:inherit;font-size:16px;font-weight:700;border-radius:6px;padding:12px 20px;cursor:pointer;border:1px solid transparent}
+.btn-primary{background:var(--green);color:var(--green-ink)}
+.btn-primary:hover{filter:brightness(1.08)}
+.btn-quiet{background:none;border-color:var(--line);color:var(--ink)}
+.nav .count{margin-left:auto;color:var(--muted);font-size:14px}
+
+/* the sheet */
+.sheet-col{position:sticky;top:24px}
+.sheet{background:var(--sheet);border:1px solid var(--line);border-radius:2px;
+  box-shadow:0 1px 0 var(--line),0 18px 40px -28px rgba(20,40,30,.35);
+  max-height:calc(100vh - 80px);display:flex;flex-direction:column}
+.sheet-head{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--sheet-line);font-size:14px;color:var(--muted)}
+.sheet-head b{color:var(--ink);font-family:var(--mono);font-weight:500}
+.sheet pre{margin:0;padding:18px 20px 24px;overflow:auto;font-family:var(--mono);font-size:13.5px;line-height:1.7;white-space:pre-wrap;word-break:break-word;color:var(--ink)}
+.sheet pre .h{font-weight:500;color:var(--green)}
+.sheet pre .e{color:var(--muted)}
+.sheet pre .new{background:var(--green-soft)}
+.sheet-note{font-size:14px;color:var(--muted);margin:12px 2px 0}
+
+/* finish */
+.done-actions{display:flex;flex-wrap:wrap;gap:10px;margin:8px 0 32px}
+.todo{list-style:none;margin:0;padding:0;counter-reset:t}
+.todo li{counter-increment:t;display:grid;grid-template-columns:32px minmax(0,1fr);gap:12px;padding:16px 0;border-top:1px solid var(--line)}
+.todo li::before{content:counter(t);width:28px;height:28px;border-radius:50%;border:1px solid var(--ink);display:grid;place-items:center;font-size:14px;font-weight:700}
+.todo h3{font-size:17px;margin:2px 0 4px}
+.todo p{margin:0;color:var(--muted);font-size:15px}
+.todo li.flag::before{border-color:var(--amber);color:var(--amber)}
+
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:10px 16px;border-radius:6px;font-size:15px;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.show{opacity:1}
+
+footer{max-width:1200px;margin:0 auto;padding:24px;color:var(--muted);font-size:14px;border-top:1px solid var(--line)}
+footer p{margin:4px 0;max-width:80ch}
+
+.mobile-sheet{display:none}
+@media (max-width: 900px){
+  .wrap{grid-template-columns:minmax(0,1fr);gap:0;padding:4px 16px 48px}
+  .top{padding:16px}
+  .sheet-col{display:none}
+  .mobile-sheet{display:block;margin-top:32px}
+  .mobile-sheet summary{cursor:pointer;font-weight:700;padding:12px 0}
+  .mobile-sheet .sheet{max-height:none}
+  .row,.row-2{grid-template-columns:minmax(0,1fr)}
+  .span2{grid-column:auto}
+  .top a.gh{display:none}
+  .brand span{display:block;margin:2px 0 0}
+  footer{padding:20px 16px}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <a class="brand" href="./">ApplySteward<span>AI job-search aide</span></a>
+  <a class="gh" href="https://github.com/yserrag/applysteward">Source on GitHub</a>
+</header>
+
+<main class="wrap">
+  <div>
+    <ol class="steps" id="steps" aria-label="Setup steps"></ol>
+
+    <!-- 0 welcome -->
+    <section class="step intro" data-step="0" data-name="Start">
+      <h1>Tell your job search what a good job looks like.</h1>
+      <p class="lede">Answer a few questions and you'll leave with a short rules file. Your AI reads it every time it checks your job alerts, and sorts each role into one of three piles.</p>
+      <div class="verdicts" aria-label="The three verdicts">
+        <span class="v v-send">Sendworthy</span>
+        <span class="v v-not">Not yet</span>
+        <span class="v v-skip">Skip</span>
+      </div>
+      <ul class="facts">
+        <li>Takes about six minutes. You can change anything later.</li>
+        <li>Nothing you type leaves this page. There is no account and no server.</li>
+        <li>It never applies for you. You decide what to send.</li>
+      </ul>
+    </section>
+
+    <!-- 1 about you -->
+    <section class="step" data-step="1" data-name="About you">
+      <h2>About you</h2>
+      <p class="lede">A little context so drafts sound like you and screening is pitched at the right level.</p>
+      <div class="field">
+        <label class="label" for="name">The name you go by</label>
+        <input type="text" id="name" data-key="name" autocomplete="given-name">
+      </div>
+      <div class="field">
+        <label class="label" for="role">Your current or most recent job title</label>
+        <input type="text" id="role" data-key="role" placeholder="For example, Senior Account Manager">
+      </div>
+      <div class="row">
+        <div class="field">
+          <label class="label" for="years">Years of experience</label>
+          <select id="years" data-key="years">
+            <option value="">Choose</option>
+            <option>Under 2</option><option>2 to 5</option><option>5 to 10</option><option>10 to 20</option><option>Over 20</option>
+          </select>
+        </div>
+        <div class="field span2">
+          <label class="label" for="area">Career area</label>
+          <select id="area" data-key="area">
+            <option value="">Choose the closest</option>
+            <option>Sales and business development</option><option>Marketing and communications</option>
+            <option>Software and IT</option><option>Data and analytics</option><option>Product and design</option>
+            <option>Finance and accounting</option><option>HR and people</option><option>Operations and supply chain</option>
+            <option>Customer service and success</option><option>Project and programme management</option>
+            <option>Healthcare</option><option>Education</option><option>Engineering</option>
+            <option>Legal</option><option>Public sector and charity</option><option>Hospitality and retail</option>
+            <option>Creative and media</option><option>Something else</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label class="label" for="proof">One or two results you're proud of</label>
+        <span class="hint">Specific and true. These are the only achievements your AI will ever quote. Leave blank if you'd rather add them later.</span>
+        <textarea id="proof" data-key="proof" placeholder="Grew the North region from £2m to £3.4m in 18 months&#10;Cut onboarding time from 6 weeks to 3"></textarea>
+      </div>
+    </section>
+
+    <!-- 2 what you want -->
+    <section class="step" data-step="2" data-name="What you want">
+      <h2>What you're looking for</h2>
+      <p class="lede">Up to three kinds of role, best first. Two is usually right. Too many and nothing gets ruled out.</p>
+      <fieldset>
+        <legend>Roles you're aiming for</legend>
+        <div class="lanes">
+          <label>1st <input type="text" data-key="lane1" aria-label="First choice of role" placeholder="For example, Enterprise Account Executive"></label>
+          <label>2nd <input type="text" data-key="lane2" aria-label="Second choice of role"></label>
+          <label>3rd <input type="text" data-key="lane3" aria-label="Third choice of role"></label>
+        </div>
+        <p class="err" id="err-lanes" hidden>Add at least one role you're aiming for, so there's something to screen against.</p>
+      </fieldset>
+      <div class="field">
+        <label class="label" for="floor-level">Lowest level you'd take</label>
+        <input type="text" id="floor-level" data-key="seniority" placeholder="For example, Senior, or Manager and above">
+      </div>
+      <fieldset>
+        <legend>Contract types you'd consider</legend>
+        <div class="chips" data-group="contracts">
+          <label><input type="checkbox" value="Permanent" checked><span>Permanent</span></label>
+          <label><input type="checkbox" value="Fixed-term"><span>Fixed-term</span></label>
+          <label><input type="checkbox" value="Contract or interim"><span>Contract or interim</span></label>
+          <label><input type="checkbox" value="Part-time"><span>Part-time</span></label>
+          <label><input type="checkbox" value="Freelance"><span>Freelance</span></label>
+        </div>
+      </fieldset>
+    </section>
+
+    <!-- 3 ground rules -->
+    <section class="step" data-step="3" data-name="Ground rules">
+      <h2>Ground rules</h2>
+      <p class="lede">Anything that breaks one of these is skipped straight away, so be honest rather than hopeful.</p>
+      <fieldset>
+        <legend>Salary floor</legend>
+        <span class="hint">The lowest base pay you'd accept. Roles that don't state pay are marked Not yet, never skipped for that alone.</span>
+        <div class="row row-2">
+          <select data-key="currency" aria-label="Currency"><option>£</option><option>€</option><option>$</option><option>AED</option><option>SAR</option></select>
+          <input type="number" data-key="salary" inputmode="numeric" min="0" step="1000" aria-label="Amount" placeholder="Amount">
+          <select data-key="per" aria-label="Per"><option>per year</option><option>per day</option><option>per hour</option></select>
+        </div>
+      </fieldset>
+      <div class="field">
+        <label class="label" for="locations">Where you'll work</label>
+        <span class="hint">Cities or regions. Add "anywhere" if location doesn't matter.</span>
+        <input type="text" id="locations" data-key="locations" placeholder="For example, London, Manchester, remote UK">
+      </div>
+      <fieldset>
+        <legend>Working pattern</legend>
+        <div class="chips" data-group="pattern">
+          <label><input type="checkbox" value="Remote" checked><span>Remote</span></label>
+          <label><input type="checkbox" value="Hybrid" checked><span>Hybrid</span></label>
+          <label><input type="checkbox" value="On-site"><span>On-site</span></label>
+        </div>
+      </fieldset>
+      <div class="field">
+        <label class="label" for="office">Most office days a week you'd accept</label>
+        <select id="office" data-key="officeDays">
+          <option value="">No limit</option><option>1</option><option>2</option><option>3</option><option>4</option>
+        </select>
+      </div>
+      <div class="field">
+        <label class="label" for="rtw">Right to work</label>
+        <input type="text" id="rtw" data-key="rtw" placeholder="For example, UK, no sponsorship needed">
+      </div>
+    </section>
+
+    <!-- 4 filters -->
+    <section class="step" data-step="4" data-name="Filters">
+      <h2>What makes a role worth it</h2>
+      <p class="lede">Short lines work best. One idea per line.</p>
+      <div class="field">
+        <label class="label" for="must">Must-haves</label>
+        <span class="hint">A role needs these to be Sendworthy.</span>
+        <textarea id="must" data-key="must" placeholder="Clear quota and commission plan&#10;Sells to large organisations"></textarea>
+      </div>
+      <div class="field">
+        <label class="label" for="nice">Nice to have</label>
+        <textarea id="nice" data-key="nice" placeholder="AI or data products&#10;Under 1,000 people"></textarea>
+      </div>
+      <div class="field">
+        <label class="label" for="deal">Deal-breakers</label>
+        <span class="hint">Industries, companies or conditions you won't consider.</span>
+        <textarea id="deal" data-key="deal" placeholder="Gambling&#10;Former employers"></textarea>
+      </div>
+      <fieldset>
+        <legend>Treat these as red flags</legend>
+        <div class="chips" data-group="flags">
+          <label><input type="checkbox" value="No company named" checked><span>No company named</span></label>
+          <label><input type="checkbox" value="Commission-only pay" checked><span>Commission-only pay</span></label>
+          <label><input type="checkbox" value="Asks for payment, bank details or ID before an interview" checked><span>Asks for money or ID up front</span></label>
+          <label><input type="checkbox" value="Vague duties with an urgent deadline" checked><span>Vague role, urgent deadline</span></label>
+          <label><input type="checkbox" value="Same advert reposted for months"><span>Advert reposted for months</span></label>
+        </div>
+      </fieldset>
+    </section>
+
+    <!-- 5 setup -->
+    <section class="step" data-step="5" data-name="Your setup">
+      <h2>Your setup</h2>
+      <p class="lede">So the next steps match the tools you already use. Where a small change would help, we'll say why. Every suggestion is optional.</p>
+
+      <fieldset>
+        <legend>Where do your job alerts arrive?</legend>
+        <div class="chips" data-group="email" data-single>
+          <label><input type="radio" name="email" value="Gmail"><span>Gmail</span></label>
+          <label><input type="radio" name="email" value="Outlook or Hotmail"><span>Outlook or Hotmail</span></label>
+          <label><input type="radio" name="email" value="Yahoo"><span>Yahoo</span></label>
+          <label><input type="radio" name="email" value="iCloud"><span>iCloud</span></label>
+          <label><input type="radio" name="email" value="Work or other"><span>Work or other</span></label>
+        </div>
+        <div class="nudge" id="n-email" hidden>
+          <strong>Consider a Gmail address just for job alerts</strong>
+          Daily scans read alerts through Claude's Gmail connection. You can keep your main inbox and forward job alerts to a free Gmail address. It takes about five minutes and keeps job mail out of your personal inbox too.
+        </div>
+        <div class="nudge" id="n-work" hidden>
+          <strong>Move alerts off your work address</strong>
+          If you're still on notice or garden leave, your employer may be able to see that inbox. A separate Gmail address keeps your search private.
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Where do you find jobs now?</legend>
+        <span class="hint">Tick all that apply.</span>
+        <div class="chips" data-group="sources">
+          <label><input type="checkbox" value="LinkedIn"><span>LinkedIn</span></label>
+          <label><input type="checkbox" value="Indeed"><span>Indeed</span></label>
+          <label><input type="checkbox" value="Reed or Totaljobs"><span>Reed or Totaljobs</span></label>
+          <label><input type="checkbox" value="Company career pages"><span>Company career pages</span></label>
+          <label><input type="checkbox" value="Recruiters"><span>Recruiters</span></label>
+          <label><input type="checkbox" value="Specialist boards"><span>Specialist boards</span></label>
+          <label><input type="checkbox" value="People I know"><span>People I know</span></label>
+        </div>
+        <div class="nudge" id="n-sources" hidden>
+          <strong>Turn your searches into email alerts</strong>
+          Your aide can only screen what lands in your inbox. Save each search on the boards you use as a daily email alert, and follow your target companies' career pages where they offer alerts.
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>What format is your main CV in?</legend>
+        <div class="chips" data-group="cv" data-single>
+          <label><input type="radio" name="cv" value="Word"><span>Word</span></label>
+          <label><input type="radio" name="cv" value="Google Docs"><span>Google Docs</span></label>
+          <label><input type="radio" name="cv" value="PDF only"><span>PDF only</span></label>
+          <label><input type="radio" name="cv" value="I need a new one"><span>I need a new one</span></label>
+        </div>
+        <div class="nudge" id="n-cv" hidden>
+          <strong>Keep an editable master copy</strong>
+          Tailoring works by editing text. A Word or Google Docs version keeps your layout intact. Most PDFs can be opened in Word to get one.
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Which AI do you use?</legend>
+        <div class="chips" data-group="ai" data-single>
+          <label><input type="radio" name="ai" value="Claude, paid plan"><span>Claude, paid plan</span></label>
+          <label><input type="radio" name="ai" value="Claude, free plan"><span>Claude, free plan</span></label>
+          <label><input type="radio" name="ai" value="ChatGPT"><span>ChatGPT</span></label>
+          <label><input type="radio" name="ai" value="None yet"><span>None yet</span></label>
+        </div>
+        <div class="nudge" id="n-ai" hidden>
+          <strong>You can start today, and automate later</strong>
+          The free skills work by pasting alerts into a chat. Automatic daily scans need a paid Claude plan, which you can add when you're ready.
+        </div>
+        <div class="nudge" id="n-gpt" hidden>
+          <strong>Built for Claude first</strong>
+          Your rules file is plain text and works anywhere. Paste it into ChatGPT with your alerts for a manual check. The skills and daily scans are Claude-only for now.
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>How would you like your morning brief?</legend>
+        <div class="chips" data-group="brief" data-single>
+          <label><input type="radio" name="brief" value="Email to myself" checked><span>Email to myself</span></label>
+          <label><input type="radio" name="brief" value="Slack channel"><span>Slack channel</span></label>
+          <label><input type="radio" name="brief" value="No brief, I'll check when I want"><span>No brief</span></label>
+        </div>
+      </fieldset>
+      <div class="field">
+        <label class="label" for="time">Best time for it</label>
+        <select id="time" data-key="time"><option>7am</option><option selected>8am</option><option>9am</option><option>Lunchtime</option></select>
+      </div>
+    </section>
+
+    <!-- 6 done -->
+    <section class="step" data-step="6" data-name="Done">
+      <h2>Your rules are ready<span id="done-name"></span></h2>
+      <p class="lede">Save the file first. Then work through the list below; most people are scanning their first alerts within twenty minutes.</p>
+      <div class="done-actions">
+        <button class="btn btn-primary" type="button" id="download">Download fit-rules.md</button>
+        <button class="btn btn-quiet" type="button" id="copy">Copy text</button>
+      </div>
+      <ol class="todo" id="todo"></ol>
+    </section>
+
+    <div class="nav" id="nav">
+      <button class="btn btn-quiet" type="button" id="back" hidden>Back</button>
+      <button class="btn btn-primary" type="button" id="next">Start setup</button>
+      <span class="count" id="count"></span>
+    </div>
+
+    <details class="mobile-sheet">
+      <summary>See your rules file so far</summary>
+      <div class="sheet"><div class="sheet-head"><b>fit-rules.md</b><span>Updates as you type</span></div><pre class="m-out"></pre></div>
+    </details>
+  </div>
+
+  <aside class="sheet-col" aria-label="Preview of your rules file">
+    <div class="sheet">
+      <div class="sheet-head"><b>fit-rules.md</b><span>Updates as you type</span></div>
+      <pre id="out" aria-live="off"></pre>
+    </div>
+    <p class="sheet-note">This file stays on your device. Your AI reads it before every scan.</p>
+  </aside>
+</main>
+
+<footer>
+  <p>ApplySteward is an independent project. It works with Claude and is not affiliated with or endorsed by Anthropic.</p>
+  <p>It screens, tracks and drafts. It never applies or sends anything for you, and it can't promise outcomes.</p>
+  <p><a href="https://github.com/yserrag/applysteward">Source on GitHub</a></p>
+</footer>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function(){
+  var KEY = "applysteward.setup.v1";
+  var steps = Array.prototype.slice.call(document.querySelectorAll(".step"));
+  var last = steps.length - 1;
+  var cur = 0, maxReached = 0;
+  var state = {};
+  var prevText = "";
+
+  function load(){
+    try{ var s = JSON.parse(localStorage.getItem(KEY) || "null"); if(s){ state = s.state || {}; maxReached = s.max || 0; } }catch(e){}
+  }
+  function save(){
+    try{ localStorage.setItem(KEY, JSON.stringify({state:state, max:maxReached})); }catch(e){}
+  }
+
+  // populate inputs from state and bind
+  function bind(){
+    document.querySelectorAll("[data-key]").forEach(function(el){
+      var k = el.getAttribute("data-key");
+      if(state[k] !== undefined) el.value = state[k];
+      else if(el.tagName === "SELECT") state[k] = el.value;
+      el.addEventListener("input", function(){ state[k] = el.value; changed(); });
+      el.addEventListener("change", function(){ state[k] = el.value; changed(); });
+    });
+    document.querySelectorAll("[data-group]").forEach(function(g){
+      var k = g.getAttribute("data-group");
+      var inputs = g.querySelectorAll("input");
+      if(state[k] !== undefined){
+        var vals = [].concat(state[k]);
+        inputs.forEach(function(i){ i.checked = vals.indexOf(i.value) > -1; });
+      } else { state[k] = readGroup(g); }
+      inputs.forEach(function(i){ i.addEventListener("change", function(){ state[k] = readGroup(g); changed(); }); });
+    });
+  }
+  function readGroup(g){
+    var out = [];
+    g.querySelectorAll("input").forEach(function(i){ if(i.checked) out.push(i.value); });
+    return g.hasAttribute("data-single") ? (out[0] || "") : out;
+  }
+
+  function lines(s){ return (s || "").split(/\n+/).map(function(x){ return x.trim(); }).filter(Boolean); }
+  function list(arr, empty){ return arr.length ? arr.map(function(x){ return "- " + x; }).join("\n") : "- " + (empty || ""); }
+  function v(x){ return (x && String(x).trim()) || ""; }
+  function money(){
+    if(!v(state.salary)) return "";
+    var n = Number(state.salary);
+    var f = isFinite(n) ? n.toLocaleString("en-GB") : state.salary;
+    var c = state.currency || "£";
+    return (c.length > 1 ? c + " " : c) + f + " " + (state.per || "per year");
+  }
+
+  function build(){
+    var lanes = [state.lane1, state.lane2, state.lane3].map(v).filter(Boolean);
+    var pattern = (state.pattern || []).join(", ");
+    if(state.officeDays) pattern += (pattern ? "; " : "") + "no more than " + state.officeDays + " office day" + (state.officeDays === "1" ? "" : "s") + " a week";
+    var md = [];
+    md.push("# Fit rules" + (v(state.name) ? " for " + v(state.name) : ""));
+    md.push("");
+    md.push("Generated by the ApplySteward setup wizard. Edit freely.");
+    md.push("");
+    md.push("## About me");
+    md.push("- Name I use: " + v(state.name));
+    md.push("- Current or most recent role: " + v(state.role));
+    md.push("- Years of experience: " + v(state.years));
+    md.push("- Career area: " + v(state.area));
+    md.push("");
+    md.push("## Lanes (in priority order)");
+    md.push(lanes.length ? lanes.map(function(l, i){ return (i + 1) + ". " + l; }).join("\n") : "1. ");
+    md.push("");
+    md.push("## Hard rules (a breach means Skip)");
+    md.push("- Salary floor: " + money());
+    md.push("- Locations: " + v(state.locations));
+    md.push("- Working pattern: " + pattern);
+    md.push("- Right to work: " + v(state.rtw));
+    md.push("- Contract types: " + (state.contracts || []).join(", "));
+    md.push("- Seniority: " + v(state.seniority));
+    md.push("");
+    md.push("## Must-haves");
+    md.push(list(lines(state.must)));
+    md.push("");
+    md.push("## Nice-to-haves");
+    md.push(list(lines(state.nice)));
+    md.push("");
+    md.push("## Deal-breakers");
+    md.push(list(lines(state.deal)));
+    md.push("");
+    md.push("## Red flags (treat as Skip)");
+    md.push(list(state.flags || []));
+    md.push("");
+    md.push("## My proof points");
+    md.push("True results only. Never invent new ones.");
+    md.push(list(lines(state.proof)));
+    md.push("");
+    md.push("## Setup");
+    md.push("- Job alerts arrive in: " + v(state.email));
+    md.push("- Where I find jobs: " + (state.sources || []).join(", "));
+    md.push("- Master CV format: " + v(state.cv));
+    md.push("- AI: " + v(state.ai));
+    md.push("");
+    md.push("## How I like the brief");
+    md.push("- Delivery: " + v(state.brief));
+    md.push("- Time: " + v(state.time));
+    md.push("- Tone: plain and short, British English");
+    return md.join("\n");
+  }
+
+  function esc(s){ return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+  function renderSheet(){
+    var text = build();
+    var old = prevText.split("\n");
+    var html = text.split("\n").map(function(line, i){
+      var cls = "";
+      if(/^#/.test(line)) cls = "h";
+      else if(/^(- |\d\. )?[^:]*: ?$/.test(line) || /^- $/.test(line) || /^\d\. $/.test(line)) cls = "e";
+      if(prevText && old[i] !== line && cls !== "h") cls += " new";
+      return cls ? '<span class="' + cls.trim() + '">' + esc(line) + "</span>" : esc(line);
+    }).join("\n");
+    document.getElementById("out").innerHTML = html;
+    document.querySelectorAll(".m-out").forEach(function(p){ p.innerHTML = html; });
+    prevText = text;
+  }
+
+  function nudges(){
+    var e = state.email;
+    show("n-email", e && e !== "Gmail" && e !== "Work or other");
+    show("n-work", e === "Work or other");
+    var s = state.sources || [];
+    show("n-sources", s.length > 0 && !(s.length === 1 && s[0] === "People I know"));
+    show("n-cv", state.cv === "PDF only");
+    show("n-ai", state.ai === "Claude, free plan" || state.ai === "None yet");
+    show("n-gpt", state.ai === "ChatGPT");
+  }
+  function show(id, on){ var n = document.getElementById(id); if(n) n.hidden = !on; }
+
+  var t;
+  function changed(){ nudges(); renderSheet(); clearTimeout(t); t = setTimeout(save, 250); }
+
+  function renderSteps(){
+    var ol = document.getElementById("steps");
+    ol.innerHTML = "";
+    steps.forEach(function(s, i){
+      if(i === 0) return;
+      var li = document.createElement("li");
+      var b = document.createElement("button");
+      b.type = "button";
+      b.textContent = i + " " + s.getAttribute("data-name");
+      if(i === cur) b.setAttribute("aria-current", "step");
+      if(i < cur || (i <= maxReached && i !== cur)) b.className = "done";
+      if(i > maxReached) b.disabled = true;
+      b.addEventListener("click", function(){ go(i); });
+      li.appendChild(b); ol.appendChild(li);
+    });
+    ol.hidden = cur === 0;
+  }
+
+  function validate(i){
+    if(i === 2){
+      var ok = [state.lane1, state.lane2, state.lane3].some(function(x){ return v(x); });
+      document.getElementById("err-lanes").hidden = ok;
+      if(!ok){ var f = document.querySelector('[data-key="lane1"]'); f && f.focus(); }
+      return ok;
+    }
+    return true;
+  }
+
+  function go(i){
+    steps[cur].classList.remove("on");
+    cur = Math.max(0, Math.min(last, i));
+    if(cur > maxReached) maxReached = cur;
+    steps[cur].classList.add("on");
+    var next = document.getElementById("next"), back = document.getElementById("back");
+    back.hidden = cur === 0;
+    next.hidden = cur === last;
+    next.textContent = cur === 0 ? (maxReached > 0 ? "Carry on where I left off" : "Start setup") : (cur === last - 1 ? "Finish" : "Continue");
+    document.getElementById("count").textContent = cur > 0 && cur < last ? "Step " + cur + " of " + (last - 1) : "";
+    if(cur === last) finish();
+    renderSteps();
+    save();
+    var h = steps[cur].querySelector("h1,h2");
+    if(h && i !== 0){ h.setAttribute("tabindex", "-1"); h.focus({preventScroll:true}); }
+    window.scrollTo({top:0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"});
+  }
+
+  function item(title, body, flag){ return { t:title, b:body, f:!!flag }; }
+  function finish(){
+    document.getElementById("done-name").textContent = v(state.name) ? ", " + v(state.name) : "";
+    var items = [];
+    items.push(item("Save your rules file", "Download it and keep it somewhere you'll find it. You will add it to Claude when you install the skills."));
+    if(state.email && state.email !== "Gmail")
+      items.push(item("Set up a Gmail address for job alerts", "Create a free Gmail account, then forward alerts to it from your current inbox. Daily scans read alerts from Gmail.", true));
+    if((state.sources || []).length)
+      items.push(item("Turn your searches into daily email alerts", "On " + (state.sources || []).filter(function(s){ return s !== "People I know"; }).join(", ").replace(/, ([^,]*)$/, " and $1") + ", save each search as an email alert so new roles reach your inbox."));
+    if(state.ai === "ChatGPT" || state.ai === "None yet")
+      items.push(item("Get set up with Claude", "The skills run in Claude. The free plan is enough to try them by pasting alerts. Daily automatic scans need a paid plan.", true));
+    items.push(item("Add the skills and your rules", 'Follow the <a href="https://github.com/yserrag/applysteward#install-the-free-core">install steps</a>, then upload fit-rules.md to a Claude project so every chat can read it.'));
+    items.push(item("Copy the tracker", 'Import <a href="https://github.com/yserrag/applysteward/blob/main/templates/tracker.csv">tracker.csv</a> into Google Sheets. Scans give you rows to paste straight in.'));
+    if(state.cv === "PDF only" || state.cv === "I need a new one")
+      items.push(item(state.cv === "PDF only" ? "Make an editable copy of your CV" : "Start a master CV", "Keep one full, honest version in Word or Google Docs. Tailoring works from this copy and never adds things that aren't true.", true));
+    items.push(item("Run your first scan", "Open a chat, type /scan and paste three or four recent job alerts. You'll get a verdict on each, and rows for your tracker."));
+    var ol = document.getElementById("todo");
+    ol.innerHTML = items.map(function(x){ return '<li' + (x.f ? ' class="flag"' : "") + '><div><h3>' + x.t + "</h3><p>" + x.b + "</p></div></li>"; }).join("");
+  }
+
+  function toast(msg){ var el = document.getElementById("toast"); el.textContent = msg; el.classList.add("show"); setTimeout(function(){ el.classList.remove("show"); }, 1800); }
+
+  document.getElementById("next").addEventListener("click", function(){
+    if(cur === 0 && maxReached > 0){ go(Math.min(maxReached, last)); return; }
+    if(!validate(cur)) return;
+    go(cur + 1);
+  });
+  document.getElementById("back").addEventListener("click", function(){ go(cur - 1); });
+  document.getElementById("download").addEventListener("click", function(){
+    var blob = new Blob([build() + "\n"], {type:"text/markdown"});
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob); a.download = "fit-rules.md";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1000);
+    toast("Downloaded fit-rules.md");
+  });
+  document.getElementById("copy").addEventListener("click", function(){
+    var txt = build();
+    var done = function(){ toast("Copied to clipboard"); };
+    if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(done, fallback); else fallback();
+    function fallback(){ var ta = document.createElement("textarea"); ta.value = txt; document.body.appendChild(ta); ta.select(); try{ document.execCommand("copy"); done(); }catch(e){ toast("Select the text in the preview to copy it"); } ta.remove(); }
+  });
+
+  load(); bind(); nudges(); prevText = ""; renderSheet(); prevText = build();
+  go(0);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "name": "applysteward",
+  "owner": {
+    "name": "Yousef Serrag",
+    "url": "https://applysteward.com"
+  },
+  "plugins": [
+    {
+      "name": "applysteward",
+      "source": "./",
+      "description": "AI job-search aide. Screens job alerts against your fit rules, drafts outreach and reviews what is working."
+    }
+  ]
+}
