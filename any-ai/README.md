@@ -42,3 +42,6 @@ Paste the instructions and your rules at the start of a conversation, then use `
 - **Keep one conversation going** for your search, or use a project or Gem, so your AI keeps your rules in mind.
 - **Update your rules** whenever your thinking changes. Re-run the wizard, or edit the file and upload it again.
 - **Check the verdicts.** Your AI can misread an advert. You always make the final call, and you always press send.
+
+---
+© 2026 Yousef Serrag. All rights reserved. ApplySteward™. Personal use only. Copying, adapting, reselling or redistributing is not permitted without written permission.

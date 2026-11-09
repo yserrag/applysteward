@@ -1,4 +1,6 @@
-# ApplySteward
+# ApplySteward™
+
+> **© 2026 Yousef Serrag. All rights reserved.** ApplySteward™ is proprietary. You may use it for your own job search only. Copying, adapting, reselling or redistributing any part of it, or using it in a commercial product or service, is not permitted without written permission. See [Licence and permitted use](#licence-and-permitted-use).
 
 **AI job-search aide.** Looks after your applications. You make the calls.
 
@@ -112,7 +114,7 @@ Then run `/scan` in any session.
 ```
 applysteward/
 ├── README.md
-├── LICENSE                     # PolyForm Noncommercial 1.0.0
+├── LICENSE                     # Licence: personal use only, all other rights reserved
 ├── .claude-plugin/
 │   ├── plugin.json             # Claude Code plugin manifest
 │   └── marketplace.json        # Lets Claude Code install from this repo
@@ -155,9 +157,19 @@ Yes. You type in plain English and stay in charge of every decision. Free plans 
 **Can I get a refund?**
 Pro comes with a 14-day "it didn't work for me" refund.
 
-## Licence
+## Licence and permitted use
 
-The free core is released under the [PolyForm Noncommercial License 1.0.0](https://polyformproject.org/licenses/noncommercial/1.0.0/). Personal use is welcome. Reselling or bundling it in a paid product is not permitted without permission.
+© 2026 Yousef Serrag. All rights reserved. ApplySteward™, including its name, website, design, skills, instructions and templates, is protected by copyright.
+
+**You may:** download and use ApplySteward for your own personal job search.
+
+**You may not**, without written permission:
+- copy, adapt or republish any part of it, including the skills, instructions or website;
+- sell, resell, bundle or sublicense it, or include it in any paid or commercial product or service;
+- offer it, or anything derived from it, to clients, employees or customers;
+- use the ApplySteward name or anything confusingly similar.
+
+The full terms are in [LICENSE](LICENSE). For permission, including coaching, outplacement or team licences, contact Yousef Serrag via [LinkedIn](https://linkedin.com/in/yserrag).
 
 ApplySteward Pro is sold separately under its own licence.
 

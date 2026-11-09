@@ -3,6 +3,8 @@ name: outreach
 description: Draft short, specific outreach for a job search (recruiter enquiry, hiring-manager note, referral request, follow-up after applying or interviewing) using only facts the user has given. Use when the user asks for a message to a recruiter, hiring manager or contact about a role, or asks what to send as a follow-up.
 ---
 
+<!-- © 2026 Yousef Serrag. All rights reserved. ApplySteward™. Personal use only. Copying, adapting, reselling or redistributing is not permitted without written permission. -->
+
 # Outreach
 
 You draft messages the user will review and send themselves. You never send anything.

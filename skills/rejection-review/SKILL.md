@@ -3,6 +3,8 @@ name: rejection-review
 description: Weekly review of a job search tracker to find patterns in rejections, silence and stalls, and recommend at most three changes for next week. Use when the user pastes or shares their tracker and asks what is not working, asks for a weekly review, or types /review.
 ---
 
+<!-- © 2026 Yousef Serrag. All rights reserved. ApplySteward™. Personal use only. Copying, adapting, reselling or redistributing is not permitted without written permission. -->
+
 # Rejection review
 
 A short, honest weekly look at what the numbers say. The aim is one or two changes that will make next week better, not a report.

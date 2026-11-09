@@ -47,3 +47,6 @@ True, specific results I can point to. Used for outreach and tailoring. Never in
 - Delivery: (email to myself / Slack channel)
 - Time:
 - Tone: plain and short
+
+---
+© 2026 Yousef Serrag. All rights reserved. ApplySteward™. Personal use only. Copying, adapting, reselling or redistributing is not permitted without written permission.

@@ -21,3 +21,6 @@
 
 ## This week
 5 applications sent, 2 replies, 1 interview booked. That is your best week of replies so far.
+
+---
+© 2026 Yousef Serrag. All rights reserved. ApplySteward™. Personal use only. Copying, adapting, reselling or redistributing is not permitted without written permission.
