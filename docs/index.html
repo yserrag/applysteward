@@ -4,10 +4,29 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ApplySteward setup</title>
+
 <meta name="copyright" content="© 2026 Yousef Serrag. All rights reserved.">
 <meta name="author" content="Yousef Serrag">
-<meta name="description" content="Set up ApplySteward, an AI job-search aide. Answer a few questions and download the rules file your AI uses to sort job alerts.">
+<title>ApplySteward: AI job-search aide that sorts your job alerts</title>
+<meta name="description" content="Free AI job-search aide. Sorts your job alerts into worth sending, check first and skip, writes a daily brief, drafts follow-ups and suggests the right job boards. Works with ChatGPT, Claude, Gemini and Copilot.">
+<link rel="canonical" href="https://applysteward.com/">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#1F5C47">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ApplySteward">
+<meta property="og:locale" content="en_GB">
+<meta property="og:url" content="https://applysteward.com/">
+<meta property="og:title" content="ApplySteward: AI job-search aide">
+<meta property="og:description" content="Fewer adverts, better applications. Sorts your job alerts, drafts follow-ups and keeps your search on track. You stay in control.">
+<meta property="og:image" content="https://applysteward.com/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Job alerts stamped Sendworthy, Not yet and Skip">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ApplySteward: AI job-search aide">
+<meta name="twitter:description" content="Sorts your job alerts, drafts follow-ups and keeps your search on track. You stay in control.">
+<meta name="twitter:image" content="https://applysteward.com/og.png">
+<script type="application/ld+json">[{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "ApplySteward", "alternateName": "ApplySteward AI job-search aide", "url": "https://applysteward.com/", "applicationCategory": "BusinessApplication", "operatingSystem": "Web", "description": "An AI job-search aide that sorts your job alerts into Sendworthy, Not yet and Skip, writes your morning brief, drafts outreach and follow-ups, and reviews your search each week. Works with Claude, ChatGPT, Gemini and Copilot.", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "GBP"}, "author": {"@type": "Person", "name": "Yousef Serrag", "url": "https://www.linkedin.com/in/yserrag"}, "inLanguage": "en-GB"}, {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Is ApplySteward free?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. The setup wizard, your rules file, job board suggestions and the core tools for sorting alerts, drafting messages and weekly reviews are free for personal use. A low, one-off Pro pack with CV tailoring, interview practice and career-specific packs is coming. There is no subscription."}}, {"@type": "Question", "name": "Does it apply for jobs for me?", "acceptedAnswer": {"@type": "Answer", "text": "No. It screens, tracks and drafts. You decide what to send and you press send every time. That protects your reputation and your accounts on job sites."}}, {"@type": "Question", "name": "Which AI do I need?", "acceptedAnswer": {"@type": "Answer", "text": "It works with Claude, ChatGPT, Gemini and Microsoft Copilot, and free plans are enough to start. Automatic daily scans of your inbox currently need a paid Claude plan."}}, {"@type": "Question", "name": "Is my data safe?", "acceptedAnswer": {"@type": "Answer", "text": "Nothing you type on this site leaves your browser. There is no account and no server. Your rules, CV and emails stay in your own AI account and your own spreadsheet."}}, {"@type": "Question", "name": "Which job boards should I use?", "acceptedAnswer": {"@type": "Answer", "text": "The wizard suggests the main boards for your country and specialist ones for your field, such as NHS Jobs, eFinancialCareers or Tes. You set up daily email alerts on those, and your aide does the sorting."}}, {"@type": "Question", "name": "Who built it?", "acceptedAnswer": {"@type": "Answer", "text": "Yousef Serrag, who built it for his own job search and now shares it with others."}}]}]</script>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%276%27 fill=%27%231F5C47%27/%3E%3Crect x=%277%27 y=%278%27 width=%2718%27 height=%274%27 rx=%272%27 fill=%27%23fff%27/%3E%3Crect x=%277%27 y=%2714%27 width=%2713%27 height=%274%27 rx=%272%27 fill=%27%23E2B762%27/%3E%3Crect x=%277%27 y=%2720%27 width=%278%27 height=%274%27 rx=%272%27 fill=%27%23B3B7B2%27/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -195,6 +214,34 @@ input:focus,select:focus,textarea:focus{border-color:var(--green);outline:none;b
 .founder h3{font-size:17px;margin:0 0 8px}
 .founder p{margin:0 0 10px;font-size:15.5px;color:var(--muted)}
 .founder p.sig{color:var(--ink);font-weight:500;margin:0}
+
+/* a week with your aide */
+.more[hidden]{display:none}
+.more{border-top:1px solid var(--line);background:var(--paper)}
+.more-in{max-width:1200px;margin:0 auto;padding:56px 24px 64px}
+.more h2{font-size:clamp(26px,3vw,34px);letter-spacing:-0.02em;margin:0 0 8px}
+.week{list-style:none;margin:28px 0 0;padding:0;max-width:1000px}
+.week li{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:32px;padding:22px 0;border-top:1px solid var(--line);align-items:start}
+.w-when{margin:0 0 2px;font-size:14px;color:var(--muted)}
+.week h3{margin:0 0 6px;font-size:19px;letter-spacing:-0.01em}
+.week .w-text p:last-child{margin:0;color:var(--muted);max-width:46ch}
+.tag{display:inline-block;vertical-align:2px;margin-left:6px;font-size:12px;font-weight:500;padding:2px 7px;border-radius:4px;background:var(--amber-soft);color:var(--amber)}
+.w-ex{background:var(--s-bg);color:var(--s-ink);border-radius:3px;padding:14px 16px;font-size:14.5px;line-height:1.55;
+  box-shadow:0 0 0 1px rgba(28,38,33,.08),0 10px 24px -18px rgba(20,30,25,.4)}
+.week li:nth-child(odd) .w-ex{transform:rotate(-.4deg)}
+.week li:nth-child(even) .w-ex{transform:rotate(.3deg)}
+.also{list-style:none;margin:36px 0 28px;padding:0;display:grid;gap:8px;max-width:70ch;color:var(--muted)}
+.also b{color:var(--ink);font-weight:500}
+.faq-h{margin-top:56px !important}
+.faq{max-width:760px;margin-top:16px}
+.faq details{border-top:1px solid var(--line);padding:14px 0}
+.faq details:last-child{border-bottom:1px solid var(--line)}
+.faq summary{cursor:pointer;font-weight:700;font-size:17px}
+.faq p{margin:10px 0 0;color:var(--muted);max-width:66ch}
+@media (max-width:900px){
+  .more-in{padding:40px 16px 48px}
+  .week li{grid-template-columns:minmax(0,1fr);gap:12px}
+}
 
 /* encouragement */
 .cheer{color:var(--green);font-weight:500;font-size:15.5px;margin:0 0 6px;min-height:1.4em}
@@ -581,6 +628,23 @@ footer .legal strong{color:var(--ink);font-weight:500}
   </aside>
 </main>
 
+<section class="more" id="more" aria-labelledby="more-h">
+  <div class="more-in">
+    <h2 id="more-h">A week with your aide</h2>
+    <p class="lede">Sorting alerts is only the start. Here is what else it does, using only what you tell it.</p>
+    <ol class="week"><li><div class="w-text"><p class="w-when">Monday, 8am</p><h3>Your morning brief</h3><p>Three things to do today, new roles worth a look, and who you're still waiting to hear from.</p></div><div class="w-ex"><b>Today</b><br>1. Apply to Delivery Lead at Fabrikam, closes Friday<br>2. Follow up with Priya at Contoso<br>3. Reply to the recruiter at Tailspin</div></li><li><div class="w-text"><p class="w-when">Monday, 9am</p><h3>Every alert, sorted</h3><p>Each role is checked against your pay floor, locations and deal-breakers. Scam-like adverts are caught before they waste your evening.</p></div><div class="w-ex"><b>14 alerts in.</b> 3 worth sending, 2 to check, 9 skipped. Two skipped for no company named.</div></li><li><div class="w-text"><p class="w-when">Tuesday</p><h3>A CV tailored to the role <span class="tag">Coming in Pro</span></h3><p>Your experience reordered and reworded to match the advert. It never invents anything; gaps are flagged for you to decide.</p></div><div class="w-ex">Moved <i>Led an 8-person system move</i> to the top.<br><b>Gap:</b> the advert asks for PRINCE2, which isn't on your CV.</div></li><li><div class="w-text"><p class="w-when">Wednesday</p><h3>Messages drafted, ready to send</h3><p>Recruiter notes, referral requests and follow-ups, short and in your voice. You review them and press send.</p></div><div class="w-ex">Hi Priya, I applied for the Programme Manager role last Tuesday and wanted to add one thing: I led a similar rollout across four sites…</div></li><li><div class="w-text"><p class="w-when">Thursday</p><h3>Interview practice <span class="tag">Coming in Pro</span></h3><p>Likely questions for the role, your best stories ready to use, and honest feedback on your answers.</p></div><div class="w-ex"><b>Q:</b> Tell me about a project that went off track.<br><b>Tip:</b> lead with the three-week recovery, not the delay.</div></li><li><div class="w-text"><p class="w-when">Friday</p><h3>A weekly review</h3><p>What's working, what to change and which follow-ups are overdue. Rejections are treated as information, not a verdict on you.</p></div><div class="w-ex"><b>Working:</b> replies doubled once you tailored your CV.<br><b>Next week:</b> follow up on the six applications listed.</div></li></ol>
+    <ul class="also">
+      <li><b>Works with the AI you already use:</b> Claude, ChatGPT, Gemini or Microsoft Copilot.</li>
+      <li><b>Points you to the right job boards</b> for your country and your field.</li>
+      <li><b>Keeps a tidy tracker</b> in Google Sheets or Excel, with every role and next step.</li>
+      <li><b>Never applies or sends anything</b> without you.</li>
+    </ul>
+    <p><button class="btn btn-primary" type="button" id="start2">Start setup, free</button></p>
+    <h2 class="faq-h">Questions</h2>
+    <div class="faq"><details><summary>Is ApplySteward free?</summary><p>Yes. The setup wizard, your rules file, job board suggestions and the core tools for sorting alerts, drafting messages and weekly reviews are free for personal use. A low, one-off Pro pack with CV tailoring, interview practice and career-specific packs is coming. There is no subscription.</p></details><details><summary>Does it apply for jobs for me?</summary><p>No. It screens, tracks and drafts. You decide what to send and you press send every time. That protects your reputation and your accounts on job sites.</p></details><details><summary>Which AI do I need?</summary><p>It works with Claude, ChatGPT, Gemini and Microsoft Copilot, and free plans are enough to start. Automatic daily scans of your inbox currently need a paid Claude plan.</p></details><details><summary>Is my data safe?</summary><p>Nothing you type on this site leaves your browser. There is no account and no server. Your rules, CV and emails stay in your own AI account and your own spreadsheet.</p></details><details><summary>Which job boards should I use?</summary><p>The wizard suggests the main boards for your country and specialist ones for your field, such as NHS Jobs, eFinancialCareers or Tes. You set up daily email alerts on those, and your aide does the sorting.</p></details><details><summary>Who built it?</summary><p>Yousef Serrag, who built it for his own job search and now shares it with others.</p></details></div>
+  </div>
+</section>
+
 <footer>
   <p>ApplySteward is an independent project. It works with Claude and is not affiliated with or endorsed by Anthropic.</p>
   <p>It screens, tracks and drafts. It never applies or sends anything for you, and it can't promise outcomes.</p>
@@ -850,6 +914,7 @@ footer .legal strong{color:var(--ink);font-weight:500}
     document.getElementById("sheet-note").hidden = onDemo;
     document.getElementById("mobile-sheet").hidden = onDemo;
     document.getElementById("founder").hidden = !onDemo;
+    document.getElementById("more").hidden = !onDemo;
   }
 
   function validate(i){
@@ -930,6 +995,7 @@ footer .legal strong{color:var(--ink);font-weight:500}
     if(!validate(cur)) return;
     go(cur + 1);
   });
+  document.getElementById("start2").addEventListener("click", function(){ document.getElementById("next").click(); });
   document.getElementById("back").addEventListener("click", function(){ go(cur - 1); });
   document.getElementById("download").addEventListener("click", function(){
     var blob = new Blob([build() + "\n"], {type:"text/markdown"});
