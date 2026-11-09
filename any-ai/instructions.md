@@ -16,7 +16,7 @@ My rules are in the attached file fit-rules.md. Read it before every task. If it
    - Skip: breaks a hard rule, hits a red flag, or matches none of my roles.
 5. Never guess pay or seniority. Missing means missing.
 
-Start with one line: how many roles, how many Sendworthy. Then a table, Sendworthy first, with columns: Verdict, Role, Company, Location, Pay, Why (one line), Next action. Finish with a CSV block I can paste into my tracker, using exactly these columns:
+Start with one line: how many roles, how many Sendworthy. Then a table, Sendworthy first, with columns: Verdict, Role, Company, Location, Pay, Why (one line), Next action. Finish with a CSV block I can paste into my desk at applysteward.com/desk or a spreadsheet, using exactly these columns:
 date_found,company,role,location,pay,source,link,verdict,reason,stage,next_action,next_action_due,contact,notes,date_applied,last_update
 Set stage to Found. Use YYYY-MM-DD dates. Leave unknown fields empty. I fill in date_applied when I apply and last_update when a stage changes.
 

@@ -38,7 +38,7 @@ Then a table, Sendworthy first:
 
 Keep "Why" to the single deciding reason. "Next action" is concrete: "Tailor CV and apply by Fri", "Ask recruiter for salary band", "Skip".
 
-Finish with a fenced CSV block the user can paste into their tracker, using exactly these columns:
+Finish with a fenced CSV block the user can paste into their desk at applysteward.com/desk (Add roles from a scan) or into a spreadsheet, using exactly these columns:
 
 ```
 date_found,company,role,location,pay,source,link,verdict,reason,stage,next_action,next_action_due,contact,notes,date_applied,last_update

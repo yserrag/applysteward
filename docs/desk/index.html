@@ -53,14 +53,28 @@ h1{font-size:clamp(30px,4vw,42px);line-height:1.1;letter-spacing:-0.025em;margin
 .btn-primary{background:var(--btn);color:var(--btn-ink)}
 .btn-quiet{background:none;border-color:var(--line);color:var(--ink)}
 .btn-link{background:none;border:0;color:var(--muted);text-decoration:underline;padding:11px 6px;font:inherit;font-size:15px;cursor:pointer}
-.load{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-.load input[type=file]{position:absolute;width:1px;height:1px;opacity:0}
+#file{position:absolute;width:1px;height:1px;opacity:0}
+.start{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;max-width:900px}
+.start[hidden]{display:none}
+.path{border:1px solid var(--line);border-radius:6px;padding:20px 22px;background:var(--field)}
+.path h2{font-size:19px;margin:0 0 6px}
+.path p{margin:0 0 16px;color:var(--muted);font-size:15.5px}
+.try{grid-column:1/-1;margin:0}
+.tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.tools[hidden]{display:none}
+label.btn-link{display:inline-block}
+.ok{color:var(--green);font-size:15px;margin:10px 0 0;font-weight:500}
+.ok[hidden]{display:none}
+td select,td input{font:inherit;font-size:14px;color:var(--ink);background:var(--field);border:1px solid var(--line);border-radius:5px;padding:4px 6px;max-width:100%}
+td input[type=text]{width:100%;min-width:150px}
+@media (max-width:900px){.start{grid-template-columns:minmax(0,1fr)}}
 .paste{margin:14px 0 0;max-width:760px}
 .paste[hidden]{display:none}
 .paste textarea{width:100%;min-height:140px;font:inherit;font-size:14px;border:1px solid var(--line);border-radius:6px;padding:10px 12px;background:var(--field);color:var(--ink)}
 .paste p{font-size:14px;color:var(--muted);margin:6px 0 10px}
 .note{font-size:14px;color:var(--muted);margin:12px 0 0}
 .err{color:#B3261E;font-size:15px;margin:10px 0 0}
+.err[hidden]{display:none}
 .empty{max-width:760px}
 
 .board{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:32px;align-items:start;margin-top:8px}
@@ -134,22 +148,39 @@ footer strong{color:var(--ink);font-weight:500}
 
 <main>
   <h1>Your desk</h1>
-  <p class="lede" id="lede">Your whole search at a glance: what to do today, what's worth applying for, and who you're waiting on. Open your tracker to begin.</p>
+  <p class="lede" id="lede">Your whole search at a glance: what to do today, what&#8217;s worth applying for, and who you&#8217;re waiting on.</p>
 
-  <div class="load" id="load">
-    <label class="btn btn-primary" for="file" tabindex="0" id="file-label">Open my tracker file</label>
-    <input type="file" id="file" accept=".csv,.tsv,.txt,text/csv">
-    <button class="btn btn-quiet" type="button" id="paste-btn">Paste from my spreadsheet</button>
-    <button class="btn-link" type="button" id="sample">Try it with example data</button>
-    <button class="btn-link" type="button" id="clear" hidden>Clear this device</button>
+  <div class="start" id="start">
+    <div class="path">
+      <h2>New here?</h2>
+      <p>Start your tracker on this page. After each scan, paste the rows your AI gives you and they're added here. No spreadsheet needed.</p>
+      <button class="btn btn-primary" type="button" id="new">Start my tracker</button>
+    </div>
+    <div class="path">
+      <h2>Already keep a tracker?</h2>
+      <p>Open it from Google Sheets or Excel. In Sheets, use File, Download, Comma-separated values first.</p>
+      <label class="btn btn-quiet" for="file" tabindex="0" id="file-label">Open my tracker file</label>
+      <button class="btn-link" type="button" id="paste-btn">or paste it</button>
+    </div>
+    <p class="try"><button class="btn-link" type="button" id="sample">Or try it with example data first</button></p>
   </div>
+  <input type="file" id="file" accept=".csv,.tsv,.txt,text/csv">
+
+  <div class="tools" id="tools" hidden>
+    <button class="btn btn-primary" type="button" id="add-btn">Add roles from a scan</button>
+    <button class="btn btn-quiet" type="button" id="download">Download my tracker</button>
+    <label class="btn-link" for="file" tabindex="0" id="file-label2">Open a different file</label>
+    <button class="btn-link" type="button" id="clear">Clear this device</button>
+  </div>
+
   <div class="paste" id="paste" hidden>
-    <p>In Google Sheets or Excel, select your tracker including the header row, copy, and paste it here.</p>
-    <textarea id="paste-text" aria-label="Paste your tracker"></textarea>
-    <p><button class="btn btn-primary" type="button" id="paste-go">Show my desk</button></p>
+    <p id="paste-help"></p>
+    <textarea id="paste-text" aria-label="Paste rows"></textarea>
+    <p><button class="btn btn-primary" type="button" id="paste-go">Add to my desk</button> <button class="btn-link" type="button" id="paste-cancel">Cancel</button></p>
   </div>
   <p class="err" id="err" hidden></p>
-  <p class="note">Your tracker is read in this browser and kept only on this device. Nothing is uploaded. To export from Google Sheets: File, Download, Comma-separated values.</p>
+  <p class="ok" id="ok" hidden></p>
+  <p class="note" id="note">Everything stays in this browser on this device. Nothing is uploaded. Download a copy now and then as a backup.</p>
 
   <div class="board" id="board" hidden>
     <section class="sheet" aria-labelledby="today-h">
@@ -184,14 +215,16 @@ footer strong{color:var(--ink);font-weight:500}
 
 <script>
 (function(){
-  var KEY = "applysteward.desk.v1";
+  var KEY = "applysteward.desk.v2", OLDKEY = "applysteward.desk.v1";
+  var COLS = ["date_found","company","role","location","pay","source","link","verdict","reason","stage","next_action","next_action_due","contact","notes","date_applied","last_update"];
+  var STAGE_OPTS = ["Found","Applied","Replied","Interview","Offer","Rejected","Waiting cold","Withdrawn"];
   var CLOSED = ["rejected","withdrawn","waiting cold","skipped","offer declined","closed"];
   var STAGES = [["found","Found"],["applied","Applied"],["replied","Replied"],["interview","Interview"],["offer","Offer"]];
-  var data = [], filter = "all";
+  var data = null, filter = "all", pasteMode = "add", demo = false;
   var $ = function(id){ return document.getElementById(id); };
 
-  function parse(text){
-    text = text.replace(/^﻿/, "");
+  function parse(text, allowHeaderless){
+    text = String(text || "").replace(/^﻿/, "");
     var first = text.split(/\r?\n/)[0] || "";
     var d = (first.split("\t").length > first.split(",").length) ? "\t" : ",";
     var rows = [], row = [], cell = "", q = false;
@@ -204,15 +237,24 @@ footer strong{color:var(--ink);font-weight:500}
       else cell += c;
     }
     if(cell !== "" || row.length){ row.push(cell); rows.push(row); }
-    rows = rows.filter(function(r){ return r.some(function(x){ return x.trim(); }); });
-    if(rows.length < 2) throw new Error("That file has no rows yet. Add a few roles, or try the example data.");
-    var head = rows[0].map(function(h){ return h.trim().toLowerCase().replace(/\s+/g, "_"); });
-    if(head.indexOf("role") < 0 || head.indexOf("company") < 0) throw new Error("This doesn't look like an ApplySteward tracker. It needs at least a role and a company column.");
-    return rows.slice(1).map(function(r){ var o = {}; head.forEach(function(h, j){ o[h] = (r[j] || "").trim(); }); return o; });
+    rows = rows.filter(function(r){ return r.some(function(x){ return x.trim() && !/^`+/.test(x.trim()); }); });
+    if(!rows.length) throw new Error("There's nothing to add yet. Paste the rows your AI gave you, including the header line.");
+    var norm = function(r){ return r.map(function(h){ return h.trim().toLowerCase().replace(/\s+/g, "_"); }); };
+    var hi = -1;
+    for(var k = 0; k < rows.length; k++){ var n = norm(rows[k]); if(n.indexOf("role") > -1 && n.indexOf("company") > -1){ hi = k; break; } }
+    var head = hi > -1 ? norm(rows[hi]) : norm(rows[0]);
+    var body = hi > -1 ? rows.slice(hi + 1) : rows.slice(1);
+    if(hi < 0){
+      if(!allowHeaderless) throw new Error("This doesn't look like a tracker. It needs at least a role and a company column.");
+      head = COLS; body = rows.filter(function(r){ return r.length >= 3; });
+    }
+    return body.map(function(r){ var o = {}; head.forEach(function(h, j){ o[h] = (r[j] || "").trim(); }); return o; })
+      .filter(function(o){ return o.role || o.company; });
   }
 
   function day(s){ if(!s) return null; var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s); if(m) return new Date(+m[1], m[2]-1, +m[3]); var m2 = /^(\d{1,2})\/(\d{1,2})\/(\d{4})/.exec(s); if(m2) return new Date(+m2[3], m2[2]-1, +m2[1]); return null; }
   function today(){ var t = new Date(); return new Date(t.getFullYear(), t.getMonth(), t.getDate()); }
+  function iso(d){ return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0"); }
   function addDays(d, n){ var x = new Date(d); x.setDate(x.getDate() + n); return x; }
   function workingDaysSince(d){ var n = 0, x = new Date(d), t = today(); while(x < t){ x.setDate(x.getDate() + 1); var w = x.getDay(); if(w && w !== 6) n++; } return n; }
   function fmt(d){ return d ? d.toLocaleDateString("en-GB", { day:"numeric", month:"short" }) : ""; }
@@ -221,6 +263,10 @@ footer strong{color:var(--ink);font-weight:500}
   function isClosed(r){ return CLOSED.indexOf(stage(r)) > -1; }
   function verdictClass(v){ return /send/i.test(v) ? "v-send" : /not/i.test(v) ? "v-not" : /skip/i.test(v) ? "v-skip" : ""; }
   function title(r){ return esc(r.role) + (r.company ? ", " + esc(r.company) : ""); }
+  function keyOf(r){ return ((r.company || "") + "|" + (r.role || "") + "|" + (r.link || "")).toLowerCase(); }
+
+  function save(){ if(demo) return; try{ localStorage.setItem(KEY, JSON.stringify(data)); }catch(e){} }
+  function msg(id, text){ var el = $(id); el.textContent = text || ""; el.hidden = !text; }
 
   function actions(){
     var t = today(), out = [];
@@ -240,10 +286,19 @@ footer strong{color:var(--ink);font-weight:500}
   }
 
   function render(){
+    $("start").hidden = true; $("tools").hidden = false; $("board").hidden = false; $("roles").hidden = false;
+    $("note").textContent = demo ? "You're looking at example data. Start your own tracker whenever you're ready." : "Everything stays in this browser on this device. Nothing is uploaded. Download a copy now and then as a backup.";
+    $("download").hidden = demo;
+    $("add-btn").textContent = demo ? "Start my own tracker" : "Add roles from a scan";
     var a = actions(), t = today();
-    $("today-sub").textContent = a.length ? (a.length <= 3 ? "Everything that needs you today." : "Start with these three. The rest can wait.") : "";
-    $("today").innerHTML = a.length ? a.slice(0, 3).map(function(x){ return "<li><div>" + x.html + "</div>" + x.pill + "</li>"; }).join("")
-      : '<li><div><b>Nothing urgent today</b><span>No follow-ups due and no Sendworthy roles waiting. A good day to run a fresh scan, or to rest.</span></div></li>';
+    if(!data.length){
+      $("today-sub").textContent = "";
+      $("today").innerHTML = '<li><div><b>Add your first roles</b><span>Run a scan in your AI, then click "Add roles from a scan" and paste the rows it gives you, header line included.</span></div></li>';
+    } else {
+      $("today-sub").textContent = a.length ? (a.length <= 3 ? "Everything that needs you today." : "Start with these three. The rest can wait.") : "";
+      $("today").innerHTML = a.length ? a.slice(0, 3).map(function(x){ return "<li><div>" + x.html + "</div>" + x.pill + "</li>"; }).join("")
+        : '<li><div><b>Nothing urgent today</b><span>No follow-ups due and no Sendworthy roles waiting. A good day to run a fresh scan, or to rest.</span></div></li>';
+    }
     var rest = a.slice(3);
     $("more-actions").hidden = !rest.length;
     if(rest.length){ $("more-actions").querySelector("summary").textContent = rest.length + " more when you have time"; $("today-more").innerHTML = rest.map(function(x){ return "<li><div>" + x.html + "</div>" + x.pill + "</li>"; }).join(""); }
@@ -256,7 +311,6 @@ footer strong{color:var(--ink);font-weight:500}
     var send = data.filter(function(r){ return inRange(r.date_found, wk, t) && /send/i.test(r.verdict || ""); }).length;
     var iv = data.filter(function(r){ return stage(r) === "interview"; }).length;
     $("week-line").innerHTML = "You found <b>" + found + "</b> role" + (found === 1 ? "" : "s") + ", <b>" + send + "</b> worth sending, and applied to <b>" + applied + "</b>." + (iv ? " <b>" + iv + "</b> interview" + (iv === 1 ? "" : "s") + " in progress." : "");
-
     var cheer = "";
     if(iv) cheer = iv === 1 ? "You have an interview in progress. That's a real step forward." : "You have " + iv + " interviews in progress. That's real momentum.";
     else if(applied && applied > appliedPrev && appliedPrev > 0) cheer = "More applications than last week, and every one was chosen on purpose.";
@@ -273,34 +327,86 @@ footer strong{color:var(--ink);font-weight:500}
 
     var defs = [["all","All"],["apply","To apply"],["live","In progress"],["closed","Closed"],["skip","Skipped"]];
     $("filters").innerHTML = defs.map(function(f){ return '<button type="button" data-f="' + f[0] + '" aria-pressed="' + (filter === f[0]) + '">' + f[1] + "</button>"; }).join("");
-    var rows = data.filter(function(r){ var s = stage(r);
-      if(filter === "apply") return s === "found" && /send/i.test(r.verdict || "");
+    var rows = data.map(function(r, i){ return { r: r, i: i }; }).filter(function(x){ var s = stage(x.r);
+      if(filter === "apply") return s === "found" && /send/i.test(x.r.verdict || "");
       if(filter === "live") return ["applied","replied","interview","offer"].indexOf(s) > -1;
-      if(filter === "closed") return isClosed(r) && s !== "skipped";
+      if(filter === "closed") return isClosed(x.r) && s !== "skipped";
       if(filter === "skip") return s === "skipped";
       return true; });
-    rows.sort(function(a, b){ var x = day(a.next_action_due), y = day(b.next_action_due); if(x && y) return x - y; if(x) return -1; if(y) return 1; return 0; });
-    $("rows").innerHTML = rows.length ? rows.map(function(r){ var due = day(r.next_action_due), od = due && due < t && !isClosed(r);
+    rows.sort(function(a, b){ var x = day(a.r.next_action_due), y = day(b.r.next_action_due); if(x && y) return x - y; if(x) return -1; if(y) return 1; return 0; });
+    $("rows").innerHTML = rows.length ? rows.map(function(x){ var r = x.r, due = day(r.next_action_due), od = due && due < t && !isClosed(r);
       var role = r.link && /^https?:\/\//.test(r.link) ? '<a href="' + esc(r.link) + '" target="_blank" rel="noopener">' + esc(r.role) + "</a>" : esc(r.role);
-      return "<tr><td>" + role + "</td><td>" + esc(r.company) + '</td><td class="v ' + verdictClass(r.verdict) + '">' + esc(r.verdict) + "</td><td>" + esc(r.stage || "Found") + "</td><td>" + esc(r.next_action) + '</td><td class="' + (od ? "overdue" : "") + '">' + fmt(due) + "</td><td>" + esc(r.pay) + "</td></tr>"; }).join("")
-      : '<tr><td colspan="7">Nothing here yet.</td></tr>';
-
-    $("board").hidden = false; $("roles").hidden = false; $("clear").hidden = false;
-    $("lede").textContent = "Your whole search at a glance. Update your tracker, then open it here again to refresh.";
+      var cur = (r.stage || "Found"), opts = STAGE_OPTS.slice(); if(opts.map(function(o){ return o.toLowerCase(); }).indexOf(cur.toLowerCase()) < 0) opts.unshift(cur);
+      var sel = '<select data-i="' + x.i + '" data-k="stage" aria-label="Stage for ' + esc(r.role) + '">' + opts.map(function(o){ return "<option" + (o.toLowerCase() === cur.toLowerCase() ? " selected" : "") + ">" + esc(o) + "</option>"; }).join("") + "</select>";
+      var na = '<input type="text" data-i="' + x.i + '" data-k="next_action" value="' + esc(r.next_action) + '" aria-label="Next action for ' + esc(r.role) + '">';
+      var du = '<input type="date" data-i="' + x.i + '" data-k="next_action_due" value="' + (due ? iso(due) : "") + '" aria-label="Due date for ' + esc(r.role) + '"' + (od ? ' class="overdue"' : "") + ">";
+      return "<tr><td>" + role + "</td><td>" + esc(r.company) + '</td><td class="v ' + verdictClass(r.verdict) + '">' + esc(r.verdict) + "</td><td>" + sel + "</td><td>" + na + "</td><td>" + du + "</td><td>" + esc(r.pay) + "</td></tr>"; }).join("")
+      : '<tr><td colspan="7">No roles here yet.</td></tr>';
+    $("lede").textContent = demo ? "This is example data, so you can see how it works." : "Your whole search at a glance. Add roles after each scan and update them as things move.";
   }
 
-  function load(text, remember){
-    if(remember && location.hash === "#demo") history.replaceState(null, "", location.pathname);
-    try{ data = parse(text); $("err").hidden = true; render(); $("paste").hidden = true;
-      if(remember){ try{ localStorage.setItem(KEY, text); }catch(e){} }
-      $("today-h").focus && $("today-h").setAttribute("tabindex", "-1");
-    }catch(e){ $("err").textContent = e.message; $("err").hidden = false; }
+  function openPaste(mode){
+    pasteMode = mode;
+    $("paste-help").textContent = mode === "add"
+      ? "Paste the rows your AI gave you after a scan, header line included. Roles already on your desk are skipped."
+      : "In Google Sheets or Excel, select your tracker including the header row, copy, and paste it here.";
+    $("paste-go").textContent = mode === "add" ? "Add to my desk" : "Show my desk";
+    $("paste").hidden = false; $("paste-text").value = ""; $("paste-text").focus();
   }
+
+  function addRows(rows){
+    var seen = {}; data.forEach(function(r){ seen[keyOf(r)] = 1; });
+    var added = 0, dup = 0;
+    rows.forEach(function(r){ if(seen[keyOf(r)]){ dup++; return; } seen[keyOf(r)] = 1; if(!r.stage) r.stage = "Found"; if(!r.date_found) r.date_found = iso(today()); data.push(r); added++; });
+    return "Added " + added + " role" + (added === 1 ? "" : "s") + (dup ? ", " + dup + " already on your desk" : "") + ".";
+  }
+
+  function exitDemo(){ demo = false; if(location.hash === "#demo") history.replaceState(null, "", location.pathname); }
+
+  $("new").addEventListener("click", function(){ exitDemo(); data = []; save(); render(); openPaste("add"); msg("err"); });
+  $("sample").addEventListener("click", sample);
+  $("paste-btn").addEventListener("click", function(){ openPaste("replace"); });
+  $("add-btn").addEventListener("click", function(){ if(demo){ exitDemo(); data = []; save(); render(); } openPaste("add"); });
+  $("paste-cancel").addEventListener("click", function(){ $("paste").hidden = true; msg("err"); });
+  $("paste-go").addEventListener("click", function(){
+    try{
+      var rows = parse($("paste-text").value, pasteMode === "add");
+      if(pasteMode === "add"){ if(!data) data = []; msg("ok", addRows(rows)); }
+      else { exitDemo(); data = rows; msg("ok", "Loaded " + rows.length + " role" + (rows.length === 1 ? "" : "s") + "."); }
+      save(); msg("err"); $("paste").hidden = true; render();
+    }catch(e){ msg("err", e.message); }
+  });
+  $("file").addEventListener("change", function(e){ var f = e.target.files[0]; if(!f) return; var rd = new FileReader();
+    rd.onload = function(){ try{ exitDemo(); data = parse(String(rd.result), false); save(); msg("err"); msg("ok", "Loaded " + data.length + " role" + (data.length === 1 ? "" : "s") + " from " + f.name + "."); render(); }catch(err){ msg("err", err.message); } };
+    rd.readAsText(f); e.target.value = ""; });
+  ["file-label","file-label2"].forEach(function(id){ $(id).addEventListener("keydown", function(e){ if(e.key === "Enter" || e.key === " "){ e.preventDefault(); $("file").click(); } }); });
+  $("download").addEventListener("click", function(){
+    var cols = COLS.slice(); data.forEach(function(r){ Object.keys(r).forEach(function(k){ if(cols.indexOf(k) < 0) cols.push(k); }); });
+    var q = function(v){ v = String(v || ""); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
+    var csv = [cols.join(",")].concat(data.map(function(r){ return cols.map(function(c){ return q(r[c]); }).join(","); })).join("\n");
+    var a = document.createElement("a"); a.href = URL.createObjectURL(new Blob(["﻿" + csv + "\n"], {type:"text/csv"}));
+    a.download = "applysteward-tracker-" + iso(today()) + ".csv"; document.body.appendChild(a); a.click(); a.remove();
+    msg("ok", "Downloaded. Open it in Excel or import it into Google Sheets any time.");
+  });
+  $("clear").addEventListener("click", function(){
+    if(!demo && data && data.length && !window.confirm("Remove your tracker from this device? Download a copy first if you want to keep it.")) return;
+    try{ localStorage.removeItem(KEY); localStorage.removeItem(OLDKEY); }catch(e){}
+    exitDemo(); data = null; $("board").hidden = true; $("roles").hidden = true; $("tools").hidden = true; $("start").hidden = false; $("paste").hidden = true; msg("ok"); msg("err");
+    $("lede").textContent = "Cleared from this device. Start again whenever you're ready.";
+  });
+  $("filters").addEventListener("click", function(e){ var b = e.target.closest("button"); if(!b) return; filter = b.getAttribute("data-f"); render(); });
+  $("rows").addEventListener("change", function(e){
+    var el = e.target, i = +el.getAttribute("data-i"), k = el.getAttribute("data-k"); if(isNaN(i) || !k) return;
+    var r = data[i]; r[k] = el.value;
+    if(k === "stage"){ r.last_update = iso(today()); if(/^applied$/i.test(el.value) && !r.date_applied) r.date_applied = iso(today()); }
+    save(); render();
+  });
 
   function sample(){
-    var t = today(); function d(n){ var x = addDays(t, n); return x.getFullYear() + "-" + String(x.getMonth()+1).padStart(2,"0") + "-" + String(x.getDate()).padStart(2,"0"); }
+    demo = true;
+    var t = today(); function d(n){ return iso(addDays(t, n)); }
     var rows = [
-      "date_found,company,role,location,pay,source,link,verdict,reason,stage,next_action,next_action_due,contact,notes,date_applied,last_update",
+      COLS.join(","),
       d(-1)+",Fabrikam Energy,Delivery Lead,Birmingham (hybrid),£65000,LinkedIn alert,,Sendworthy,Second choice; strong match,Found,Tailor CV and apply,"+d(2)+",,,,",
       d(0)+",Northwind Health,Senior Project Manager,Manchester (hybrid),£62000,Indeed alert,,Sendworthy,First choice; above pay floor,Found,,,,,,",
       d(-2)+",Tailspin Logistics,Programme Manager,Remote UK,,LinkedIn alert,,Not yet,Pay not stated,Found,Ask recruiter for pay band,"+d(0)+",Sam (recruiter),,,",
@@ -312,19 +418,12 @@ footer strong{color:var(--ink);font-weight:500}
       d(-3)+",Unnamed,Project Manager urgent start,,,Job board,,Skip,Red flag: no company named,Found,,,,,,",
       d(-20)+",Proseware,Programme Manager,London,£64000,LinkedIn,,Sendworthy,Lane 1,Rejected,,,,,"+d(-18)+","+d(-8)
     ];
-    load(rows.join("\n"), false);
+    data = parse(rows.join("\n"), false); msg("err"); msg("ok"); render();
   }
 
-  $("file").addEventListener("change", function(e){ var f = e.target.files[0]; if(!f) return; var rd = new FileReader(); rd.onload = function(){ load(String(rd.result), true); }; rd.readAsText(f); e.target.value = ""; });
-  $("file-label").addEventListener("keydown", function(e){ if(e.key === "Enter" || e.key === " "){ e.preventDefault(); $("file").click(); } });
-  $("paste-btn").addEventListener("click", function(){ $("paste").hidden = !$("paste").hidden; if(!$("paste").hidden) $("paste-text").focus(); });
-  $("paste-go").addEventListener("click", function(){ load($("paste-text").value, true); });
-  $("sample").addEventListener("click", sample);
-  $("clear").addEventListener("click", function(){ try{ localStorage.removeItem(KEY); }catch(e){} data = []; $("board").hidden = true; $("roles").hidden = true; $("clear").hidden = true; $("lede").textContent = "Cleared from this device. Open your tracker to begin again."; });
-  $("filters").addEventListener("click", function(e){ var b = e.target.closest("button"); if(!b) return; filter = b.getAttribute("data-f"); render(); });
-
-  var saved = null; try{ saved = localStorage.getItem(KEY); }catch(e){}
-  if(location.hash === "#demo") sample(); else if(saved) load(saved, false);
+  var saved = null;
+  try{ saved = localStorage.getItem(KEY); if(saved) saved = JSON.parse(saved); else { var old = localStorage.getItem(OLDKEY); if(old) saved = parse(old, false); } }catch(e){ saved = null; }
+  if(location.hash === "#demo") sample(); else if(saved){ data = saved; render(); }
 })();
 </script>
 </body>

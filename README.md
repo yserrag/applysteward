@@ -98,8 +98,8 @@ Link: _coming soon_
 2. Download the latest release zip from the Releases page.
 3. In Claude, open the skills settings and upload each folder inside `skills/`.
 4. Create a Claude project and add your `fit-rules.md` to it.
-5. Import `templates/tracker.csv` into Google Sheets.
-6. In a chat inside that project, type `/scan` and paste a few job-alert emails.
+5. Open [your desk](https://applysteward.com/desk/) and click **Start my tracker** (or import `templates/tracker.csv` into a spreadsheet if you prefer).
+6. In a chat inside that project, type `/scan` and paste a few job-alert emails, then paste the rows it gives you into your desk.
 
 ### Option B: Claude Code
 
