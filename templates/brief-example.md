@@ -20,4 +20,4 @@
 - Litware, interviewed 5 Nov, decision expected this week
 
 ## This week
-5 applications sent, 2 replies, 1 interview booked.
+5 applications sent, 2 replies, 1 interview booked. That is your best week of replies so far.

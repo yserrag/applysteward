@@ -172,6 +172,16 @@ input:focus,select:focus,textarea:focus{border-color:var(--green);outline:none;b
 .fresh{background:#FFF4C2;border-radius:2px;transition:background 1.2s ease}
 .doc-foot{margin:22px 0 0;font-size:13px;color:var(--s-muted)}
 
+.sheet-note{font-size:14px;color:var(--muted);margin:12px 2px 0}
+.sheet-note[hidden]{display:none}
+
+/* encouragement */
+.cheer{color:var(--green);font-weight:500;font-size:15.5px;margin:0 0 6px;min-height:1.4em}
+.care{margin:36px 0 0;padding:20px 22px;border-radius:6px;background:var(--green-soft);font-size:15.5px}
+.care h3{margin:0 0 8px;font-size:17px}
+.care p{margin:0 0 8px;max-width:62ch}
+.care p:last-child{margin:0}
+
 /* finish */
 .done-actions{display:flex;flex-wrap:wrap;gap:10px;margin:8px 0 32px}
 .todo{list-style:none;margin:0;padding:0;counter-reset:t}
@@ -239,6 +249,7 @@ footer p{margin:4px 0;max-width:80ch}
 
     <!-- 1 about you -->
     <section class="step" data-step="1" data-name="About you">
+      <p class="cheer" aria-live="polite"></p>
       <h2>About you</h2>
       <p class="lede">A little context so drafts sound like you and screening is pitched at the right level.</p>
       <div class="field">
@@ -274,22 +285,23 @@ footer p{margin:4px 0;max-width:80ch}
       <div class="field">
         <label class="label" for="proof">One or two results you're proud of</label>
         <span class="hint">Specific and true. These are the only achievements your AI will ever quote. Leave blank if you'd rather add them later.</span>
-        <textarea id="proof" data-key="proof" placeholder="Grew the North region from £2m to £3.4m in 18 months&#10;Cut onboarding time from 6 weeks to 3"></textarea>
+        <textarea id="proof" data-key="proof" placeholder="Led a team of 8 through a system move, on time and on budget&#10;Cut onboarding time from 6 weeks to 3"></textarea>
       </div>
     </section>
 
     <!-- 2 what you want -->
     <section class="step" data-step="2" data-name="What you want">
+      <p class="cheer" aria-live="polite"></p>
       <h2>What you're looking for</h2>
       <p class="lede">Up to three kinds of role, best first. Two is usually right. Too many and nothing gets ruled out.</p>
       <fieldset>
         <legend>Roles you're aiming for</legend>
         <div class="lanes">
-          <label>1st <input type="text" data-key="lane1" aria-label="First choice of role" placeholder="For example, Enterprise Account Executive"></label>
+          <label>1st <input type="text" data-key="lane1" aria-label="First choice of role" placeholder="For example, Senior Project Manager"></label>
           <label>2nd <input type="text" data-key="lane2" aria-label="Second choice of role"></label>
           <label>3rd <input type="text" data-key="lane3" aria-label="Third choice of role"></label>
         </div>
-        <p class="err" id="err-lanes" hidden>Add at least one role you're aiming for, so there's something to screen against.</p>
+        <p class="err" id="err-lanes" hidden>Add at least one role to aim for. You can change it any time.</p>
       </fieldset>
       <div class="field">
         <label class="label" for="floor-level">Lowest level you'd take</label>
@@ -309,6 +321,7 @@ footer p{margin:4px 0;max-width:80ch}
 
     <!-- 3 ground rules -->
     <section class="step" data-step="3" data-name="Ground rules">
+      <p class="cheer" aria-live="polite"></p>
       <h2>Ground rules</h2>
       <p class="lede">Anything that breaks one of these is skipped straight away, so be honest rather than hopeful.</p>
       <fieldset>
@@ -347,16 +360,17 @@ footer p{margin:4px 0;max-width:80ch}
 
     <!-- 4 filters -->
     <section class="step" data-step="4" data-name="Filters">
+      <p class="cheer" aria-live="polite"></p>
       <h2>What makes a role worth it</h2>
       <p class="lede">Short lines work best. One idea per line.</p>
       <div class="field">
         <label class="label" for="must">Must-haves</label>
         <span class="hint">A role needs these to be Sendworthy.</span>
-        <textarea id="must" data-key="must" placeholder="Clear quota and commission plan&#10;Sells to large organisations"></textarea>
+        <textarea id="must" data-key="must" placeholder="Flexible start and finish times&#10;Clear route to promotion"></textarea>
       </div>
       <div class="field">
         <label class="label" for="nice">Nice to have</label>
-        <textarea id="nice" data-key="nice" placeholder="AI or data products&#10;Under 1,000 people"></textarea>
+        <textarea id="nice" data-key="nice" placeholder="Health or public sector&#10;Under 1,000 people"></textarea>
       </div>
       <div class="field">
         <label class="label" for="deal">Deal-breakers</label>
@@ -377,6 +391,7 @@ footer p{margin:4px 0;max-width:80ch}
 
     <!-- 5 setup -->
     <section class="step" data-step="5" data-name="Your setup">
+      <p class="cheer" aria-live="polite"></p>
       <h2>Your setup</h2>
       <p class="lede">So the next steps match the tools you already use. Where a small change would help, we'll say why. Every suggestion is optional.</p>
 
@@ -437,6 +452,8 @@ footer p{margin:4px 0;max-width:80ch}
           <label><input type="radio" name="ai" value="Claude, paid plan"><span>Claude, paid plan</span></label>
           <label><input type="radio" name="ai" value="Claude, free plan"><span>Claude, free plan</span></label>
           <label><input type="radio" name="ai" value="ChatGPT"><span>ChatGPT</span></label>
+          <label><input type="radio" name="ai" value="Gemini"><span>Gemini</span></label>
+          <label><input type="radio" name="ai" value="Microsoft Copilot"><span>Copilot</span></label>
           <label><input type="radio" name="ai" value="None yet"><span>None yet</span></label>
         </div>
         <div class="nudge" id="n-ai" hidden>
@@ -444,8 +461,8 @@ footer p{margin:4px 0;max-width:80ch}
           The free skills work by pasting alerts into a chat. Automatic daily scans need a paid Claude plan, which you can add when you're ready.
         </div>
         <div class="nudge" id="n-gpt" hidden>
-          <strong>Built for Claude first</strong>
-          Your rules file is plain text and works anywhere. Paste it into ChatGPT with your alerts for a manual check. The skills and daily scans are Claude-only for now.
+          <strong>Your rules work with any AI</strong>
+          The rules file is plain text. Paste it into a chat with your job alerts and ask which are worth applying for. The ready-made skills and automatic daily scans currently run in Claude.
         </div>
       </fieldset>
 
@@ -466,12 +483,17 @@ footer p{margin:4px 0;max-width:80ch}
     <!-- 6 done -->
     <section class="step" data-step="6" data-name="Done">
       <h2>Your rules are ready<span id="done-name"></span></h2>
-      <p class="lede">Save the file first. Then work through the list below; most people are scanning their first alerts within twenty minutes.</p>
+      <p class="lede">That's the hard thinking done, and it makes every application after this one easier. Save the file, then work through the list below. Most people are scanning their first alerts within twenty minutes.</p>
       <div class="done-actions">
         <button class="btn btn-primary" type="button" id="download">Download fit-rules.md</button>
         <button class="btn btn-quiet" type="button" id="copy">Copy text</button>
       </div>
       <ol class="todo" id="todo"></ol>
+      <aside class="care" aria-label="Looking after yourself">
+        <h3>Looking after yourself counts too</h3>
+        <p>A search often takes months, and much of it is outside your control. A rejection is usually about fit and timing, not your worth. Small, steady steps add up, and you have just taken one.</p>
+        <p>If it starts to feel heavy, talk to someone you trust or a doctor. In the UK and Ireland, Samaritans are free to call, day or night, on <a href="tel:116123">116 123</a>. Elsewhere, <a href="https://findahelpline.com">findahelpline.com</a> lists free support near you.</p>
+      </aside>
     </section>
 
     <div class="nav" id="nav">
@@ -667,7 +689,7 @@ footer p{margin:4px 0;max-width:80ch}
     show("n-sources", s.length > 0 && !(s.length === 1 && s[0] === "People I know"));
     show("n-cv", state.cv === "PDF only");
     show("n-ai", state.ai === "Claude, free plan" || state.ai === "None yet");
-    show("n-gpt", state.ai === "ChatGPT");
+    show("n-gpt", ["ChatGPT","Gemini","Microsoft Copilot"].indexOf(state.ai) > -1);
   }
   function show(id, on){ var n = document.getElementById(id); if(n) n.hidden = !on; }
 
@@ -721,6 +743,8 @@ footer p{margin:4px 0;max-width:80ch}
     next.textContent = cur === 0 ? (maxReached > 0 ? "Carry on where I left off" : "Start setup") : (cur === last - 1 ? "Finish" : "Continue");
     document.getElementById("count").textContent = "";
     if(cur === last) finish();
+    var c = steps[cur].querySelector(".cheer");
+    if(c) c.textContent = cheer(cur);
     renderSteps();
     save();
     var h = steps[cur].querySelector("h1,h2");
@@ -728,6 +752,16 @@ footer p{margin:4px 0;max-width:80ch}
     window.scrollTo({top:0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"});
   }
 
+  function cheer(i){
+    var nm = v(state.name);
+    var lanes = [state.lane1, state.lane2, state.lane3].map(v).filter(Boolean).length;
+    if(i === 1) return "Six short sections. Skip anything you're unsure of and come back to it.";
+    if(i === 2) return v(state.proof) ? "Thanks" + (nm ? ", " + nm : "") + ". Results like those are exactly what recruiters look for." : "Thanks" + (nm ? ", " + nm : "") + ". That's the groundwork done.";
+    if(i === 3) return lanes ? "Good. Clear targets make every scan sharper." : "";
+    if(i === 4) return "Rules like these save hours of reading adverts that were never right for you.";
+    if(i === 5) return "Nearly there. This last section is about your tools.";
+    return "";
+  }
   function item(title, body, flag){ return { t:title, b:body, f:!!flag }; }
   function finish(){
     document.getElementById("done-name").textContent = v(state.name) ? ", " + v(state.name) : "";
@@ -737,7 +771,7 @@ footer p{margin:4px 0;max-width:80ch}
       items.push(item("Set up a Gmail address for job alerts", "Create a free Gmail account, then forward alerts to it from your current inbox. Daily scans read alerts from Gmail.", true));
     if((state.sources || []).length)
       items.push(item("Turn your searches into daily email alerts", "On " + (state.sources || []).filter(function(s){ return s !== "People I know"; }).join(", ").replace(/, ([^,]*)$/, " and $1") + ", save each search as an email alert so new roles reach your inbox."));
-    if(state.ai === "ChatGPT" || state.ai === "None yet")
+    if(state.ai === "None yet")
       items.push(item("Get set up with Claude", "The skills run in Claude. The free plan is enough to try them by pasting alerts. Daily automatic scans need a paid plan.", true));
     items.push(item("Add the skills and your rules", 'Follow the <a href="https://github.com/yserrag/applysteward#install-the-free-core">install steps</a>, then upload fit-rules.md to a Claude project so every chat can read it.'));
     items.push(item("Copy the tracker", 'Import <a href="https://github.com/yserrag/applysteward/blob/main/templates/tracker.csv">tracker.csv</a> into Google Sheets. Scans give you rows to paste straight in.'));

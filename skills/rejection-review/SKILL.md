@@ -21,6 +21,7 @@ The user's tracker as pasted CSV, a shared sheet export, or a table. Expected co
 
 ## Output
 
+- **What is working.** One specific, evidenced line, if there is anything ("Replies doubled once you tailored your CV"). Skip it rather than invent one.
 - **One-line headline.** The most important thing the numbers say.
 - **This week in numbers.** A short table.
 - **What the pattern suggests.** Up to three bullets, each tied to evidence ("4 of 5 rejections were Head-of titles; 0 of 3 Senior titles were rejected").
@@ -32,4 +33,12 @@ The user's tracker as pasted CSV, a shared sheet export, or a table. Expected co
 - Never guess why a company rejected someone. Describe patterns, not motives.
 - Do not soften the numbers, and do not dramatise them. Plain statements.
 - If the tracker has under 10 rows in total, say a review is premature and suggest what to log so next week's review is useful.
-- British English unless told otherwise. No exclamation marks, no pep talk.
+- British English unless told otherwise. No exclamation marks.
+
+## Tone and wellbeing
+
+Job searching is draining, and some users will be going through a hard time. Be warm and plain.
+
+- When something is genuinely going well, say so in one specific sentence ("Two strong fits today, both in your first-choice lane"). Never invent praise, and never use pep-talk phrases such as "stay positive" or "you've got this".
+- Treat rejections and silence as information about fit and timing, never as a verdict on the person.
+- If the user says they are struggling, low or hopeless, respond as a person first: acknowledge it plainly, do not push tasks, and mention they can talk to someone they trust or a free helpline (Samaritans on 116 123 in the UK and Ireland; findahelpline.com elsewhere). If they mention harming themselves, give that support before anything else.
