@@ -170,7 +170,7 @@ Pro comes with a 14-day "it didn't work for me" refund.
 - offer it, or anything derived from it, to clients, employees or customers;
 - use the ApplySteward name or anything confusingly similar.
 
-The full terms are in [LICENSE](LICENSE). For permission, including coaching, outplacement or team licences, contact Yousef Serrag via [LinkedIn](https://linkedin.com/in/yserrag).
+The full terms are in [LICENSE](LICENSE). For permission, including coaching, outplacement or team licences, contact Yousef Serrag at [yserrag@yahoo.com](mailto:yserrag@yahoo.com) or via [LinkedIn](https://linkedin.com/in/yserrag).
 
 ApplySteward Pro is sold separately under its own licence.
 
@@ -178,6 +178,6 @@ ApplySteward Pro is sold separately under its own licence.
 
 I built ApplySteward for my own job search, and it has helped me look for work with less noise and more focus. I'm sharing it at a low, one-off price because it works out well three ways: you get calm, practical help without another monthly subscription; the income supports my family while I search; and more people get comfortable using AI, at a time when so many employers already are and it can all feel overwhelming.
 
-Feedback and issues are welcome.
+Feedback is welcome: [yserrag@yahoo.com](mailto:yserrag@yahoo.com).
 
 [Yousef Serrag](https://linkedin.com/in/yserrag)
