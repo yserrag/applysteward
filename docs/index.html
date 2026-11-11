@@ -326,6 +326,7 @@ footer .legal strong{color:var(--ink);font-weight:500}
   .brand span{display:block;margin:2px 0 0}
   footer{padding:20px 16px}
 }
+.doc .lead-with{margin:0 0 4px}
 </style>
 </head>
 <body>
@@ -409,6 +410,15 @@ footer .legal strong{color:var(--ink);font-weight:500}
           <label>3rd <input type="text" data-key="lane3" aria-label="Third choice of role"></label>
         </div>
         <p class="err" id="err-lanes" hidden>Add at least one role to aim for. You can change it any time.</p>
+      </fieldset>
+      <fieldset>
+        <legend>What should your applications lead with?</legend>
+        <span class="hint">Your AI opens every CV tweak, cover note and form answer with this. If a role clearly wants the other side of you, it will say so.</span>
+        <div class="chips" data-group="angle" data-single>
+          <label><input type="radio" name="angle" value="Leadership and strategy"><span>Leadership and strategy</span></label>
+          <label><input type="radio" name="angle" value="Hands-on delivery and results"><span>Hands-on delivery</span></label>
+          <label><input type="radio" name="angle" value="A mix, matched to each role"><span>A mix, matched to each role</span></label>
+        </div>
       </fieldset>
       <div class="field">
         <label class="label" for="floor-level">Lowest level you'd take</label>
@@ -797,6 +807,11 @@ footer .legal strong{color:var(--ink);font-weight:500}
     md.push("## Lanes (in priority order)");
     md.push(lanes.length ? lanes.map(function(l, i){ return (i + 1) + ". " + l; }).join("\n") : "1. ");
     md.push("");
+    md.push("## How to position me");
+    md.push("- Lead with: " + (v(state.angle) || "ask me for each role"));
+    md.push("- Open every draft (CV changes, cover notes, messages, form answers) with evidence of this angle, using my proof points.");
+    md.push("- If a role clearly wants a different angle, say so in the scan reason rather than forcing a fit.");
+    md.push("");
     md.push("## Hard rules (a breach means Skip)");
     md.push("- Salary floor: " + money());
     md.push("- Locations: " + v(state.locations));
@@ -855,6 +870,7 @@ footer .legal strong{color:var(--ink);font-weight:500}
     h.push('<div class="doc"><div class="doc-head"><h3>' + (v(state.name) ? esc(v(state.name)) + "&#8217;s rules" : "Your rules") + '</h3><span>For your AI helper</span></div>');
     h.push('<h4>Roles I want, best first</h4>');
     h.push(lanes.length ? '<ol>' + lanes.map(function(l, i){ return '<li>' + val("lane" + i, l) + '</li>'; }).join("") + '</ol>' : '<ol><li><span class="blank" aria-label="Not set"></span></li></ol>');
+    h.push('<h4>Lead with</h4><p class="lead-with">' + val("angle", state.angle) + '</p>');
     h.push('<h4>Ground rules</h4><dl>');
     h.push('<dt>Lowest pay</dt><dd>' + val("pay", money()) + '</dd>');
     h.push('<dt>Where</dt><dd>' + val("loc", state.locations) + '</dd>');

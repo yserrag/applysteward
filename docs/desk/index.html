@@ -122,16 +122,40 @@ td input[type=text]{width:100%;min-width:150px}
 .filters{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}
 .filters button{font:inherit;font-size:14.5px;border:1px solid var(--line);background:var(--field);color:var(--ink);border-radius:6px;padding:6px 12px;cursor:pointer}
 .filters button[aria-pressed="true"]{border-color:var(--green);background:var(--green-soft);color:var(--green);font-weight:500}
-.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--field)}
-table{border-collapse:collapse;width:100%;font-size:14.5px;min-width:820px}
+.tablewrap{position:relative;overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--field)}
+table{border-collapse:collapse;width:100%;font-size:14.5px;min-width:880px}
 th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
 th{font-weight:700;color:var(--muted);font-size:13.5px;background:var(--paper)}
 tr:last-child td{border-bottom:0}
 td a{font-weight:500}
 .v{font-weight:700}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .v-send{color:var(--green)} .v-not{color:var(--amber)} .v-skip{color:var(--muted)}
 .overdue{color:#B3261E;font-weight:500}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .overdue,:root:not([data-theme="light"]) .err{color:#F2A49E}}
+
+.aim{font-size:15px;color:var(--muted);margin:-14px 0 26px;max-width:46ch}
+.aim b{color:var(--ink)}
+.aim select{font:inherit;font-size:14px;color:var(--ink);background:var(--field);border:1px solid var(--line);border-radius:5px;padding:2px 4px}
+td.acts-cell{white-space:nowrap}
+td .pack-btn{font:inherit;font-size:14px;color:var(--green);background:none;border:1px solid var(--line);border-radius:5px;padding:4px 10px;cursor:pointer;white-space:nowrap}
+dialog{border:0;border-radius:8px;padding:0;max-width:640px;width:calc(100% - 32px);max-height:calc(100% - 32px);background:var(--field);color:var(--ink);box-shadow:0 30px 60px -20px rgba(0,0,0,.45)}
+dialog::backdrop{background:rgba(20,26,23,.5)}
+.dlg{padding:22px 24px}
+.dlg h2{font-size:20px;margin:0 0 8px;line-height:1.25;letter-spacing:-0.01em}
+.dlg h3{font-size:16px;margin:22px 0 2px}
+.dlg p{margin:0 0 10px;font-size:15px;color:var(--muted)}
+.dlg .why{border-left:3px solid var(--amber);padding:8px 12px;background:var(--amber-soft);color:var(--ink);border-radius:0 4px 4px 0}
+.dlg label{font-size:14px;font-weight:700}
+.dlg .row{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin:12px 0 4px}
+.dlg textarea,.dlg input[type=text]{width:100%;font:inherit;font-size:14.5px;border:1px solid var(--line);border-radius:6px;padding:8px 10px;background:var(--paper);color:var(--ink)}
+.dlg textarea{min-height:58px;resize:vertical}
+#pack-prompt{min-height:190px;font-size:13.5px}
+.dlg .copy{font:inherit;font-size:13.5px;background:none;border:0;color:var(--green);text-decoration:underline;cursor:pointer;padding:2px 0;white-space:nowrap}
+.dlg .acts{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:20px}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:11px 16px;border-radius:6px;font-size:15px;max-width:calc(100% - 32px);width:max-content;box-shadow:0 10px 30px -10px rgba(0,0,0,.5);z-index:10}
+.toast[hidden]{display:none}
 
 footer{max-width:1200px;margin:0 auto;padding:24px;color:var(--muted);font-size:14px;border-top:1px solid var(--line)}
 footer p{margin:4px 0;max-width:80ch}
@@ -213,6 +237,7 @@ footer strong{color:var(--ink);font-weight:500}
     <section class="side" aria-labelledby="pipe-h">
       <h2 id="pipe-h">This week</h2>
       <p class="week-line" id="week-line"></p>
+      <p class="aim" id="aim"></p>
       <h2>Where things stand</h2>
       <p class="sub">Jobs still in play, by stage</p>
       <ul class="pipe" id="pipe"></ul>
@@ -223,9 +248,32 @@ footer strong{color:var(--ink);font-weight:500}
   <section class="roles" id="roles" hidden aria-labelledby="roles-h">
     <h2 id="roles-h">All your jobs</h2>
     <div class="filters" id="filters" role="group" aria-label="Filter roles"></div>
-    <div class="tablewrap"><table><thead><tr><th>Job</th><th>Company</th><th>Verdict</th><th>Where it stands</th><th>Next step</th><th>Due</th><th>Pay</th><th aria-label="Remove"></th></tr></thead><tbody id="rows"></tbody></table></div>
+    <div class="tablewrap"><table><thead><tr><th>Job</th><th>Company</th><th>Verdict</th><th>Where it stands</th><th>Next step</th><th>Due</th><th>Pay</th><th><span class="sr">Pack and remove</span></th></tr></thead><tbody id="rows"></tbody></table></div>
   </section>
 </main>
+
+<dialog id="gate" aria-labelledby="gate-h"><div class="dlg">
+  <h2 id="gate-h"></h2>
+  <p class="why" id="gate-why"></p>
+  <p id="gate-text"></p>
+  <div class="row"><label for="gate-reason" id="gate-label"></label></div>
+  <input type="text" id="gate-reason" autocomplete="off" maxlength="200">
+  <div class="acts"><button class="btn btn-primary" type="button" id="gate-go">Apply anyway</button><button class="btn btn-quiet" type="button" id="gate-keep">Leave it for now</button></div>
+</div></dialog>
+
+<dialog id="pack" aria-labelledby="pack-h"><div class="dlg">
+  <h2 id="pack-h"></h2>
+  <p>Everything you need for a long application form, Workday and Taleo included. Copy each part as you go. You check it and submit it yourself.</p>
+  <h3>1. The parts written for this role</h3>
+  <p>Copy this into your AI, in the chat or project that has your rules. It writes a tailored summary, answers and a cover note, using only your own facts.</p>
+  <div class="row"><span></span><button class="copy" type="button" data-copy="pack-prompt">Copy for my AI</button></div>
+  <textarea id="pack-prompt" readonly aria-label="Request to copy into your AI"></textarea>
+  <h3>2. Your standard answers</h3>
+  <p>Fill these in once. They're saved on this device and reused for every role.</p>
+  <div id="answers"></div>
+  <div class="acts"><button class="btn btn-primary" type="button" id="pack-all">Copy all standard answers</button><button class="btn btn-quiet" type="button" id="pack-close">Done</button></div>
+</div></dialog>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
 <footer>
   <p>Runs entirely in your browser. ApplySteward is an independent project and is not affiliated with or endorsed by Anthropic.</p>
@@ -241,6 +289,10 @@ footer strong{color:var(--ink);font-weight:500}
   var CLOSED = ["rejected","withdrawn","waiting cold","skipped","offer declined","closed"];
   var STAGES = [["found","Found"],["applied","Applied"],["replied","Replied"],["interview","Interview"],["offer","Offer"]];
   var data = null, filter = "all", pasteMode = "add", demo = false;
+  var AIMKEY = "applysteward.desk.aim", ANSKEY = "applysteward.desk.answers", SETUPKEY = "applysteward.setup.v1";
+  var aim = 3, gateIdx = -1, packIdx = -1, toastTimer = null;
+  try{ var sa = parseInt(localStorage.getItem(AIMKEY), 10); if(sa > 0) aim = sa; }catch(e){}
+  var ANS = [["summary","Short summary (2 to 3 lines)"],["results","Key results, one per line"],["rtw","Right to work"],["notice","Notice period"],["salary","Salary expectation"],["where","Where and how you want to work"],["links","LinkedIn or portfolio link"]];
   var $ = function(id){ return document.getElementById(id); };
 
   var ALIAS = { due:"next_action_due", due_date:"next_action_due", next_step:"next_action", action:"next_action",
@@ -310,6 +362,9 @@ footer strong{color:var(--ink);font-weight:500}
   function payText(p){ var m = /^([£$€]?)\s*(\d{4,})$/.exec(String(p || "").trim()); return m ? m[1] + Number(m[2]).toLocaleString("en-GB") : (p || ""); }
   function keyOf(r){ return ((r.company || "") + "|" + (r.role || "") + "|" + (r.link || "")).toLowerCase(); }
 
+  function appliedToday(){ var t = iso(today()); return data ? data.filter(function(r){ return (r.date_applied || "").slice(0, 10) === t; }).length : 0; }
+  function toast(text){ var el = $("toast"); el.textContent = text; el.hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(function(){ el.hidden = true; }, 6000); }
+
   function save(){ if(demo) return; try{ localStorage.setItem(KEY, JSON.stringify(data)); }catch(e){} }
   function msg(id, text){ var el = $(id); el.textContent = text || ""; el.hidden = !text; }
 
@@ -327,6 +382,11 @@ footer strong{color:var(--ink);font-weight:500}
         if(ap && workingDaysSince(ap) >= 7) out.push({ rank: 2, sort: ap, html: "<b>Follow up: " + esc(r.role) + "</b><span>" + esc(r.company) + ", applied " + fmt(ap) + "</span>", pill: '<span class="pill follow">Follow up</span>' });
       }
     });
+    if(appliedToday() >= aim){
+      var waiting = out.filter(function(x){ return x.rank === 1; }).length;
+      out = out.filter(function(x){ return x.rank !== 1; });
+      if(waiting) out.push({ rank: 1, sort: t, html: "<b>Today&#8217;s aim reached</b><span>" + waiting + " Sendworthy job" + (waiting === 1 ? " can" : "s can") + " wait until tomorrow. Fresh eyes write better applications.</span>", pill: '<span class="pill apply">Done</span>' });
+    }
     return out.sort(function(a, b){ return a.rank - b.rank || a.sort - b.sort; });
   }
 
@@ -356,6 +416,8 @@ footer strong{color:var(--ink);font-weight:500}
     var send = data.filter(function(r){ return inRange(r.date_found, wk, t) && /send/i.test(r.verdict || ""); }).length;
     var iv = data.filter(function(r){ return stage(r) === "interview"; }).length;
     $("week-line").innerHTML = "You found <b>" + found + "</b> job" + (found === 1 ? "" : "s") + ", <b>" + send + "</b> worth sending, and applied to <b>" + applied + "</b>." + (iv ? " <b>" + iv + "</b> interview" + (iv === 1 ? "" : "s") + " in progress." : "");
+    var at = appliedToday(), aimOpts = [2,3,5,8]; if(aimOpts.indexOf(aim) < 0) aimOpts.push(aim);
+    $("aim").innerHTML = "Applied today: <b>" + at + "</b> of your daily aim of <select id=\"aim-sel\" aria-label=\"Daily aim\">" + aimOpts.sort(function(a, b){ return a - b; }).map(function(n){ return "<option" + (n === aim ? " selected" : "") + ">" + n + "</option>"; }).join("") + "</select>. A few strong applications go further than many rushed ones.";
     var cheer = "";
     if(iv) cheer = iv === 1 ? "You have an interview in progress. That's a real step forward." : "You have " + iv + " interviews in progress. That's real momentum.";
     else if(applied && applied > appliedPrev && appliedPrev > 0) cheer = "More applications than last week, and every one was chosen on purpose.";
@@ -385,7 +447,7 @@ footer strong{color:var(--ink);font-weight:500}
       var sel = '<select data-i="' + x.i + '" data-k="stage" aria-label="Stage for ' + esc(r.role) + '">' + opts.map(function(o){ return "<option" + (o.toLowerCase() === cur.toLowerCase() ? " selected" : "") + ">" + esc(o) + "</option>"; }).join("") + "</select>";
       var na = '<input type="text" data-i="' + x.i + '" data-k="next_action" value="' + esc(r.next_action) + '" aria-label="Next action for ' + esc(r.role) + '">';
       var du = '<input type="date" data-i="' + x.i + '" data-k="next_action_due" value="' + (due ? iso(due) : "") + '" aria-label="Due date for ' + esc(r.role) + '"' + (od ? ' class="overdue"' : "") + ">";
-      return "<tr><td>" + role + "</td><td>" + esc(r.company) + '</td><td class="v ' + verdictClass(r.verdict) + '">' + esc(r.verdict) + "</td><td>" + sel + "</td><td>" + na + "</td><td>" + du + "</td><td>" + esc(payText(r.pay)) + '</td><td><button type="button" class="rm" data-rm="' + x.i + '" aria-label="Remove ' + esc(r.role) + (r.company ? " at " + esc(r.company) : "") + '">Remove</button></td></tr>'; }).join("")
+      return "<tr><td>" + role + "</td><td>" + esc(r.company) + '</td><td class="v ' + verdictClass(r.verdict) + '">' + esc(r.verdict) + "</td><td>" + sel + "</td><td>" + na + "</td><td>" + du + "</td><td>" + esc(payText(r.pay)) + '</td><td class="acts-cell"><button type="button" class="pack-btn" data-pack="' + x.i + '" aria-label="Application pack for ' + esc(r.role) + '">Pack</button> <button type="button" class="rm" data-rm="' + x.i + '" aria-label="Remove ' + esc(r.role) + (r.company ? " at " + esc(r.company) : "") + '">Remove</button></td></tr>'; }).join("")
       : '<tr><td colspan="8">No jobs here yet.</td></tr>';
     $("lede").textContent = demo ? "This is example data, so you can see how it works." : "Your whole search at a glance. Add jobs as you find them and update them as things move.";
   }
@@ -489,10 +551,97 @@ footer strong{color:var(--ink);font-weight:500}
   });
   $("rows").addEventListener("change", function(e){
     var el = e.target, i = +el.getAttribute("data-i"), k = el.getAttribute("data-k"); if(isNaN(i) || !k) return;
-    var r = data[i]; r[k] = el.value;
-    if(k === "stage"){ r.last_update = iso(today()); if(/^applied$/i.test(el.value) && !r.date_applied) r.date_applied = iso(today()); }
+    var r = data[i];
+    if(k === "stage" && /^applied$/i.test(el.value) && !/^applied$/i.test(r.stage || "")){
+      if(/skip|not/i.test(r.verdict || "")){ el.value = r.stage || "Found"; openGate(i); return; }
+      markApplied(r); save(); render(); afterApplied(); return;
+    }
+    r[k] = el.value;
+    if(k === "stage") r.last_update = iso(today());
     save(); render();
   });
+  $("rows").addEventListener("click", function(e){ var b = e.target.closest("[data-pack]"); if(b) openPack(+b.getAttribute("data-pack")); });
+  $("aim").addEventListener("change", function(e){ if(e.target.id !== "aim-sel") return; aim = parseInt(e.target.value, 10) || 3; try{ localStorage.setItem(AIMKEY, String(aim)); }catch(err){} render(); });
+
+  function markApplied(r){ r.stage = "Applied"; r.last_update = iso(today()); if(!r.date_applied) r.date_applied = iso(today()); }
+  function afterApplied(){
+    var n = appliedToday();
+    if(n === aim) toast("That's your " + aim + " for today. Well chosen. Anything else can wait until tomorrow.");
+    else if(n > aim) toast("That's " + n + " today, past your aim of " + aim + ". Fewer, stronger applications usually go further. Tomorrow is fine for the rest.");
+    else toast("Marked as applied. A follow-up reminder will appear here after 7 working days.");
+  }
+
+  function openGate(i){
+    gateIdx = i; var r = data[i], skip = /skip/i.test(r.verdict || "");
+    $("gate-h").textContent = "Your rules said " + (skip ? "Skip" : "Not yet") + " for " + (r.role || "this role") + (r.company ? " at " + r.company : "");
+    $("gate-why").textContent = r.reason ? "Reason: " + r.reason : "No reason was recorded with the scan.";
+    $("gate-text").textContent = skip
+      ? "Applying anyway is your call. A role that breaks your own rules usually takes more energy than it gives back, so add a short reason. Your weekly review can learn from it."
+      : "Usually something is missing, like the pay band or the level. It's worth checking that first, but it's your call.";
+    $("gate-label").textContent = skip ? "Why apply anyway? One line is enough." : "Why apply now? (optional)";
+    $("gate-reason").value = ""; $("gate-go").disabled = skip;
+    $("gate").setAttribute("data-skip", skip ? "1" : "");
+    $("gate").showModal(); $("gate-reason").focus();
+  }
+  $("gate-reason").addEventListener("input", function(){ if($("gate").getAttribute("data-skip")) $("gate-go").disabled = !this.value.trim(); });
+  $("gate-reason").addEventListener("keydown", function(e){ if(e.key === "Enter" && !$("gate-go").disabled){ e.preventDefault(); $("gate-go").click(); } });
+  $("gate-keep").addEventListener("click", function(){ $("gate").close(); });
+  $("gate-go").addEventListener("click", function(){
+    var r = data[gateIdx]; if(!r) return; var why = $("gate-reason").value.trim(), skip = !!$("gate").getAttribute("data-skip");
+    if(skip && !why) return;
+    markApplied(r);
+    if(why) r.notes = (r.notes ? r.notes + "; " : "") + "Applied despite " + (skip ? "Skip" : "Not yet") + ": " + why;
+    $("gate").close(); save(); render(); afterApplied();
+  });
+
+  function loadAnswers(){
+    var a = null; try{ a = JSON.parse(localStorage.getItem(ANSKEY) || "null"); }catch(e){}
+    if(a) return a;
+    a = {}; var st = null; try{ st = (JSON.parse(localStorage.getItem(SETUPKEY) || "null") || {}).state; }catch(e){}
+    if(st){
+      var t = function(x){ return (x && String(x).trim()) || ""; };
+      if(t(st.role)) a.summary = t(st.role) + (t(st.years) ? " with " + t(st.years) + " years' experience" : "") + (t(st.area) ? " in " + t(st.area) : "") + ".";
+      a.results = t(st.proof); a.rtw = t(st.rtw);
+      if(t(st.salary)){ var c = st.currency || "£"; var amt = parseFloat(String(st.salary).replace(/[^0-9.]/g, "")); a.salary = (c.length > 1 ? c + " " : c) + (isFinite(amt) ? amt.toLocaleString("en-GB") : t(st.salary)) + " " + (st.per || "per year") + " base, open to discussion"; }
+      a.where = [t(st.locations), (st.pattern || []).join(" or ")].filter(Boolean).join(", ");
+    }
+    return a;
+  }
+  function saveAnswers(){ var a = {}; ANS.forEach(function(f){ a[f[0]] = $("ans-" + f[0]).value; }); try{ localStorage.setItem(ANSKEY, JSON.stringify(a)); }catch(e){} }
+  function openPack(i){
+    packIdx = i; var r = data[i]; if(!r) return;
+    $("pack-h").textContent = "Application pack: " + (r.role || "Role") + (r.company ? ", " + r.company : "");
+    $("pack-prompt").value = [
+      "pack",
+      "Role: " + (r.role || ""),
+      "Company: " + (r.company || ""),
+      r.link ? "Advert: " + r.link : "Advert: (I'll paste it below)",
+      "",
+      "Using my rules file, including how to position me, write these ready to paste into an application form:",
+      "1. A 3-line summary tailored to this role",
+      "2. The 3 results from my proof points most relevant to this role, one line each",
+      "3. Why this role? Under 80 words",
+      "4. Why this company? Under 80 words, using only what the advert says",
+      "5. A cover note of 120 to 180 words",
+      "Use only facts from my rules or what I tell you. Leave [a placeholder] where something is missing. If you can't open the advert, ask me to paste it."
+    ].join("\n");
+    var a = loadAnswers();
+    $("answers").innerHTML = ANS.map(function(f){ return '<div class="row"><label for="ans-' + f[0] + '">' + f[1] + '</label><button class="copy" type="button" data-copy="ans-' + f[0] + '">Copy</button></div><textarea id="ans-' + f[0] + '" rows="' + (f[0] === "results" || f[0] === "summary" ? 3 : 1) + '">' + esc(a[f[0]] || "") + "</textarea>"; }).join("");
+    $("pack").showModal();
+  }
+  function copyText(text, btn){
+    var label = btn ? btn.textContent : "";
+    function done(){ if(btn){ btn.textContent = "Copied"; setTimeout(function(){ btn.textContent = label; }, 1500); } }
+    function fallback(){ var tmp = document.createElement("textarea"); tmp.value = text; (document.querySelector("dialog[open]") || document.body).appendChild(tmp); tmp.select(); try{ document.execCommand("copy"); done(); }catch(e){} tmp.remove(); }
+    try{ navigator.clipboard.writeText(text).then(done, fallback); }catch(e){ fallback(); }
+  }
+  $("pack").addEventListener("input", function(e){ if(e.target.id && e.target.id.indexOf("ans-") === 0) saveAnswers(); });
+  $("pack").addEventListener("click", function(e){ var b = e.target.closest("[data-copy]"); if(b) copyText($(b.getAttribute("data-copy")).value, b); });
+  $("pack-all").addEventListener("click", function(){
+    var txt = ANS.map(function(f){ var v = $("ans-" + f[0]).value.trim(); return v ? f[1].replace(/ \(.*\)|, one per line/, "") + ":\n" + v : ""; }).filter(Boolean).join("\n\n");
+    copyText(txt, this);
+  });
+  $("pack-close").addEventListener("click", function(){ saveAnswers(); $("pack").close(); });
 
   function sample(){
     demo = true;

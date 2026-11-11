@@ -1,6 +1,6 @@
 ---
 name: outreach
-description: Draft short, specific outreach for a job search (recruiter enquiry, hiring-manager note, referral request, follow-up after applying or interviewing) using only facts the user has given. Use when the user asks for a message to a recruiter, hiring manager or contact about a role, or asks what to send as a follow-up.
+description: Draft short, specific outreach for a job search (recruiter enquiry, hiring-manager note, referral request, follow-up after applying or interviewing, and application packs for long online forms) using only facts the user has given. Use when the user asks for a message to a recruiter, hiring manager or contact about a role, asks what to send as a follow-up, or types pack for a role.
 ---
 
 <!-- © 2026 Yousef Serrag. All rights reserved. ApplySteward™. Personal use only. Copying, adapting, reselling or redistributing is not permitted without written permission. -->
@@ -27,6 +27,12 @@ You need four things. Take them from the conversation, the tracker row or `fit-r
 | Referral request | 60 to 100 words | Context of how you know them, the role, what you need from them, make it easy to say no |
 | Follow-up after applying | 40 to 70 words | Date applied, one new point of value, the ask |
 | Follow-up after interview | 50 to 90 words | Thanks, one thing you took from the conversation, one line on fit, next step |
+
+Lead every message with the angle in the "How to position me" section of `fit-rules.md`, if it is set.
+
+## Application pack
+
+When the user types `pack` with a role, company and advert, write content ready to paste into an application form: a 3-line summary tailored to the role; the 3 most relevant proof points, one line each; "Why this role?" and "Why this company?", each under 80 words, the company answer using only what the advert says; and a cover note of 120 to 180 words. Lead with the user's chosen angle. Use only true facts from `fit-rules.md` or the conversation, and leave `[a placeholder]` where something is missing. If the advert can't be read, ask the user to paste it. Never fill in or submit the form.
 
 ## Follow-up cadence (suggest, do not schedule)
 
