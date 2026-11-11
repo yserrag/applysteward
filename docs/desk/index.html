@@ -73,6 +73,14 @@ td input[type=text]{width:100%;min-width:150px}
 .paste textarea{width:100%;min-height:140px;font:inherit;font-size:14px;border:1px solid var(--line);border-radius:6px;padding:10px 12px;background:var(--field);color:var(--ink)}
 .paste p{font-size:14px;color:var(--muted);margin:6px 0 10px}
 .note{font-size:14px;color:var(--muted);margin:12px 0 0}
+.hand{margin:14px 0 0;max-width:760px}
+.hand[hidden]{display:none}
+.hand p{font-size:14px;color:var(--muted);margin:6px 0 10px}
+.hand-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px 16px}
+.hand label{display:grid;gap:4px;font-size:14.5px;font-weight:500}
+.hand input,.hand select{font:inherit;font-size:16px;color:var(--ink);background:var(--field);border:1px solid var(--line);border-radius:6px;padding:9px 10px;width:100%}
+@media (max-width:600px){.hand-grid{grid-template-columns:minmax(0,1fr)}}
+.rm{background:none;border:0;color:var(--muted);text-decoration:underline;font:inherit;font-size:13.5px;cursor:pointer;padding:4px 0}
 .err{color:#B3261E;font-size:15px;margin:10px 0 0}
 .err[hidden]{display:none}
 .empty{max-width:760px}
@@ -116,7 +124,7 @@ td input[type=text]{width:100%;min-width:150px}
 .filters button{font:inherit;font-size:14.5px;border:1px solid var(--line);background:var(--field);color:var(--ink);border-radius:6px;padding:6px 12px;cursor:pointer}
 .filters button[aria-pressed="true"]{border-color:var(--green);background:var(--green-soft);color:var(--green);font-weight:500}
 .tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--field)}
-table{border-collapse:collapse;width:100%;font-size:14.5px;min-width:760px}
+table{border-collapse:collapse;width:100%;font-size:14.5px;min-width:820px}
 th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
 th{font-weight:700;color:var(--muted);font-size:13.5px;background:var(--paper)}
 tr:last-child td{border-bottom:0}
@@ -168,6 +176,7 @@ footer strong{color:var(--ink);font-weight:500}
 
   <div class="tools" id="tools" hidden>
     <button class="btn btn-primary" type="button" id="add-btn">Add roles from a scan</button>
+    <button class="btn btn-quiet" type="button" id="hand-btn">Add a role by hand</button>
     <button class="btn btn-quiet" type="button" id="download">Download my tracker</button>
     <label class="btn-link" for="file" tabindex="0" id="file-label2">Open a different file</label>
     <button class="btn-link" type="button" id="clear">Clear this device</button>
@@ -178,6 +187,18 @@ footer strong{color:var(--ink);font-weight:500}
     <textarea id="paste-text" aria-label="Paste rows"></textarea>
     <p><button class="btn btn-primary" type="button" id="paste-go">Add to my desk</button> <button class="btn-link" type="button" id="paste-cancel">Cancel</button></p>
   </div>
+  <form class="hand" id="hand" hidden>
+    <p>For a job you found yourself. Only the job title and company are needed.</p>
+    <div class="hand-grid">
+      <label>Job title <input type="text" id="h-role" required></label>
+      <label>Company <input type="text" id="h-company" required></label>
+      <label>Pay, if stated <input type="text" id="h-pay" placeholder="For example, £42,000"></label>
+      <label>Link to the advert <input type="url" id="h-link" placeholder="https://"></label>
+      <label>Your verdict <select id="h-verdict"><option>Sendworthy</option><option>Not yet</option><option>Skip</option></select></label>
+      <label>Where it stands <select id="h-stage"></select></label>
+    </div>
+    <p><button class="btn btn-primary" type="submit">Add to my desk</button> <button class="btn-link" type="button" id="hand-cancel">Cancel</button></p>
+  </form>
   <p class="err" id="err" hidden></p>
   <p class="ok" id="ok" hidden></p>
   <p class="note" id="note">Everything stays in this browser on this device. Nothing is uploaded. Download a copy now and then as a backup.</p>
@@ -203,7 +224,7 @@ footer strong{color:var(--ink);font-weight:500}
   <section class="roles" id="roles" hidden aria-labelledby="roles-h">
     <h2 id="roles-h">All roles</h2>
     <div class="filters" id="filters" role="group" aria-label="Filter roles"></div>
-    <div class="tablewrap"><table><thead><tr><th>Role</th><th>Company</th><th>Verdict</th><th>Stage</th><th>Next action</th><th>Due</th><th>Pay</th></tr></thead><tbody id="rows"></tbody></table></div>
+    <div class="tablewrap"><table><thead><tr><th>Role</th><th>Company</th><th>Verdict</th><th>Stage</th><th>Next action</th><th>Due</th><th>Pay</th><th aria-label="Remove"></th></tr></thead><tbody id="rows"></tbody></table></div>
   </section>
 </main>
 
@@ -223,9 +244,13 @@ footer strong{color:var(--ink);font-weight:500}
   var data = null, filter = "all", pasteMode = "add", demo = false;
   var $ = function(id){ return document.getElementById(id); };
 
-  function parse(text, allowHeaderless){
-    text = String(text || "").replace(/^﻿/, "");
-    var first = text.split(/\r?\n/)[0] || "";
+  var ALIAS = { due:"next_action_due", due_date:"next_action_due", next_step:"next_action", action:"next_action",
+    title:"role", job_title:"role", job:"role", position:"role", employer:"company", organisation:"company", organization:"company",
+    salary:"pay", status:"stage", why:"reason", url:"link", found:"date_found", date:"date_found", applied:"date_applied" };
+  var NOTHING = "I couldn't find any roles in that. Paste the whole table your AI gave you, or the block that starts with date_found, including its top line of column names.";
+
+  function splitCsv(text){
+    var first = text.split(/\r?\n/).filter(function(l){ return l.trim() && !/^\s*`+/.test(l); })[0] || "";
     var d = (first.split("\t").length > first.split(",").length) ? "\t" : ",";
     var rows = [], row = [], cell = "", q = false;
     for(var i = 0; i < text.length; i++){
@@ -237,19 +262,36 @@ footer strong{color:var(--ink);font-weight:500}
       else cell += c;
     }
     if(cell !== "" || row.length){ row.push(cell); rows.push(row); }
+    return rows;
+  }
+  // A table copied straight from an AI chat: | Role | Company | ... |
+  function splitPipes(text){
+    var ls = text.split(/\r?\n/).filter(function(l){ return /^\s*\|.*\|\s*$/.test(l); });
+    if(ls.length < 2) return null;
+    return ls.filter(function(l){ return !/^[\s|:-]+$/.test(l); })
+      .map(function(l){ return l.trim().replace(/^\|/, "").replace(/\|$/, "").split("|").map(function(c){ return c.trim().replace(/^\*\*(.*)\*\*$/, "$1"); }); });
+  }
+
+  function parse(text, allowHeaderless){
+    text = String(text || "").replace(/^\uFEFF/, "");
+    // A whole AI reply may hold both the readable table and the fuller date_found block: prefer the block.
+    var at = text.search(/(^|\n)[ \t]*date_found[ \t]*[,\t]/);
+    var rows = at > -1 ? splitCsv(text.slice(at).replace(/^\n/, "")) : (splitPipes(text) || splitCsv(text));
     rows = rows.filter(function(r){ return r.some(function(x){ return x.trim() && !/^`+/.test(x.trim()); }); });
-    if(!rows.length) throw new Error("There's nothing to add yet. Paste the rows your AI gave you, including the header line.");
-    var norm = function(r){ return r.map(function(h){ return h.trim().toLowerCase().replace(/\s+/g, "_"); }); };
+    if(!rows.length) throw new Error("There's nothing to add yet. Paste the rows your AI gave you, including the top line of column names.");
+    var norm = function(r){ return r.map(function(h){ h = h.replace(/\(.*?\)/g, "").trim().toLowerCase().replace(/[\s-]+/g, "_"); return ALIAS[h] || h; }); };
     var hi = -1;
     for(var k = 0; k < rows.length; k++){ var n = norm(rows[k]); if(n.indexOf("role") > -1 && n.indexOf("company") > -1){ hi = k; break; } }
     var head = hi > -1 ? norm(rows[hi]) : norm(rows[0]);
     var body = hi > -1 ? rows.slice(hi + 1) : rows.slice(1);
     if(hi < 0){
-      if(!allowHeaderless) throw new Error("This doesn't look like a tracker. It needs at least a role and a company column.");
-      head = COLS; body = rows.filter(function(r){ return r.length >= 3; });
+      if(!allowHeaderless) throw new Error("This doesn't look like a tracker. It needs a top line of column names with at least Role and Company.");
+      head = COLS; body = rows.filter(function(r){ return r.length >= COLS.length - 2; });
     }
-    return body.map(function(r){ var o = {}; head.forEach(function(h, j){ o[h] = (r[j] || "").trim(); }); return o; })
+    var out = body.map(function(r){ var o = {}; head.forEach(function(h, j){ if(h && !(h in o)) o[h] = (r[j] || "").trim(); }); return o; })
       .filter(function(o){ return o.role || o.company; });
+    if(!out.length) throw new Error(NOTHING);
+    return out;
   }
 
   function day(s){ if(!s) return null; var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s); if(m) return new Date(+m[1], m[2]-1, +m[3]); var m2 = /^(\d{1,2})\/(\d{1,2})\/(\d{4})/.exec(s); if(m2) return new Date(+m2[3], m2[2]-1, +m2[1]); return null; }
@@ -263,6 +305,7 @@ footer strong{color:var(--ink);font-weight:500}
   function isClosed(r){ return CLOSED.indexOf(stage(r)) > -1; }
   function verdictClass(v){ return /send/i.test(v) ? "v-send" : /not/i.test(v) ? "v-not" : /skip/i.test(v) ? "v-skip" : ""; }
   function title(r){ return esc(r.role) + (r.company ? ", " + esc(r.company) : ""); }
+  function payText(p){ var m = /^([£$€]?)\s*(\d{4,})$/.exec(String(p || "").trim()); return m ? m[1] + Number(m[2]).toLocaleString("en-GB") : (p || ""); }
   function keyOf(r){ return ((r.company || "") + "|" + (r.role || "") + "|" + (r.link || "")).toLowerCase(); }
 
   function save(){ if(demo) return; try{ localStorage.setItem(KEY, JSON.stringify(data)); }catch(e){} }
@@ -276,7 +319,7 @@ footer strong{color:var(--ink);font-weight:500}
       if(due && due <= t && r.next_action){
         out.push({ rank: 0, sort: due, html: "<b>" + esc(r.next_action) + "</b><span>" + title(r) + "</span>", pill: '<span class="pill due">' + (due < t ? "Overdue" : "Due today") + "</span>" });
       } else if(st === "found" && /send/i.test(r.verdict || "")){
-        out.push({ rank: 1, sort: day(r.date_found) || t, html: "<b>Apply: " + esc(r.role) + "</b><span>" + esc(r.company) + (r.pay ? ", " + esc(r.pay) : "") + "</span>", pill: '<span class="pill apply">Sendworthy</span>' });
+        out.push({ rank: 1, sort: day(r.date_found) || t, html: "<b>Apply: " + esc(r.role) + "</b><span>" + esc(r.company) + (r.pay ? ", " + esc(payText(r.pay)) : "") + "</span>", pill: '<span class="pill apply">Sendworthy</span>' });
       } else if(st === "applied" && !due){
         var ap = day(r.date_applied) || day(r.last_update);
         if(ap && workingDaysSince(ap) >= 7) out.push({ rank: 2, sort: ap, html: "<b>Follow up: " + esc(r.role) + "</b><span>" + esc(r.company) + ", applied " + fmt(ap) + "</span>", pill: '<span class="pill follow">Follow up</span>' });
@@ -288,12 +331,12 @@ footer strong{color:var(--ink);font-weight:500}
   function render(){
     $("start").hidden = true; $("tools").hidden = false; $("board").hidden = false; $("roles").hidden = false;
     $("note").textContent = demo ? "You're looking at example data. Start your own tracker whenever you're ready." : "Everything stays in this browser on this device. Nothing is uploaded. Download a copy now and then as a backup.";
-    $("download").hidden = demo;
+    $("download").hidden = demo; $("hand-btn").hidden = demo;
     $("add-btn").textContent = demo ? "Start my own tracker" : "Add roles from a scan";
     var a = actions(), t = today();
     if(!data.length){
       $("today-sub").textContent = "";
-      $("today").innerHTML = '<li><div><b>Add your first roles</b><span>Run a scan in your AI, then click "Add roles from a scan" and paste the rows it gives you, header line included.</span></div></li>';
+      $("today").innerHTML = '<li><div><b>Add your first roles</b><span>Run a scan in your AI, then click "Add roles from a scan" and paste what it gives you. Or click "Add a role by hand" for a job you found yourself.</span></div></li>';
     } else {
       $("today-sub").textContent = a.length ? (a.length <= 3 ? "Everything that needs you today." : "Start with these three. The rest can wait.") : "";
       $("today").innerHTML = a.length ? a.slice(0, 3).map(function(x){ return "<li><div>" + x.html + "</div>" + x.pill + "</li>"; }).join("")
@@ -340,18 +383,24 @@ footer strong{color:var(--ink);font-weight:500}
       var sel = '<select data-i="' + x.i + '" data-k="stage" aria-label="Stage for ' + esc(r.role) + '">' + opts.map(function(o){ return "<option" + (o.toLowerCase() === cur.toLowerCase() ? " selected" : "") + ">" + esc(o) + "</option>"; }).join("") + "</select>";
       var na = '<input type="text" data-i="' + x.i + '" data-k="next_action" value="' + esc(r.next_action) + '" aria-label="Next action for ' + esc(r.role) + '">';
       var du = '<input type="date" data-i="' + x.i + '" data-k="next_action_due" value="' + (due ? iso(due) : "") + '" aria-label="Due date for ' + esc(r.role) + '"' + (od ? ' class="overdue"' : "") + ">";
-      return "<tr><td>" + role + "</td><td>" + esc(r.company) + '</td><td class="v ' + verdictClass(r.verdict) + '">' + esc(r.verdict) + "</td><td>" + sel + "</td><td>" + na + "</td><td>" + du + "</td><td>" + esc(r.pay) + "</td></tr>"; }).join("")
-      : '<tr><td colspan="7">No roles here yet.</td></tr>';
+      return "<tr><td>" + role + "</td><td>" + esc(r.company) + '</td><td class="v ' + verdictClass(r.verdict) + '">' + esc(r.verdict) + "</td><td>" + sel + "</td><td>" + na + "</td><td>" + du + "</td><td>" + esc(payText(r.pay)) + '</td><td><button type="button" class="rm" data-rm="' + x.i + '" aria-label="Remove ' + esc(r.role) + (r.company ? " at " + esc(r.company) : "") + '">Remove</button></td></tr>'; }).join("")
+      : '<tr><td colspan="8">No roles here yet.</td></tr>';
     $("lede").textContent = demo ? "This is example data, so you can see how it works." : "Your whole search at a glance. Add roles after each scan and update them as things move.";
   }
 
   function openPaste(mode){
     pasteMode = mode;
     $("paste-help").textContent = mode === "add"
-      ? "Paste the rows your AI gave you after a scan, header line included. Roles already on your desk are skipped."
+      ? "Paste what your AI gave you after a scan: the table, or the block that starts with date_found. Include its top line of column names. Roles already on your desk are skipped."
       : "In Google Sheets or Excel, select your tracker including the header row, copy, and paste it here.";
     $("paste-go").textContent = mode === "add" ? "Add to my desk" : "Show my desk";
+    $("hand").hidden = true;
     $("paste").hidden = false; $("paste-text").value = ""; $("paste-text").focus();
+  }
+  function openHand(){
+    $("paste").hidden = true; msg("err"); msg("ok");
+    $("h-stage").innerHTML = STAGE_OPTS.map(function(o){ return "<option>" + o + "</option>"; }).join("");
+    $("hand").reset(); $("hand").hidden = false; $("h-role").focus();
   }
 
   function addRows(rows){
@@ -368,6 +417,17 @@ footer strong{color:var(--ink);font-weight:500}
   $("paste-btn").addEventListener("click", function(){ openPaste("replace"); });
   $("add-btn").addEventListener("click", function(){ if(demo){ exitDemo(); data = []; save(); render(); } openPaste("add"); });
   $("paste-cancel").addEventListener("click", function(){ $("paste").hidden = true; msg("err"); });
+  $("hand-btn").addEventListener("click", function(){ if(demo){ exitDemo(); data = []; save(); render(); } openHand(); });
+  $("hand-cancel").addEventListener("click", function(){ $("hand").hidden = true; });
+  $("hand").addEventListener("submit", function(e){
+    e.preventDefault();
+    var st = $("h-stage").value, r = { date_found: iso(today()), company: $("h-company").value.trim(), role: $("h-role").value.trim(), pay: $("h-pay").value.trim(),
+      source: "Added by hand", link: $("h-link").value.trim(), verdict: $("h-verdict").value, stage: st, last_update: iso(today()) };
+    if(!r.role || !r.company) return;
+    if(/^applied$/i.test(st)) r.date_applied = iso(today());
+    if(!data) data = [];
+    msg("ok", addRows([r])); msg("err"); save(); $("hand").hidden = true; render();
+  });
   $("paste-go").addEventListener("click", function(){
     try{
       var rows = parse($("paste-text").value, pasteMode === "add");
@@ -391,10 +451,16 @@ footer strong{color:var(--ink);font-weight:500}
   $("clear").addEventListener("click", function(){
     if(!demo && data && data.length && !window.confirm("Remove your tracker from this device? Download a copy first if you want to keep it.")) return;
     try{ localStorage.removeItem(KEY); localStorage.removeItem(OLDKEY); }catch(e){}
-    exitDemo(); data = null; $("board").hidden = true; $("roles").hidden = true; $("tools").hidden = true; $("start").hidden = false; $("paste").hidden = true; msg("ok"); msg("err");
+    exitDemo(); data = null; $("board").hidden = true; $("roles").hidden = true; $("tools").hidden = true; $("start").hidden = false; $("paste").hidden = true; $("hand").hidden = true; msg("ok"); msg("err");
     $("lede").textContent = "Cleared from this device. Start again whenever you're ready.";
   });
   $("filters").addEventListener("click", function(e){ var b = e.target.closest("button"); if(!b) return; filter = b.getAttribute("data-f"); render(); });
+  $("rows").addEventListener("click", function(e){
+    var b = e.target.closest("[data-rm]"); if(!b) return;
+    var i = +b.getAttribute("data-rm"), r = data[i]; if(!r) return;
+    if(!window.confirm("Remove " + (r.role || "this role") + (r.company ? " at " + r.company : "") + " from your desk?")) return;
+    data.splice(i, 1); save(); msg("ok", "Removed."); render();
+  });
   $("rows").addEventListener("change", function(e){
     var el = e.target, i = +el.getAttribute("data-i"), k = el.getAttribute("data-k"); if(isNaN(i) || !k) return;
     var r = data[i]; r[k] = el.value;

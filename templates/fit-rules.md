@@ -20,7 +20,7 @@ Roles I want, best first. Two or three lanes is plenty.
 - Working pattern: (remote / hybrid / on-site, days in office I accept)
 - Right to work:
 - Contract types: (permanent / fixed-term / contract / part-time)
-- Seniority: (the levels I will not go below)
+- Lowest level I'd take:
 
 ## Must-haves
 Things a role needs for me to call it Sendworthy.

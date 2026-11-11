@@ -2,7 +2,9 @@
 
 ApplySteward works best in Claude, where it can scan your inbox automatically every morning. But you don't need Claude to use it. This guide sets it up in ChatGPT, Gemini or Microsoft Copilot in about five minutes.
 
-You'll need two things:
+The quickest way needs no files at all: finish the wizard at [applysteward.com](https://applysteward.com), click **Copy my setup**, and paste it into a new chat. The steps below save it permanently, so you don't paste it each time.
+
+For those you'll need two things:
 
 1. **Your rules file**, `fit-rules.md`, from the setup wizard at [applysteward.com](https://applysteward.com).
 2. **The instructions** in [`instructions.md`](instructions.md). Open it and copy everything.

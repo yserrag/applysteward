@@ -133,6 +133,8 @@ input:focus,select:focus,textarea:focus{border-color:var(--green);outline:none;b
 .btn-primary{background:var(--btn);color:var(--btn-ink)}
 .btn-primary:hover{filter:brightness(1.08)}
 .btn-quiet{background:none;border-color:var(--line);color:var(--ink)}
+.btn-link{background:none;border:0;color:var(--muted);text-decoration:underline;padding:12px 6px;font:inherit;font-size:15px;cursor:pointer}
+.btn-link[hidden]{display:none}
 .nav .count{margin-left:auto;color:var(--muted);font-size:14px}
 
 /* the sheet: a lit page, light in both themes */
@@ -290,7 +292,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--green);outline:none;b
 .todo p{margin:0;color:var(--muted);font-size:15px}
 .todo li.flag::before{border-color:var(--amber);color:var(--amber)}
 
-.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--s-ink);color:var(--s-bg);padding:10px 16px;border-radius:6px;font-size:15px;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast{position:fixed;left:50%;bottom:24px;max-width:90vw;transform:translateX(-50%);background:var(--s-ink);color:var(--s-bg);padding:10px 16px;border-radius:6px;font-size:15px;opacity:0;pointer-events:none;transition:opacity .2s}
 .toast.show{opacity:1}
 
 footer{max-width:1200px;margin:0 auto;padding:24px;color:var(--muted);font-size:14px;border-top:1px solid var(--line)}
@@ -343,6 +345,7 @@ footer .legal strong{color:var(--ink);font-weight:500}
       <div class="tray-mobile" id="tray-mobile"></div>
       <ul class="facts">
         <li>Takes about six minutes. You can change anything later.</li>
+        <li>Nothing to install. You paste one block of text into the AI you already use, or a free one.</li>
         <li>Nothing you type leaves this page. There is no account and no server.</li>
         <li>It never applies for you. You decide what to send.</li>
       </ul>
@@ -507,8 +510,8 @@ footer .legal strong{color:var(--ink);font-weight:500}
           <label><input type="radio" name="email" value="Work or other"><span>Work or other</span></label>
         </div>
         <div class="nudge" id="n-email" hidden>
-          <strong>Consider a Gmail address just for job alerts</strong>
-          Daily scans read alerts through Claude's Gmail connection. You can keep your main inbox and forward job alerts to a free Gmail address. It takes about five minutes and keeps job mail out of your personal inbox too.
+          <strong>Optional: a Gmail address just for job alerts</strong>
+          It keeps job mail out of your personal inbox, and it is what automatic daily scans read from if you add those later. You can keep your main inbox and forward job alerts to a free Gmail address in about five minutes.
         </div>
         <div class="nudge" id="n-work" hidden>
           <strong>Move alerts off your work address</strong>
@@ -608,10 +611,11 @@ footer .legal strong{color:var(--ink);font-weight:500}
     <!-- 6 done -->
     <section class="step" data-step="6" data-name="Done">
       <h2>Your rules are ready<span id="done-name"></span></h2>
-      <p class="lede">That's the hard thinking done, and it makes every application after this one easier. Save the file, then work through the list below. Most people are scanning their first alerts within twenty minutes.</p>
+      <p class="lede">That's the hard thinking done, and it makes every application after this one easier. Copy your setup, paste it into your AI, and you can sort your first alerts in a few minutes. There is nothing to install.</p>
       <div class="done-actions">
-        <button class="btn btn-primary" type="button" id="download">Download fit-rules.md</button>
-        <button class="btn btn-quiet" type="button" id="copy">Copy text</button>
+        <button class="btn btn-primary" type="button" id="copy-setup">Copy my setup</button>
+        <button class="btn btn-quiet" type="button" id="download">Download fit-rules.md</button>
+        <button class="btn-link" type="button" id="copy">Copy my rules only</button>
       </div>
       <ol class="todo" id="todo"></ol>
       <aside class="care" aria-label="Looking after yourself">
@@ -624,6 +628,7 @@ footer .legal strong{color:var(--ink);font-weight:500}
     <div class="nav" id="nav">
       <button class="btn btn-quiet" type="button" id="back" hidden>Back</button>
       <button class="btn btn-primary" type="button" id="next">Start setup</button>
+      <button class="btn-link" type="button" id="reset" hidden>Clear my answers</button>
       <span class="count" id="count"></span>
     </div>
 
@@ -762,7 +767,8 @@ footer .legal strong{color:var(--ink);font-weight:500}
   function money(){
     if(!v(state.salary)) return "";
     var n = Number(state.salary);
-    var f = isFinite(n) ? n.toLocaleString("en-GB") : state.salary;
+    if(!isFinite(n) || n <= 0) return "";
+    var f = n.toLocaleString("en-GB");
     var c = state.currency || "£";
     return (c.length > 1 ? c + " " : c) + f + " " + (state.per || "per year");
   }
@@ -791,7 +797,7 @@ footer .legal strong{color:var(--ink);font-weight:500}
     md.push("- Working pattern: " + pattern);
     md.push("- Right to work: " + v(state.rtw));
     md.push("- Contract types: " + (state.contracts || []).join(", "));
-    md.push("- Seniority: " + v(state.seniority));
+    md.push("- Lowest level I'd take: " + v(state.seniority));
     md.push("");
     md.push("## Must-haves");
     md.push(list(lines(state.must)));
@@ -920,6 +926,8 @@ footer .legal strong{color:var(--ink);font-weight:500}
     "Creative and media":{uk:["thedots","guardian"],all:["thedots"]},
     "Marketing and communications":{uk:["guardian"]}
   };
+  var INDEED = { uk:"https://uk.indeed.com/", ie:"https://ie.indeed.com/", ca:"https://ca.indeed.com/", au:"https://au.indeed.com/", nz:"https://nz.indeed.com/", "in":"https://in.indeed.com/" };
+  function burl(k){ return (k === "indeed" && INDEED[state.region]) || B[k][1]; }
   function suggest(){
     var r = state.region; if(!r) return null;
     var main = (REGION[r] || REGION.other).slice();
@@ -929,7 +937,7 @@ footer .legal strong{color:var(--ink);font-weight:500}
   function renderBoards(){
     var box = document.getElementById("boards"), sg = suggest();
     if(!sg){ box.hidden = true; return; }
-    function li(k){ var b = B[k]; return '<li><a href="' + b[1] + '" target="_blank" rel="noopener">' + b[0] + '</a><span>' + b[2] + '</span></li>'; }
+    function li(k){ var b = B[k]; return '<li><a href="' + burl(k) + '" target="_blank" rel="noopener">' + b[0] + '</a><span>' + b[2] + '</span></li>'; }
     var h = '<h3>Worth setting alerts on</h3><p>Start with these. Save a search on each and turn on daily email alerts, so new roles come to you.</p><ul>' + sg.main.map(li).join("") + '</ul>';
     if(sg.extra.length) h += '<h4>For ' + esc(state.area.toLowerCase()) + '</h4><ul>' + sg.extra.map(li).join("") + '</ul>';
     box.innerHTML = h; box.hidden = false;
@@ -957,7 +965,7 @@ footer .legal strong{color:var(--ink);font-weight:500}
     ol.innerHTML = "";
     var total = last;
     steps.forEach(function(st, i){
-      if(i === 0) return;
+      if(i === 0 || (i === last && maxReached < last)) return; // the Done bar appears once you have finished
       var li = document.createElement("li");
       var b = document.createElement("button");
       b.type = "button";
@@ -1000,6 +1008,7 @@ footer .legal strong{color:var(--ink);font-weight:500}
     next.hidden = cur === last;
     next.textContent = cur === 0 ? (maxReached > 0 ? "Carry on where I left off" : "Start setup") : (cur === last - 1 ? "Finish" : "Continue");
     document.getElementById("count").textContent = "";
+    document.getElementById("reset").hidden = !(maxReached > 0 && (cur === 0 || cur === last));
     if(cur === last) finish();
     var c = steps[cur].querySelector(".cheer");
     if(c) c.textContent = cheer(cur);
@@ -1013,7 +1022,7 @@ footer .legal strong{color:var(--ink);font-weight:500}
   function cheer(i){
     var nm = v(state.name);
     var lanes = [state.lane1, state.lane2, state.lane3].map(v).filter(Boolean).length;
-    if(i === 1) return "Six short sections. Skip anything you're unsure of and come back to it.";
+    if(i === 1) return "Five short sections. Skip anything you're unsure of and come back to it.";
     if(i === 2) return v(state.proof) ? "Thanks" + (nm ? ", " + nm : "") + ". Results like those are exactly what recruiters look for." : "Thanks" + (nm ? ", " + nm : "") + ". That's the groundwork done.";
     if(i === 3) return lanes ? "Good. Clear targets make every scan sharper." : "";
     if(i === 4) return "Rules like these save hours of reading adverts that were never right for you.";
@@ -1021,32 +1030,47 @@ footer .legal strong{color:var(--ink);font-weight:500}
     return "";
   }
   function item(title, body, flag){ return { t:title, b:body, f:!!flag }; }
+  // The same wording as any-ai/instructions.md in the repository. Keep the two in step.
+  var INSTRUCTIONS = "ApplySteward™ instructions. © 2026 Yousef Serrag. All rights reserved. ApplySteward™. Personal use only. Copying, adapting, reselling or redistributing is not permitted without written permission.\n\nYou are my job-search aide, called ApplySteward. You help me decide which roles are worth my time, draft messages for me to send, and review how my search is going. You never apply for jobs, never send anything, and never invent facts about me or about a role.\n\nMy rules are in the attached file fit-rules.md. Read it before every task. If it is missing, ask me for it once.\n\n## Commands\n\n**scan**: I paste job-alert emails, job adverts or recruiter messages. For each role:\n1. Pull out the title, company, location and working pattern, pay (only if stated), source, closing date (only if stated) and link.\n2. Check my hard rules first (pay floor, locations, working pattern, contract types, lowest level, right to work, deal-breakers). A clear breach is Skip.\n3. Check my red flags. A red flag is Skip unless my rules say otherwise.\n4. Then give a verdict:\n   - Sendworthy: matches one of my roles, meets every hard rule, and I can show most of the core requirements.\n   - Not yet: plausible but missing information (pay not stated, unclear level) or one gap. Say exactly what would make it Sendworthy.\n   - Skip: breaks a hard rule, hits a red flag, or matches none of my roles.\n5. Never guess pay or seniority. Missing means missing.\n\nStart with one line: how many roles, how many Sendworthy. Then a table, Sendworthy first, with columns: Verdict, Role, Company, Location, Pay, Why (one line), Next action. Finish with a CSV block I can paste into my desk at applysteward.com/desk or a spreadsheet, using exactly these columns:\ndate_found,company,role,location,pay,source,link,verdict,reason,stage,next_action,next_action_due,contact,notes,date_applied,last_update\nSet stage to Found. Use YYYY-MM-DD dates. Leave unknown fields empty. I fill in date_applied when I apply and last_update when a stage changes.\n\n**draft**: I tell you who I'm writing to and why. Write a short message I will review and send myself: a recruiter enquiry (60 to 90 words), a note to a hiring manager (70 to 110), a referral request (60 to 100), or a follow-up (40 to 90). Use only results listed in my rules or that I tell you. If none fits, leave [one result relevant to this role] for me to fill in. Give a subject line for email. No \"I hope this finds you well\", \"excited to\", \"passionate\" or \"leverage\". Suggest a follow-up date: 7 working days after applying, then 14; thank-you notes within 24 hours of an interview.\n\n**review**: I paste my tracker. Count roles by stage, work out reply and interview rates where there are at least 5 in a stage, and look for patterns backed by at least 3 rows (source, job title, level, location). List overdue follow-ups. Reply with: what is working (only if something is), the main thing the numbers say, up to three specific changes for next week, and the overdue list. Never guess why a company said no.\n\nIf I just paste job adverts without a command, treat it as scan.\n\n## Tone and wellbeing\n\nPlain, calm and brief. British English unless my rules say otherwise. No exclamation marks.\n\nJob searching is draining, and I may be having a hard time. When something is genuinely going well, say so in one specific sentence. Never invent praise or use phrases like \"stay positive\". Treat rejection and silence as information about fit and timing, not about my worth.\n\nIf I say I'm struggling, low or hopeless, respond as a person first: acknowledge it plainly, don't push tasks, and mention that I can talk to someone I trust or a free helpline (Samaritans on 116 123 in the UK and Ireland; findahelpline.com elsewhere). If I mention harming myself, give that support before anything else.";
+  var ATTACH = "My rules are in the attached file fit-rules.md. Read it before every task. If it is missing, ask me for it once.";
+  var AI_URL = { "Claude":"https://claude.ai/new", "ChatGPT":"https://chatgpt.com/", "Gemini":"https://gemini.google.com/app", "Copilot":"https://copilot.microsoft.com/" };
+  function ai(){
+    var s = state.ai || "";
+    if(s.indexOf("Claude") === 0) return "Claude";
+    if(s === "Microsoft Copilot") return "Copilot";
+    if(s === "ChatGPT" || s === "Gemini") return s;
+    return "";
+  }
+  function link(name){ return '<a href="' + AI_URL[name] + '" target="_blank" rel="noopener">' + name + '</a>'; }
+  // One block holding the instructions and this person's rules, to paste into any AI chat.
+  function setup(){
+    return INSTRUCTIONS.replace(ATTACH, "My rules are at the end of this message, under MY RULES. Follow them for this whole conversation.")
+      + "\n\n=== MY RULES ===\n\n" + build()
+      + "\n\n=== END OF MY RULES ===\n\nReply with one short line to confirm you have read my rules, then wait. Next I will paste job alerts for you to scan.";
+  }
   function finish(){
     document.getElementById("done-name").textContent = v(state.name) ? ", " + v(state.name) : "";
-    var items = [];
-    var claude = state.ai === "Claude, paid plan" || state.ai === "Claude, free plan";
-    var other = ["ChatGPT","Gemini","Microsoft Copilot"].indexOf(state.ai) > -1;
-    var aiName = other ? (state.ai === "Microsoft Copilot" ? "Copilot" : state.ai) : "Claude";
-    items.push(item("Save your rules file", "Download it and keep it somewhere you'll find it. You'll give it to " + aiName + " in a moment."));
-    if(state.email && state.email !== "Gmail" && !other)
-      items.push(item("Set up a Gmail address for job alerts", "Create a free Gmail account, then forward alerts to it from your current inbox. Daily scans read alerts from Gmail.", true));
+    var items = [], name = ai(), other = name && name !== "Claude";
+    if(!name)
+      items.push(item("Open a free AI assistant", "Any of these will do, and the free plans are enough to start: " + link("ChatGPT") + ", " + link("Claude") + ", " + link("Gemini") + " or " + link("Copilot") + ". Pick whichever you find easiest to sign in to.", true));
+    items.push(item("Paste your setup into " + (name || "it"), "Click <b>Copy my setup</b> above, " + (name ? "open " + link(name) + ", " : "") + "start a new chat and paste. It holds the instructions and your rules in one piece, so there is nothing to install or upload."));
+    items.push(item("Run your first scan", "In the same chat, paste three or four recent job alerts or adverts. You'll get a verdict on each, and a table for your desk."));
+    items.push(item("Start your tracker", 'Open <a href="desk/">your desk</a>, click Start my tracker and paste in the table your AI gave you. You can also add a job by hand. No spreadsheet needed, though you can download it for Excel or Google Sheets any time.'));
     var names = boardNames();
     if(names.length){
-      var sg = suggest(), links = sg.main.concat(sg.extra).map(function(k){ return '<a href="' + B[k][1] + '" target="_blank" rel="noopener">' + B[k][0] + '</a>'; });
+      var sg = suggest(), links = sg.main.concat(sg.extra).map(function(k){ return '<a href="' + burl(k) + '" target="_blank" rel="noopener">' + B[k][0] + '</a>'; });
       items.push(item("Set up daily email alerts", "On " + links.join(", ").replace(/, ([^,]*)$/, " and $1") + ". Save one search per role you're aiming for, with your location and pay floor."));
     } else if((state.sources || []).length)
       items.push(item("Turn your searches into daily email alerts", "On " + (state.sources || []).filter(function(s){ return s !== "People I know"; }).join(", ").replace(/, ([^,]*)$/, " and $1") + ", save each search as an email alert so new roles reach your inbox."));
-    if(state.ai === "None yet")
-      items.push(item("Choose an AI assistant", "Any of the big ones will do. Claude runs everything, including automatic daily scans. ChatGPT, Gemini and Copilot work with our copy-and-paste guide. Free plans are enough to start.", true));
-    if(other){
-      items.push(item("Set up " + aiName, 'Follow the short <a href="https://github.com/yserrag/applysteward/tree/main/any-ai">guide for ' + aiName + '</a>: paste one block of instructions and add your rules file. About five minutes.'));
-    } else {
-      items.push(item("Add the skills and your rules", 'Follow the <a href="https://github.com/yserrag/applysteward#install-the-free-core">install steps</a>, then upload fit-rules.md to a Claude project so every chat can read it. Using another AI later? The <a href="https://github.com/yserrag/applysteward/tree/main/any-ai">any-AI guide</a> covers it.'));
-    }
-    items.push(item("Start your tracker", 'Open <a href="desk/">your desk</a> and click Start my tracker. After each scan, paste in the rows your AI gives you. No spreadsheet needed, though you can download it for Excel or Google Sheets any time.'));
     if(state.cv === "PDF only" || state.cv === "I need a new one")
       items.push(item(state.cv === "PDF only" ? "Make an editable copy of your CV" : "Start a master CV", "Keep one full, honest version in Word or Google Docs. Tailoring works from this copy and never adds things that aren't true.", true));
-    items.push(item("Run your first scan", other ? "In your " + aiName + " project, type scan and paste three or four recent job alerts. You'll get a verdict on each, and rows for your tracker." : "Open a chat, type /scan and paste three or four recent job alerts. You'll get a verdict on each, and rows for your tracker."));
+    items.push(item("Keep your rules file", "Download fit-rules.md and keep it somewhere you'll find it. It is your backup. Come back here any time to change your answers and copy a fresh setup."));
+    if(other)
+      items.push(item("Optional: save it in " + name, 'So you don\'t paste your setup into every new chat, the <a href="https://github.com/yserrag/applysteward/tree/main/any-ai">short guide for ' + name + '</a> shows how to save it once.'));
+    else if(name === "Claude")
+      items.push(item("Optional: save it in Claude", 'The <a href="https://github.com/yserrag/applysteward#install-the-free-core">install steps</a> add ApplySteward to Claude as skills, with your rules in a project, so every chat already knows them.'));
+    if(state.ai === "Claude, paid plan" && state.email && state.email !== "Gmail")
+      items.push(item("Optional: a Gmail address for job alerts", "Automatic daily scans read alerts from Gmail. If you want those later, create a free Gmail account and forward your alerts to it from your current inbox.", true));
     var ol = document.getElementById("todo");
     ol.innerHTML = items.map(function(x){ return '<li' + (x.f ? ' class="flag"' : "") + '><div><h3>' + x.t + "</h3><p>" + x.b + "</p></div></li>"; }).join("");
   }
@@ -1068,11 +1092,17 @@ footer .legal strong{color:var(--ink);font-weight:500}
     setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1000);
     toast("Downloaded fit-rules.md");
   });
-  document.getElementById("copy").addEventListener("click", function(){
-    var txt = build();
-    var done = function(){ toast("Copied to clipboard"); };
+  function copyText(txt, said){
+    var done = function(){ toast(said); };
     if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(done, fallback); else fallback();
-    function fallback(){ var ta = document.createElement("textarea"); ta.value = txt; document.body.appendChild(ta); ta.select(); try{ document.execCommand("copy"); done(); }catch(e){ toast("Select the text in the preview to copy it"); } ta.remove(); }
+    function fallback(){ var ta = document.createElement("textarea"); ta.value = txt; document.body.appendChild(ta); ta.select(); try{ document.execCommand("copy"); done(); }catch(e){ toast("Copying didn't work here. Download the file instead."); } ta.remove(); }
+  }
+  document.getElementById("copy").addEventListener("click", function(){ copyText(build(), "Rules copied"); });
+  document.getElementById("copy-setup").addEventListener("click", function(){ copyText(setup(), "Setup copied. Now paste it into your AI."); });
+  document.getElementById("reset").addEventListener("click", function(){
+    if(!window.confirm("Clear your answers from this device? Download your rules file first if you want to keep it.")) return;
+    try{ localStorage.removeItem(KEY); }catch(e){}
+    location.reload();
   });
 
   load(); bind(); nudges(); renderBoards(); renderSheet();

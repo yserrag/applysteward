@@ -59,9 +59,12 @@ flowchart LR
 
 ## Requirements
 
+To start, you only need an AI assistant. Claude, ChatGPT, Gemini and Microsoft Copilot all work, and free plans are enough. Your tracker lives on [your desk](https://applysteward.com/desk/) in your browser, so no spreadsheet is needed.
+
+For the automatic daily scan and morning brief (Pro), you also need:
+
 - A paid Claude plan (scheduled tasks and connectors need one)
 - A Gmail account for job alerts (other providers can forward alerts to Gmail)
-- Google Sheets for the tracker
 - Optional: a free Slack workspace for the morning brief
 
 Feature availability on AI plans changes often. The setup guide lists what to check before you start.
@@ -92,14 +95,18 @@ Link: _coming soon_
 
 ## Install the free core
 
+### Simplest: nothing to install
+
+Finish the setup wizard at [applysteward.com](https://applysteward.com) and click **Copy my setup**. Paste it into a new chat in Claude, ChatGPT, Gemini or Copilot, then paste a few job alerts. That is the whole setup. The options below save it permanently, so you don't paste it into each new chat.
+
 ### Option A: claude.ai (web or desktop)
 
 1. Create your fit rules with the setup wizard at [applysteward.com](https://applysteward.com).
-2. Download the latest release zip from the Releases page.
+2. Download this repository: on its GitHub page, click the green **Code** button, then **Download ZIP**, and unzip it.
 3. In Claude, open the skills settings and upload each folder inside `skills/`.
 4. Create a Claude project and add your `fit-rules.md` to it.
 5. Open [your desk](https://applysteward.com/desk/) and click **Start my tracker** (or import `templates/tracker.csv` into a spreadsheet if you prefer).
-6. In a chat inside that project, type `/scan` and paste a few job-alert emails, then paste the rows it gives you into your desk.
+6. In a chat inside that project, type `/scan` and paste a few job-alert emails, then paste the table or the rows it gives you into your desk.
 
 ### Option B: Claude Code
 
