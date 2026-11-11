@@ -18,10 +18,9 @@
 <meta property="og:image" content="https://applysteward.com/og.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%276%27 fill=%27%231F5C47%27/%3E%3Crect x=%277%27 y=%278%27 width=%2718%27 height=%274%27 rx=%272%27 fill=%27%23fff%27/%3E%3Crect x=%277%27 y=%2714%27 width=%2713%27 height=%274%27 rx=%272%27 fill=%27%23E2B762%27/%3E%3Crect x=%277%27 y=%2720%27 width=%278%27 height=%274%27 rx=%272%27 fill=%27%23B3B7B2%27/%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="preload" href="/fonts/atkinson-hyperlegible-next.woff2" as="font" type="font/woff2" crossorigin>
 <style>
+@font-face{font-family:"Atkinson Hyperlegible Next";font-style:normal;font-weight:200 800;font-display:swap;src:url("/fonts/atkinson-hyperlegible-next.woff2") format("woff2")}
 :root{
   --paper:#EEF0EA; --ink:#1C2621; --muted:#58625B; --line:#D2D7CD; --field:#FFFFFF;
   --green:#1F5C47; --green-soft:#E1EBE5; --btn:#1F5C47; --btn-ink:#FFFFFF;
@@ -201,7 +200,7 @@ footer strong{color:var(--ink);font-weight:500}
   </form>
   <p class="err" id="err" hidden></p>
   <p class="ok" id="ok" hidden></p>
-  <p class="note" id="note">Your list is kept on this device only. Press Save a copy now and then, so you have a backup.</p>
+  <p class="note" id="note">Your list is kept on this device only. Press Save a copy now and then, so you have a backup. On a shared or public computer, press Clear this device before you leave.</p>
 
   <div class="board" id="board" hidden>
     <section class="sheet" aria-labelledby="today-h">
@@ -231,7 +230,7 @@ footer strong{color:var(--ink);font-weight:500}
 <footer>
   <p>Runs entirely in your browser. ApplySteward is an independent project and is not affiliated with or endorsed by Anthropic.</p>
   <p><strong>© 2026 Yousef Serrag. All rights reserved.</strong> ApplySteward™, this site, its design, wording, skills and instructions are protected by copyright. You may use them for your own job search. Copying, adapting, reselling or redistributing any part of ApplySteward, or using it in a commercial product or service, is not permitted without written permission.</p>
-  <p>Contact: <a href="mailto:yserrag@yahoo.com">yserrag@yahoo.com</a></p>
+  <p><a href="/privacy/">Privacy</a> · Contact: <a href="mailto:yserrag@yahoo.com">yserrag@yahoo.com</a></p>
 </footer>
 
 <script>
@@ -333,7 +332,7 @@ footer strong{color:var(--ink);font-weight:500}
 
   function render(){
     $("start").hidden = true; $("tools").hidden = false; $("board").hidden = false; $("roles").hidden = false;
-    $("note").textContent = demo ? "You're looking at example data. Start your own tracker whenever you're ready." : "Your list is kept on this device only. Press Save a copy now and then, so you have a backup.";
+    $("note").textContent = demo ? "You're looking at example data. Start your own tracker whenever you're ready." : "Your list is kept on this device only. Press Save a copy now and then, so you have a backup. On a shared or public computer, press Clear this device before you leave.";
     $("download").hidden = demo; $("hand-btn").hidden = demo;
     $("add-btn").textContent = demo ? "Start my own tracker" : "Add jobs from my AI";
     var a = actions(), t = today();

@@ -1,0 +1,212 @@
+<!doctype html>
+<!-- © 2026 Yousef Serrag. All rights reserved. ApplySteward™. -->
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy: what happens to your information | ApplySteward</title>
+<meta name="description" content="ApplySteward has no accounts and no database. What you type stays on your own device. This page explains, in plain words, what is and isn't shared.">
+<meta name="author" content="Yousef Serrag">
+<link rel="canonical" href="https://applysteward.com/privacy/">
+<meta name="theme-color" content="#1F5C47">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%276%27 fill=%27%231F5C47%27/%3E%3Crect x=%277%27 y=%278%27 width=%2718%27 height=%274%27 rx=%272%27 fill=%27%23fff%27/%3E%3Crect x=%277%27 y=%2714%27 width=%2713%27 height=%274%27 rx=%272%27 fill=%27%23E2B762%27/%3E%3Crect x=%277%27 y=%2720%27 width=%278%27 height=%274%27 rx=%272%27 fill=%27%23B3B7B2%27/%3E%3C/svg%3E">
+<link rel="preload" href="/fonts/atkinson-hyperlegible-next.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:"Atkinson Hyperlegible Next";font-style:normal;font-weight:200 800;font-display:swap;src:url("/fonts/atkinson-hyperlegible-next.woff2") format("woff2")}
+:root{
+  --paper:#EEF0EA; --ink:#1C2621; --muted:#58625B; --line:#D2D7CD; --field:#FFFFFF;
+  --green:#1F5C47; --green-soft:#E1EBE5; --btn:#1F5C47; --btn-ink:#FFFFFF;
+  --amber:#8C5F0E; --amber-soft:#F5ECD8; --focus:#2B6CB0;
+  --s-bg:#FBFAF6; --s-ink:#1C2621; --s-muted:#6A726C; --s-line:#E3E1D8;
+  --s-green:#1F5C47; --s-green-soft:#E1EBE5; --s-amber:#8C5F0E; --s-amber-soft:#F6EBD3; --s-red:#A23A2E; --s-red-soft:#F8E3DF;
+  --bar:#1F5C47; --track:#E6E5DE;
+  --sans:"Atkinson Hyperlegible Next","Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#26292D; --ink:#ECEAE4; --muted:#AAAEA9; --line:#3D4247; --field:#2E3237;
+  --green:#93CDB3; --green-soft:#2F3E37; --btn:#2F7A5F; --btn-ink:#FFFFFF;
+  --amber:#E2B762; --amber-soft:#3A3528; --focus:#8DB8F2;}}
+:root[data-theme="dark"]{--paper:#26292D; --ink:#ECEAE4; --muted:#AAAEA9; --line:#3D4247; --field:#2E3237;
+  --green:#93CDB3; --green-soft:#2F3E37; --btn:#2F7A5F; --btn-ink:#FFFFFF; --amber:#E2B762; --amber-soft:#3A3528; --focus:#8DB8F2;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.55}
+a{color:var(--green)}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.top{display:flex;justify-content:space-between;align-items:center;max-width:1200px;margin:0 auto;padding:20px 24px}
+.brand{font-weight:700;font-size:19px;color:var(--ink);text-decoration:none}
+.brand span{color:var(--muted);font-weight:400;margin-left:8px;font-size:15px}
+.top nav a{color:var(--muted);font-size:15px;margin-left:18px}
+.top nav a[aria-current]{color:var(--ink);font-weight:500;text-decoration:none}
+main{max-width:1200px;margin:0 auto;padding:8px 24px 56px}
+h1{font-size:clamp(30px,4vw,42px);line-height:1.1;letter-spacing:-0.025em;margin:0 0 10px}
+.lede{font-size:18px;color:var(--muted);max-width:60ch;margin:0 0 24px}
+.btn{font:inherit;font-size:16px;font-weight:700;border-radius:6px;padding:11px 18px;cursor:pointer;border:1px solid transparent}
+.btn-primary{background:var(--btn);color:var(--btn-ink)}
+.btn-quiet{background:none;border-color:var(--line);color:var(--ink)}
+.btn-link{background:none;border:0;color:var(--muted);text-decoration:underline;padding:11px 6px;font:inherit;font-size:15px;cursor:pointer}
+#file{position:absolute;width:1px;height:1px;opacity:0}
+.start{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;max-width:900px}
+.start[hidden]{display:none}
+.path{border:1px solid var(--line);border-radius:6px;padding:20px 22px;background:var(--field)}
+.path h2{font-size:19px;margin:0 0 6px}
+.path p{margin:0 0 16px;color:var(--muted);font-size:15.5px}
+.try{grid-column:1/-1;margin:0}
+.tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.tools[hidden]{display:none}
+label.btn-link{display:inline-block}
+.ok{color:var(--green);font-size:15px;margin:10px 0 0;font-weight:500}
+.ok[hidden]{display:none}
+td select,td input{font:inherit;font-size:14px;color:var(--ink);background:var(--field);border:1px solid var(--line);border-radius:5px;padding:4px 6px;max-width:100%}
+td input[type=text]{width:100%;min-width:150px}
+@media (max-width:900px){.start{grid-template-columns:minmax(0,1fr)}}
+.paste{margin:14px 0 0;max-width:760px}
+.paste[hidden]{display:none}
+.paste textarea{width:100%;min-height:140px;font:inherit;font-size:14px;border:1px solid var(--line);border-radius:6px;padding:10px 12px;background:var(--field);color:var(--ink)}
+.paste p{font-size:14px;color:var(--muted);margin:6px 0 10px}
+.note{font-size:14px;color:var(--muted);margin:12px 0 0}
+.hand{margin:14px 0 0;max-width:760px}
+.hand[hidden]{display:none}
+.hand p{font-size:14px;color:var(--muted);margin:6px 0 10px}
+.hand-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px 16px}
+.hand label{display:grid;gap:4px;font-size:14.5px;font-weight:500}
+.hand input,.hand select{font:inherit;font-size:16px;color:var(--ink);background:var(--field);border:1px solid var(--line);border-radius:6px;padding:9px 10px;width:100%}
+@media (max-width:600px){.hand-grid{grid-template-columns:minmax(0,1fr)}}
+.rm{background:none;border:0;color:var(--muted);text-decoration:underline;font:inherit;font-size:13.5px;cursor:pointer;padding:4px 0}
+.err{color:#B3261E;font-size:15px;margin:10px 0 0}
+.err[hidden]{display:none}
+.empty{max-width:760px}
+
+.board{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:32px;align-items:start;margin-top:8px}
+.board[hidden]{display:none}
+.sheet{background:var(--s-bg);color:var(--s-ink);border-radius:3px;padding:22px 24px;
+  box-shadow:0 0 0 1px rgba(28,38,33,.08),0 2px 4px rgba(28,38,33,.06),0 24px 48px -24px rgba(20,30,25,.35)}
+.sheet h2{font-size:21px;letter-spacing:-0.01em;margin:0 0 4px}
+.sheet .sub{font-size:14.5px;color:var(--s-muted);margin:0 0 16px}
+.today{list-style:none;margin:0;padding:0;counter-reset:t}
+.today li{counter-increment:t;display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:12px;align-items:start;padding:12px 0;border-top:1px solid var(--s-line)}
+.today li::before{content:counter(t);width:26px;height:26px;border-radius:50%;border:1.5px solid var(--s-ink);display:grid;place-items:center;font-size:13px;font-weight:700;margin-top:1px}
+.today b{display:block;font-size:16px;line-height:1.35}
+.today span{display:block;font-size:14px;color:var(--s-muted)}
+.pill{font-size:12.5px;font-weight:700;border-radius:4px;padding:3px 8px;white-space:nowrap}
+.pill.due{background:var(--s-red-soft);color:var(--s-red)}
+.pill.apply{background:var(--s-green-soft);color:var(--s-green)}
+.pill.follow{background:var(--s-amber-soft);color:var(--s-amber)}
+.more-actions{margin:10px 0 0;font-size:14px}
+.more-actions summary{cursor:pointer;color:var(--s-muted)}
+.cheer{margin:16px 0 0;padding-top:14px;border-top:1px solid var(--s-line);font-size:15px;color:var(--s-green);font-weight:500}
+.cheer:empty{display:none}
+
+.side h2{font-size:19px;margin:0 0 4px}
+.side .sub{font-size:14.5px;color:var(--muted);margin:0 0 14px}
+.week-line{font-size:16px;margin:0 0 26px;max-width:42ch}
+.week-line b{font-weight:700}
+.pipe{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.pipe li{display:grid;grid-template-columns:96px minmax(0,1fr) 36px;gap:10px;align-items:center;font-size:15px}
+.pipe .lab{color:var(--muted)}
+.pipe .num{text-align:right;font-weight:700}
+.track{height:12px;background:var(--line);border-radius:0 4px 4px 0;position:relative}
+.fill{height:12px;background:var(--green);border-radius:0 4px 4px 0;min-width:2px}
+.pipe li.zero .fill{background:transparent}
+.closed{font-size:14px;color:var(--muted);margin:12px 0 0}
+
+.roles{margin-top:44px}
+.roles h2{font-size:22px;margin:0 0 10px}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}
+.filters button{font:inherit;font-size:14.5px;border:1px solid var(--line);background:var(--field);color:var(--ink);border-radius:6px;padding:6px 12px;cursor:pointer}
+.filters button[aria-pressed="true"]{border-color:var(--green);background:var(--green-soft);color:var(--green);font-weight:500}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--field)}
+table{border-collapse:collapse;width:100%;font-size:14.5px;min-width:820px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:700;color:var(--muted);font-size:13.5px;background:var(--paper)}
+tr:last-child td{border-bottom:0}
+td a{font-weight:500}
+.v{font-weight:700}
+.v-send{color:var(--green)} .v-not{color:var(--amber)} .v-skip{color:var(--muted)}
+.overdue{color:#B3261E;font-weight:500}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .overdue,:root:not([data-theme="light"]) .err{color:#F2A49E}}
+
+footer{max-width:1200px;margin:0 auto;padding:24px;color:var(--muted);font-size:14px;border-top:1px solid var(--line)}
+footer p{margin:4px 0;max-width:80ch}
+footer strong{color:var(--ink);font-weight:500}
+@media (max-width:900px){
+  .top{padding:16px}.top nav a{margin-left:12px}
+  main{padding:4px 16px 40px}
+  .board{grid-template-columns:minmax(0,1fr)}
+  .today li{grid-template-columns:30px minmax(0,1fr)}
+  .today .pill{grid-column:2;justify-self:start}
+  .brand span{display:none}
+  footer{padding:20px 16px}
+}
+
+.doc{max-width:68ch}
+.doc h2{font-size:21px;margin:34px 0 8px}
+.doc p,.doc li{font-size:17px}
+.doc ul{padding-left:20px;margin:8px 0}
+.doc li{margin:6px 0}
+.short{background:var(--field);border:1px solid var(--line);border-radius:6px;padding:18px 22px;margin:0 0 8px}
+.short p{margin:0 0 8px}.short p:last-child{margin:0}
+.updated{color:var(--muted);font-size:14.5px;margin-top:36px}
+</style>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="/">ApplySteward™<span>AI job-search aide</span></a>
+  <nav><a href="/">Setup</a><a href="/desk/">Your desk</a></nav>
+</header>
+
+<main class="doc">
+  <h1>Privacy</h1>
+  <p class="lede">What happens to your information, in plain words.</p>
+
+  <div class="short">
+    <p><strong>The short version.</strong> ApplySteward has no accounts and no database. What you type here is kept on your own device. It is never sent to us, and nobody else can see it.</p>
+  </div>
+
+  <h2>What stays on your device</h2>
+  <p>Your answers to the setup questions and the list of jobs on your desk are saved inside the web browser you are using, on the phone or computer in front of you. That is how the site remembers them when you come back.</p>
+  <ul>
+    <li>They are not sent to ApplySteward or to anyone else.</li>
+    <li>We cannot see them, and we could not recover them for you if they were lost.</li>
+    <li>They do not follow you to another device. Press <b>Save a copy</b> if you want a backup.</li>
+  </ul>
+
+  <h2>On a shared or public computer</h2>
+  <p>Because your answers stay in the browser, the next person to use the same computer and browser could open this site and see them. Before you leave a library, work or family computer, press <b>Clear my answers</b> on the setup page and <b>Clear this device</b> on your desk.</p>
+
+  <h2>What you share with your AI helper</h2>
+  <p>ApplySteward works by having you copy text and paste it into an AI helper such as ChatGPT, Claude, Gemini or Copilot. Whatever you paste there, including your rules and any job adverts, is handled by that company under its own privacy terms, not ours. Other people cannot see it, but it is worth knowing where it goes.</p>
+  <ul>
+    <li>Only paste what you are comfortable sharing with that company.</li>
+    <li>You do not need to include your address, date of birth or any ID numbers, and we suggest you don't.</li>
+  </ul>
+
+  <h2>What we do not do</h2>
+  <ul>
+    <li>No accounts, passwords or sign-up.</li>
+    <li>No cookies.</li>
+    <li>No advertising, tracking or visitor statistics.</li>
+    <li>No selling or sharing of information. We hold none to sell.</li>
+  </ul>
+
+  <h2>What the website's host can see</h2>
+  <p>Like every website, this one is delivered by a hosting company. Ours is GitHub. When your browser loads a page, GitHub's computers receive the usual technical details of the visit, such as your internet (IP) address and the time, and GitHub may keep them for security. This never includes anything you type on the site.</p>
+
+  <h2>Links to other sites</h2>
+  <p>The job sites and AI helpers we link to are run by other companies. Once you follow a link, their own privacy terms apply.</p>
+
+  <h2>If you email us</h2>
+  <p>If you write to <a href="mailto:yserrag@yahoo.com">yserrag@yahoo.com</a>, we will have your email address and whatever you choose to tell us, and we use them only to reply. Ask at any time and we will delete the conversation.</p>
+
+  <h2>If this changes</h2>
+  <p>If ApplySteward ever adds a feature that needs your information to leave your device, this page will say so first, and the feature will ask before it does anything.</p>
+
+  <p class="updated">Last updated 11 November 2026. ApplySteward is run by Yousef Serrag in the United Kingdom.</p>
+</main>
+
+<footer>
+  <p>ApplySteward is an independent project and is not affiliated with or endorsed by Anthropic.</p>
+  <p><strong>© 2026 Yousef Serrag. All rights reserved.</strong></p>
+  <p>Contact: <a href="mailto:yserrag@yahoo.com">yserrag@yahoo.com</a></p>
+</footer>
+</body>
+</html>
