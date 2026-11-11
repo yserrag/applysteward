@@ -328,6 +328,7 @@ footer .legal strong{color:var(--ink);font-weight:500}
 }
 .doc .lead-with{margin:0 0 4px}
 </style>
+<script src="/count.js" defer></script>
 </head>
 <body>
 
@@ -740,6 +741,7 @@ footer .legal strong{color:var(--ink);font-weight:500}
 <script>
 (function(){
   var KEY = "applysteward.setup.v1";
+  function count(n){ if(window.asCount) window.asCount(n); }
   var steps = Array.prototype.slice.call(document.querySelectorAll(".step"));
   var last = steps.length - 1;
   var cur = 0, maxReached = 0;
@@ -1023,7 +1025,7 @@ footer .legal strong{color:var(--ink);font-weight:500}
   function go(i){
     steps[cur].classList.remove("on");
     cur = Math.max(0, Math.min(last, i));
-    if(cur > maxReached) maxReached = cur;
+    if(cur > maxReached){ maxReached = cur; count(cur === last ? "setup-finished" : "setup-step-" + cur); }
     steps[cur].classList.add("on");
     var next = document.getElementById("next"), back = document.getElementById("back");
     back.hidden = cur === 0;
@@ -1114,18 +1116,19 @@ footer .legal strong{color:var(--ink);font-weight:500}
     a.href = URL.createObjectURL(blob); a.download = "fit-rules.md";
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1000);
-    toast("Saved to your downloads as fit-rules.md");
+    toast("Saved to your downloads as fit-rules.md"); count("rules-saved");
   });
   function copyText(txt, said){
     var done = function(){ toast(said); };
     if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(done, fallback); else fallback();
     function fallback(){ var ta = document.createElement("textarea"); ta.value = txt; document.body.appendChild(ta); ta.select(); try{ document.execCommand("copy"); done(); }catch(e){ toast("Copying didn't work here. Press Save a copy instead."); } ta.remove(); }
   }
-  document.getElementById("copy").addEventListener("click", function(){ copyText(build(), "Your rules are copied"); });
-  document.getElementById("copy-setup").addEventListener("click", function(){ copyText(setup(), "Copied. Now paste it into your AI helper."); });
+  document.getElementById("copy").addEventListener("click", function(){ copyText(build(), "Your rules are copied"); count("rules-copied"); });
+  document.getElementById("copy-setup").addEventListener("click", function(){ copyText(setup(), "Copied. Now paste it into your AI helper."); count("setup-copied"); });
   document.getElementById("reset").addEventListener("click", function(){
     if(!window.confirm("Clear your answers from this device? Press Save a copy first if you want to keep them.")) return;
     try{ localStorage.removeItem(KEY); }catch(e){}
+    count("answers-cleared");
     location.reload();
   });
 
@@ -1133,6 +1136,8 @@ footer .legal strong{color:var(--ink);font-weight:500}
   var tm = document.getElementById("tray-mobile"); tm.appendChild(document.getElementById("tray").cloneNode(true)); tm.firstChild.removeAttribute("id"); tm.firstChild.className = "sheet panel tray";
   document.querySelectorAll(".tray").forEach(function(t){ t.classList.add("play"); });
   go(0);
+  // Came back with answers already saved on this device: tells us people return. Sends no answers.
+  if(maxReached > 0) window.addEventListener("load", function(){ setTimeout(function(){ count("setup-returned"); }, 1500); });
 })();
 </script>
 </body>

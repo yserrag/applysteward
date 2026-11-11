@@ -170,6 +170,7 @@ footer strong{color:var(--ink);font-weight:500}
   footer{padding:20px 16px}
 }
 </style>
+<script src="/count.js" defer></script>
 </head>
 <body>
 <header class="top">
@@ -294,6 +295,7 @@ footer strong{color:var(--ink);font-weight:500}
   try{ var sa = parseInt(localStorage.getItem(AIMKEY), 10); if(sa > 0) aim = sa; }catch(e){}
   var ANS = [["summary","Short summary (2 to 3 lines)"],["results","Key results, one per line"],["rtw","Right to work"],["notice","Notice period"],["salary","Salary expectation"],["where","Where and how you want to work"],["links","LinkedIn or portfolio link"]];
   var $ = function(id){ return document.getElementById(id); };
+  function count(n){ if(window.asCount) window.asCount(n); }
 
   var ALIAS = { due:"next_action_due", due_date:"next_action_due", next_step:"next_action", action:"next_action",
     title:"role", job_title:"role", job:"role", position:"role", employer:"company", organisation:"company", organization:"company",
@@ -476,8 +478,8 @@ footer strong{color:var(--ink);font-weight:500}
 
   function exitDemo(){ demo = false; if(location.hash === "#demo") history.replaceState(null, "", location.pathname); }
 
-  $("new").addEventListener("click", function(){ exitDemo(); data = []; save(); render(); openPaste("add"); msg("err"); });
-  $("sample").addEventListener("click", sample);
+  $("new").addEventListener("click", function(){ exitDemo(); data = []; save(); render(); openPaste("add"); msg("err"); count("desk-started"); });
+  $("sample").addEventListener("click", function(){ sample(); count("desk-example-viewed"); });
   $("paste-btn").addEventListener("click", function(){ openPaste("replace"); });
   $("add-btn").addEventListener("click", function(){ if(demo){ exitDemo(); data = []; save(); render(); } openPaste("add"); });
   $("paste-cancel").addEventListener("click", function(){ $("paste").hidden = true; msg("err"); });
@@ -514,18 +516,18 @@ footer strong{color:var(--ink);font-weight:500}
     if(!r.role || !r.company) return;
     if(/^applied$/i.test(st)) r.date_applied = iso(today());
     if(!data) data = [];
-    msg("ok", addRows([r])); msg("err"); save(); $("hand").hidden = true; render();
+    msg("ok", addRows([r])); msg("err"); save(); $("hand").hidden = true; render(); count("job-added-by-hand");
   });
   $("paste-go").addEventListener("click", function(){
     try{
       var rows = parse($("paste-text").value, pasteMode === "add");
-      if(pasteMode === "add"){ if(!data) data = []; msg("ok", addRows(rows)); }
-      else { exitDemo(); data = rows; msg("ok", "Loaded " + rows.length + " job" + (rows.length === 1 ? "" : "s") + "."); }
+      if(pasteMode === "add"){ if(!data) data = []; msg("ok", addRows(rows)); count("jobs-added-from-ai"); }
+      else { exitDemo(); data = rows; msg("ok", "Loaded " + rows.length + " job" + (rows.length === 1 ? "" : "s") + "."); count("desk-list-pasted"); }
       save(); msg("err"); $("paste").hidden = true; render();
-    }catch(e){ msg("err", e.message); }
+    }catch(e){ msg("err", e.message); count("desk-paste-failed"); }
   });
   $("file").addEventListener("change", function(e){ var f = e.target.files[0]; if(!f) return; var rd = new FileReader();
-    rd.onload = function(){ try{ exitDemo(); data = parse(String(rd.result), false); save(); msg("err"); msg("ok", "Loaded " + data.length + " job" + (data.length === 1 ? "" : "s") + " from " + f.name + "."); render(); }catch(err){ msg("err", err.message); } };
+    rd.onload = function(){ try{ exitDemo(); data = parse(String(rd.result), false); save(); msg("err"); msg("ok", "Loaded " + data.length + " job" + (data.length === 1 ? "" : "s") + " from " + f.name + "."); render(); count("desk-file-opened"); }catch(err){ msg("err", err.message); } };
     rd.readAsText(f); e.target.value = ""; });
   ["file-label","file-label2"].forEach(function(id){ $(id).addEventListener("keydown", function(e){ if(e.key === "Enter" || e.key === " "){ e.preventDefault(); $("file").click(); } }); });
   $("download").addEventListener("click", function(){
@@ -534,7 +536,7 @@ footer strong{color:var(--ink);font-weight:500}
     var csv = [cols.join(",")].concat(data.map(function(r){ return cols.map(function(c){ return q(r[c]); }).join(","); })).join("\n");
     var a = document.createElement("a"); a.href = URL.createObjectURL(new Blob(["﻿" + csv + "\n"], {type:"text/csv"}));
     a.download = "applysteward-tracker-" + iso(today()) + ".csv"; document.body.appendChild(a); a.click(); a.remove();
-    msg("ok", "Saved to your downloads. It opens in Excel or Google Sheets.");
+    msg("ok", "Saved to your downloads. It opens in Excel or Google Sheets."); count("desk-saved");
   });
   $("clear").addEventListener("click", function(){
     if(!demo && data && data.length && !window.confirm("Remove your list from this device? Press Save a copy first if you want to keep it.")) return;
@@ -547,17 +549,17 @@ footer strong{color:var(--ink);font-weight:500}
     var b = e.target.closest("[data-rm]"); if(!b) return;
     var i = +b.getAttribute("data-rm"), r = data[i]; if(!r) return;
     if(!window.confirm("Remove " + (r.role || "this role") + (r.company ? " at " + r.company : "") + " from your desk?")) return;
-    data.splice(i, 1); save(); msg("ok", "Removed."); render();
+    data.splice(i, 1); save(); msg("ok", "Removed."); render(); count("job-removed");
   });
   $("rows").addEventListener("change", function(e){
     var el = e.target, i = +el.getAttribute("data-i"), k = el.getAttribute("data-k"); if(isNaN(i) || !k) return;
     var r = data[i];
     if(k === "stage" && /^applied$/i.test(el.value) && !/^applied$/i.test(r.stage || "")){
       if(/skip|not/i.test(r.verdict || "")){ el.value = r.stage || "Found"; openGate(i); return; }
-      markApplied(r); save(); render(); afterApplied(); return;
+      markApplied(r); save(); render(); afterApplied(); count("job-stage-changed"); return;
     }
     r[k] = el.value;
-    if(k === "stage") r.last_update = iso(today());
+    if(k === "stage"){ count("job-stage-changed"); r.last_update = iso(today()); }
     save(); render();
   });
   $("rows").addEventListener("click", function(e){ var b = e.target.closest("[data-pack]"); if(b) openPack(+b.getAttribute("data-pack")); });
@@ -664,7 +666,9 @@ footer strong{color:var(--ink);font-weight:500}
 
   var saved = null;
   try{ saved = localStorage.getItem(KEY); if(saved) saved = JSON.parse(saved); else { var old = localStorage.getItem(OLDKEY); if(old) saved = parse(old, false); } }catch(e){ saved = null; }
-  if(location.hash === "#demo") sample(); else if(saved){ data = saved; render(); }
+  if(location.hash === "#demo") sample(); else if(saved){ data = saved; render();
+    // Came back with a list already saved on this device: tells us people return. Sends no job details.
+    if(saved.length) window.addEventListener("load", function(){ setTimeout(function(){ count("desk-returned"); }, 1500); }); }
 })();
 </script>
 </body>
