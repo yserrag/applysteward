@@ -161,13 +161,13 @@ footer strong{color:var(--ink);font-weight:500}
   <div class="start" id="start">
     <div class="path">
       <h2>New here?</h2>
-      <p>Start your tracker on this page. After each scan, paste the rows your AI gives you and they're added here. No spreadsheet needed.</p>
+      <p>Keep your list of jobs on this page. When your AI helper has sorted some jobs, paste in the table it gives you. You can also add a job yourself.</p>
       <button class="btn btn-primary" type="button" id="new">Start my tracker</button>
     </div>
     <div class="path">
-      <h2>Already keep a tracker?</h2>
-      <p>Open it from Google Sheets or Excel. In Sheets, use File, Download, Comma-separated values first.</p>
-      <label class="btn btn-quiet" for="file" tabindex="0" id="file-label">Open my tracker file</label>
+      <h2>Already keep a list in a spreadsheet?</h2>
+      <p>Open it here. In Google Sheets, first choose File, then Download, then Comma-separated values. In Excel, save it as CSV.</p>
+      <label class="btn btn-quiet" for="file" tabindex="0" id="file-label">Open my file</label>
       <button class="btn-link" type="button" id="paste-btn">or paste it</button>
     </div>
     <p class="try"><button class="btn-link" type="button" id="sample">Or try it with example data first</button></p>
@@ -175,9 +175,9 @@ footer strong{color:var(--ink);font-weight:500}
   <input type="file" id="file" accept=".csv,.tsv,.txt,text/csv">
 
   <div class="tools" id="tools" hidden>
-    <button class="btn btn-primary" type="button" id="add-btn">Add roles from a scan</button>
-    <button class="btn btn-quiet" type="button" id="hand-btn">Add a role by hand</button>
-    <button class="btn btn-quiet" type="button" id="download">Download my tracker</button>
+    <button class="btn btn-primary" type="button" id="add-btn">Add jobs from my AI</button>
+    <button class="btn btn-quiet" type="button" id="hand-btn">Add a job myself</button>
+    <button class="btn btn-quiet" type="button" id="download">Save a copy</button>
     <label class="btn-link" for="file" tabindex="0" id="file-label2">Open a different file</label>
     <button class="btn-link" type="button" id="clear">Clear this device</button>
   </div>
@@ -201,7 +201,7 @@ footer strong{color:var(--ink);font-weight:500}
   </form>
   <p class="err" id="err" hidden></p>
   <p class="ok" id="ok" hidden></p>
-  <p class="note" id="note">Everything stays in this browser on this device. Nothing is uploaded. Download a copy now and then as a backup.</p>
+  <p class="note" id="note">Your list is kept on this device only. Press Save a copy now and then, so you have a backup.</p>
 
   <div class="board" id="board" hidden>
     <section class="sheet" aria-labelledby="today-h">
@@ -222,9 +222,9 @@ footer strong{color:var(--ink);font-weight:500}
   </div>
 
   <section class="roles" id="roles" hidden aria-labelledby="roles-h">
-    <h2 id="roles-h">All roles</h2>
+    <h2 id="roles-h">All your jobs</h2>
     <div class="filters" id="filters" role="group" aria-label="Filter roles"></div>
-    <div class="tablewrap"><table><thead><tr><th>Role</th><th>Company</th><th>Verdict</th><th>Stage</th><th>Next action</th><th>Due</th><th>Pay</th><th aria-label="Remove"></th></tr></thead><tbody id="rows"></tbody></table></div>
+    <div class="tablewrap"><table><thead><tr><th>Job</th><th>Company</th><th>Verdict</th><th>Where it stands</th><th>Next step</th><th>Due</th><th>Pay</th><th aria-label="Remove"></th></tr></thead><tbody id="rows"></tbody></table></div>
   </section>
 </main>
 
@@ -247,7 +247,7 @@ footer strong{color:var(--ink);font-weight:500}
   var ALIAS = { due:"next_action_due", due_date:"next_action_due", next_step:"next_action", action:"next_action",
     title:"role", job_title:"role", job:"role", position:"role", employer:"company", organisation:"company", organization:"company",
     salary:"pay", status:"stage", why:"reason", url:"link", found:"date_found", date:"date_found", applied:"date_applied" };
-  var NOTHING = "I couldn't find any roles in that. Paste the whole table your AI gave you, or the block that starts with date_found, including its top line of column names.";
+  var NOTHING = "I couldn't find any jobs in that. Go back to your AI chat, copy the whole table it gave you, including the top row of headings, and paste it here.";
 
   function splitCsv(text){
     var first = text.split(/\r?\n/).filter(function(l){ return l.trim() && !/^\s*`+/.test(l); })[0] || "";
@@ -278,17 +278,19 @@ footer strong{color:var(--ink);font-weight:500}
     var at = text.search(/(^|\n)[ \t]*date_found[ \t]*[,\t]/);
     var rows = at > -1 ? splitCsv(text.slice(at).replace(/^\n/, "")) : (splitPipes(text) || splitCsv(text));
     rows = rows.filter(function(r){ return r.some(function(x){ return x.trim() && !/^`+/.test(x.trim()); }); });
-    if(!rows.length) throw new Error("There's nothing to add yet. Paste the rows your AI gave you, including the top line of column names.");
+    if(!rows.length) throw new Error("There's nothing to add yet. Paste the table your AI helper gave you, including the top row of headings.");
     var norm = function(r){ return r.map(function(h){ h = h.replace(/\(.*?\)/g, "").trim().toLowerCase().replace(/[\s-]+/g, "_"); return ALIAS[h] || h; }); };
     var hi = -1;
     for(var k = 0; k < rows.length; k++){ var n = norm(rows[k]); if(n.indexOf("role") > -1 && n.indexOf("company") > -1){ hi = k; break; } }
     var head = hi > -1 ? norm(rows[hi]) : norm(rows[0]);
     var body = hi > -1 ? rows.slice(hi + 1) : rows.slice(1);
     if(hi < 0){
-      if(!allowHeaderless) throw new Error("This doesn't look like a tracker. It needs a top line of column names with at least Role and Company.");
+      if(!allowHeaderless) throw new Error("This doesn't look like a list of jobs. Its top row needs at least the headings Role and Company.");
       head = COLS; body = rows.filter(function(r){ return r.length >= COLS.length - 2; });
     }
-    var out = body.map(function(r){ var o = {}; head.forEach(function(h, j){ if(h && !(h in o)) o[h] = (r[j] || "").trim(); }); return o; })
+    // An AI may write a link as [words](address) or <address>: keep just the address.
+    var bare = function(l){ var m = /\((https?:\/\/[^)\s]+)\)/.exec(l) || /(https?:\/\/[^\s<>"]+)/.exec(l); return m ? m[1] : l; };
+    var out = body.map(function(r){ var o = {}; head.forEach(function(h, j){ if(h && !(h in o)) o[h] = (r[j] || "").trim(); }); if(o.link) o.link = bare(o.link); return o; })
       .filter(function(o){ return o.role || o.company; });
     if(!out.length) throw new Error(NOTHING);
     return out;
@@ -330,17 +332,17 @@ footer strong{color:var(--ink);font-weight:500}
 
   function render(){
     $("start").hidden = true; $("tools").hidden = false; $("board").hidden = false; $("roles").hidden = false;
-    $("note").textContent = demo ? "You're looking at example data. Start your own tracker whenever you're ready." : "Everything stays in this browser on this device. Nothing is uploaded. Download a copy now and then as a backup.";
+    $("note").textContent = demo ? "You're looking at example data. Start your own tracker whenever you're ready." : "Your list is kept on this device only. Press Save a copy now and then, so you have a backup.";
     $("download").hidden = demo; $("hand-btn").hidden = demo;
-    $("add-btn").textContent = demo ? "Start my own tracker" : "Add roles from a scan";
+    $("add-btn").textContent = demo ? "Start my own tracker" : "Add jobs from my AI";
     var a = actions(), t = today();
     if(!data.length){
       $("today-sub").textContent = "";
-      $("today").innerHTML = '<li><div><b>Add your first roles</b><span>Run a scan in your AI, then click "Add roles from a scan" and paste what it gives you. Or click "Add a role by hand" for a job you found yourself.</span></div></li>';
+      $("today").innerHTML = '<li><div><b>Add your first jobs</b><span>When your AI helper has sorted some jobs, press "Add jobs from my AI" and paste in the table it gave you. Or press "Add a job myself".</span></div></li>';
     } else {
       $("today-sub").textContent = a.length ? (a.length <= 3 ? "Everything that needs you today." : "Start with these three. The rest can wait.") : "";
       $("today").innerHTML = a.length ? a.slice(0, 3).map(function(x){ return "<li><div>" + x.html + "</div>" + x.pill + "</li>"; }).join("")
-        : '<li><div><b>Nothing urgent today</b><span>No follow-ups due and no Sendworthy roles waiting. A good day to run a fresh scan, or to rest.</span></div></li>';
+        : '<li><div><b>Nothing urgent today</b><span>Nothing to chase and no Sendworthy jobs waiting. A good day to look at new jobs, or to rest.</span></div></li>';
     }
     var rest = a.slice(3);
     $("more-actions").hidden = !rest.length;
@@ -353,7 +355,7 @@ footer strong{color:var(--ink);font-weight:500}
     var appliedPrev = data.filter(function(r){ return inRange(r.date_applied, prev, addDays(wk, -1)); }).length;
     var send = data.filter(function(r){ return inRange(r.date_found, wk, t) && /send/i.test(r.verdict || ""); }).length;
     var iv = data.filter(function(r){ return stage(r) === "interview"; }).length;
-    $("week-line").innerHTML = "You found <b>" + found + "</b> role" + (found === 1 ? "" : "s") + ", <b>" + send + "</b> worth sending, and applied to <b>" + applied + "</b>." + (iv ? " <b>" + iv + "</b> interview" + (iv === 1 ? "" : "s") + " in progress." : "");
+    $("week-line").innerHTML = "You found <b>" + found + "</b> job" + (found === 1 ? "" : "s") + ", <b>" + send + "</b> worth sending, and applied to <b>" + applied + "</b>." + (iv ? " <b>" + iv + "</b> interview" + (iv === 1 ? "" : "s") + " in progress." : "");
     var cheer = "";
     if(iv) cheer = iv === 1 ? "You have an interview in progress. That's a real step forward." : "You have " + iv + " interviews in progress. That's real momentum.";
     else if(applied && applied > appliedPrev && appliedPrev > 0) cheer = "More applications than last week, and every one was chosen on purpose.";
@@ -366,7 +368,7 @@ footer strong{color:var(--ink);font-weight:500}
     var max = Math.max(1, Math.max.apply(null, STAGES.map(function(s){ return counts[s[0]]; })));
     $("pipe").innerHTML = STAGES.map(function(s){ var n = counts[s[0]];
       return '<li class="' + (n ? "" : "zero") + '" title="' + s[1] + ": " + n + '"><span class="lab">' + s[1] + '</span><span class="track" aria-hidden="true"><span class="fill" style="display:block;width:' + (n / max * 100) + '%"></span></span><span class="num">' + n + "</span></li>"; }).join("");
-    $("closed").textContent = (skipped ? skipped + " skipped by screening. " : "") + (closed ? closed + " closed or no longer active." : "");
+    $("closed").textContent = (skipped ? skipped + " marked Skip. " : "") + (closed ? closed + " closed or no longer active." : "");
 
     var defs = [["all","All"],["apply","To apply"],["live","In progress"],["closed","Closed"],["skip","Skipped"]];
     $("filters").innerHTML = defs.map(function(f){ return '<button type="button" data-f="' + f[0] + '" aria-pressed="' + (filter === f[0]) + '">' + f[1] + "</button>"; }).join("");
@@ -384,14 +386,14 @@ footer strong{color:var(--ink);font-weight:500}
       var na = '<input type="text" data-i="' + x.i + '" data-k="next_action" value="' + esc(r.next_action) + '" aria-label="Next action for ' + esc(r.role) + '">';
       var du = '<input type="date" data-i="' + x.i + '" data-k="next_action_due" value="' + (due ? iso(due) : "") + '" aria-label="Due date for ' + esc(r.role) + '"' + (od ? ' class="overdue"' : "") + ">";
       return "<tr><td>" + role + "</td><td>" + esc(r.company) + '</td><td class="v ' + verdictClass(r.verdict) + '">' + esc(r.verdict) + "</td><td>" + sel + "</td><td>" + na + "</td><td>" + du + "</td><td>" + esc(payText(r.pay)) + '</td><td><button type="button" class="rm" data-rm="' + x.i + '" aria-label="Remove ' + esc(r.role) + (r.company ? " at " + esc(r.company) : "") + '">Remove</button></td></tr>'; }).join("")
-      : '<tr><td colspan="8">No roles here yet.</td></tr>';
-    $("lede").textContent = demo ? "This is example data, so you can see how it works." : "Your whole search at a glance. Add roles after each scan and update them as things move.";
+      : '<tr><td colspan="8">No jobs here yet.</td></tr>';
+    $("lede").textContent = demo ? "This is example data, so you can see how it works." : "Your whole search at a glance. Add jobs as you find them and update them as things move.";
   }
 
   function openPaste(mode){
     pasteMode = mode;
     $("paste-help").textContent = mode === "add"
-      ? "Paste what your AI gave you after a scan: the table, or the block that starts with date_found. Include its top line of column names. Roles already on your desk are skipped."
+      ? "In your AI chat, copy the whole table it gave you, including the top row of headings, and paste it here. Jobs already on your desk are skipped."
       : "In Google Sheets or Excel, select your tracker including the header row, copy, and paste it here.";
     $("paste-go").textContent = mode === "add" ? "Add to my desk" : "Show my desk";
     $("hand").hidden = true;
@@ -407,7 +409,7 @@ footer strong{color:var(--ink);font-weight:500}
     var seen = {}; data.forEach(function(r){ seen[keyOf(r)] = 1; });
     var added = 0, dup = 0;
     rows.forEach(function(r){ if(seen[keyOf(r)]){ dup++; return; } seen[keyOf(r)] = 1; if(!r.stage) r.stage = "Found"; if(!r.date_found) r.date_found = iso(today()); data.push(r); added++; });
-    return "Added " + added + " role" + (added === 1 ? "" : "s") + (dup ? ", " + dup + " already on your desk" : "") + ".";
+    return "Added " + added + " job" + (added === 1 ? "" : "s") + (dup ? ". " + dup + " already on your desk" : "") + ".";
   }
 
   function exitDemo(){ demo = false; if(location.hash === "#demo") history.replaceState(null, "", location.pathname); }
@@ -432,12 +434,12 @@ footer strong{color:var(--ink);font-weight:500}
     try{
       var rows = parse($("paste-text").value, pasteMode === "add");
       if(pasteMode === "add"){ if(!data) data = []; msg("ok", addRows(rows)); }
-      else { exitDemo(); data = rows; msg("ok", "Loaded " + rows.length + " role" + (rows.length === 1 ? "" : "s") + "."); }
+      else { exitDemo(); data = rows; msg("ok", "Loaded " + rows.length + " job" + (rows.length === 1 ? "" : "s") + "."); }
       save(); msg("err"); $("paste").hidden = true; render();
     }catch(e){ msg("err", e.message); }
   });
   $("file").addEventListener("change", function(e){ var f = e.target.files[0]; if(!f) return; var rd = new FileReader();
-    rd.onload = function(){ try{ exitDemo(); data = parse(String(rd.result), false); save(); msg("err"); msg("ok", "Loaded " + data.length + " role" + (data.length === 1 ? "" : "s") + " from " + f.name + "."); render(); }catch(err){ msg("err", err.message); } };
+    rd.onload = function(){ try{ exitDemo(); data = parse(String(rd.result), false); save(); msg("err"); msg("ok", "Loaded " + data.length + " job" + (data.length === 1 ? "" : "s") + " from " + f.name + "."); render(); }catch(err){ msg("err", err.message); } };
     rd.readAsText(f); e.target.value = ""; });
   ["file-label","file-label2"].forEach(function(id){ $(id).addEventListener("keydown", function(e){ if(e.key === "Enter" || e.key === " "){ e.preventDefault(); $("file").click(); } }); });
   $("download").addEventListener("click", function(){
@@ -446,10 +448,10 @@ footer strong{color:var(--ink);font-weight:500}
     var csv = [cols.join(",")].concat(data.map(function(r){ return cols.map(function(c){ return q(r[c]); }).join(","); })).join("\n");
     var a = document.createElement("a"); a.href = URL.createObjectURL(new Blob(["﻿" + csv + "\n"], {type:"text/csv"}));
     a.download = "applysteward-tracker-" + iso(today()) + ".csv"; document.body.appendChild(a); a.click(); a.remove();
-    msg("ok", "Downloaded. Open it in Excel or import it into Google Sheets any time.");
+    msg("ok", "Saved to your downloads. It opens in Excel or Google Sheets.");
   });
   $("clear").addEventListener("click", function(){
-    if(!demo && data && data.length && !window.confirm("Remove your tracker from this device? Download a copy first if you want to keep it.")) return;
+    if(!demo && data && data.length && !window.confirm("Remove your list from this device? Press Save a copy first if you want to keep it.")) return;
     try{ localStorage.removeItem(KEY); localStorage.removeItem(OLDKEY); }catch(e){}
     exitDemo(); data = null; $("board").hidden = true; $("roles").hidden = true; $("tools").hidden = true; $("start").hidden = false; $("paste").hidden = true; $("hand").hidden = true; msg("ok"); msg("err");
     $("lede").textContent = "Cleared from this device. Start again whenever you're ready.";
