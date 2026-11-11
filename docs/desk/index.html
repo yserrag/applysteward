@@ -419,6 +419,30 @@ footer strong{color:var(--ink);font-weight:500}
   $("paste-btn").addEventListener("click", function(){ openPaste("replace"); });
   $("add-btn").addEventListener("click", function(){ if(demo){ exitDemo(); data = []; save(); render(); } openPaste("add"); });
   $("paste-cancel").addEventListener("click", function(){ $("paste").hidden = true; msg("err"); });
+  // A table copied with the mouse from an AI chat can lose its columns as plain text (ChatGPT puts
+  // each cell on its own line and drops empty ones). The copy also carries the real table, so read
+  // that instead and turn it into tab-separated rows.
+  function tableFromHtml(html){
+    if(!html || !/<table/i.test(html)) return "";
+    var doc; try{ doc = new DOMParser().parseFromString(html, "text/html"); }catch(e){ return ""; }
+    var best = "", bestRows = 0;
+    Array.prototype.forEach.call(doc.querySelectorAll("table"), function(t){
+      var rows = Array.prototype.map.call(t.querySelectorAll("tr"), function(tr){
+        return Array.prototype.map.call(tr.children, function(c){
+          var txt = (c.textContent || "").replace(/\s+/g, " ").trim(), a = c.querySelector("a[href]");
+          if(a && /^https?:\/\//i.test(a.getAttribute("href")) && !/^https?:\/\//i.test(txt)) txt = a.getAttribute("href");
+          return txt;
+        }).join("\t");
+      }).filter(function(r){ return r.trim(); });
+      if(rows.length > bestRows){ bestRows = rows.length; best = rows.join("\n"); }
+    });
+    return bestRows > 1 ? best : "";
+  }
+  $("paste-text").addEventListener("paste", function(e){
+    var cd = e.clipboardData; if(!cd) return;
+    var tsv = tableFromHtml(cd.getData("text/html")); if(!tsv) return;
+    e.preventDefault(); this.value = tsv; msg("err");
+  });
   $("hand-btn").addEventListener("click", function(){ if(demo){ exitDemo(); data = []; save(); render(); } openHand(); });
   $("hand-cancel").addEventListener("click", function(){ $("hand").hidden = true; });
   $("hand").addEventListener("submit", function(e){
