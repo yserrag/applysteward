@@ -215,7 +215,7 @@ footer strong{color:var(--ink);font-weight:500}
       <h2 id="pipe-h">This week</h2>
       <p class="week-line" id="week-line"></p>
       <h2>Where things stand</h2>
-      <p class="sub">Active roles by stage</p>
+      <p class="sub">Jobs still in play, by stage</p>
       <ul class="pipe" id="pipe"></ul>
       <p class="closed" id="closed"></p>
     </section>
@@ -250,8 +250,9 @@ footer strong{color:var(--ink);font-weight:500}
   var NOTHING = "I couldn't find any jobs in that. Go back to your AI chat, copy the whole table it gave you, including the top row of headings, and paste it here.";
 
   function splitCsv(text){
-    var first = text.split(/\r?\n/).filter(function(l){ return l.trim() && !/^\s*`+/.test(l); })[0] || "";
-    var d = (first.split("\t").length > first.split(",").length) ? "\t" : ",";
+    // A table selected with the mouse arrives tab-separated, often with a sentence above it.
+    // Ordinary sentences never hold two tabs, so any line that does means a tab-separated table.
+    var d = text.split(/\r?\n/).some(function(l){ return l.split("\t").length > 2; }) ? "\t" : ",";
     var rows = [], row = [], cell = "", q = false;
     for(var i = 0; i < text.length; i++){
       var c = text[i];
