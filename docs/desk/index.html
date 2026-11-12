@@ -152,7 +152,9 @@ dialog::backdrop{background:rgba(20,26,23,.5)}
 .dlg .row{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin:12px 0 4px}
 .dlg textarea,.dlg input[type=text]{width:100%;font:inherit;font-size:14.5px;border:1px solid var(--line);border-radius:6px;padding:8px 10px;background:var(--paper);color:var(--ink)}
 .dlg textarea{min-height:58px;resize:vertical}
-#pack-prompt{min-height:190px;font-size:13.5px}
+#pack-prompt,#coach-prompt{min-height:190px;font-size:13.5px}
+#coach-tips{margin:6px 0 0;padding-left:20px;font-size:15px;color:var(--muted)}
+#coach-tips li{margin:5px 0}
 .dlg .copy{font:inherit;font-size:13.5px;background:none;border:0;color:var(--green);text-decoration:underline;cursor:pointer;padding:2px 0;white-space:nowrap}
 .dlg .acts{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:20px}
 .btn[disabled]{opacity:.5;cursor:not-allowed}
@@ -277,6 +279,15 @@ footer strong{color:var(--ink);font-weight:500}
   <div id="answers"></div>
   <div class="acts"><button class="btn btn-primary" type="button" id="pack-all">Copy all standard answers</button><button class="btn btn-quiet" type="button" id="pack-close">Done</button></div>
 </div></dialog>
+<dialog id="coach" aria-labelledby="coach-h"><div class="dlg">
+  <h2 id="coach-h"></h2>
+  <p id="coach-lede"></p>
+  <div class="row"><span></span><button class="copy" type="button" data-copy="coach-prompt">Copy for my AI</button></div>
+  <textarea id="coach-prompt" aria-label="Request to copy into your AI"></textarea>
+  <h3 id="coach-tips-h"></h3>
+  <ul id="coach-tips"></ul>
+  <div class="acts"><button class="btn btn-primary" type="button" id="coach-copy">Copy for my AI</button><button class="btn btn-quiet" type="button" id="coach-close">Done</button></div>
+</div></dialog>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
 <footer>
@@ -373,6 +384,13 @@ footer strong{color:var(--ink);font-weight:500}
   function save(){ if(demo) return; try{ localStorage.setItem(KEY, JSON.stringify(data)); }catch(e){} }
   function msg(id, text){ var el = $(id); el.textContent = text || ""; el.hidden = !text; }
 
+  // The helper button changes with the stage: applying, then interview practice, then the offer.
+  function helpBtn(r, i){
+    var st = stage(r), role = esc(r.role);
+    if(st === "interview" || st === "replied") return '<button type="button" class="pack-btn" data-coach="practise" data-i="' + i + '" aria-label="Practise for the interview for ' + role + '">Practise interview</button>';
+    if(st === "offer") return '<button type="button" class="pack-btn" data-coach="pay" data-i="' + i + '" aria-label="Help with the offer for ' + role + '">Help with offer</button>';
+    return '<button type="button" class="pack-btn" data-pack="' + i + '" aria-label="Help with the application for ' + role + '">Help me apply</button>';
+  }
   function actions(){
     var t = today(), out = [];
     data.forEach(function(r){
@@ -380,6 +398,10 @@ footer strong{color:var(--ink);font-weight:500}
       var due = day(r.next_action_due), st = stage(r);
       if(due && due <= t && r.next_action){
         out.push({ rank: 0, sort: due, html: "<b>" + esc(r.next_action) + "</b><span>" + title(r) + "</span>", pill: '<span class="pill due">' + (due < t ? "Overdue" : "Due today") + "</span>" });
+      } else if(st === "interview"){
+        out.push({ rank: 0, sort: t, html: "<b>Practise for your interview: " + esc(r.role) + "</b><span>" + esc(r.company) + ". Press Practise interview in your list below.</span>", pill: '<span class="pill apply">Interview</span>' });
+      } else if(st === "offer"){
+        out.push({ rank: 0, sort: t, html: "<b>You have an offer: " + esc(r.role) + "</b><span>" + esc(r.company) + ". Press Help with offer before you reply.</span>", pill: '<span class="pill apply">Offer</span>' });
       } else if(st === "found" && /send/i.test(r.verdict || "")){
         out.push({ rank: 1, sort: day(r.date_found) || t, html: "<b>Apply: " + esc(r.role) + "</b><span>" + esc(r.company) + (r.pay ? ", " + esc(payText(r.pay)) : "") + "</span>", pill: '<span class="pill apply">Sendworthy</span>' });
       } else if(st === "applied" && !due){
@@ -452,7 +474,7 @@ footer strong{color:var(--ink);font-weight:500}
       var sel = '<select data-i="' + x.i + '" data-k="stage" aria-label="Stage for ' + esc(r.role) + '">' + opts.map(function(o){ return "<option" + (o.toLowerCase() === cur.toLowerCase() ? " selected" : "") + ">" + esc(o) + "</option>"; }).join("") + "</select>";
       var na = '<input type="text" data-i="' + x.i + '" data-k="next_action" value="' + esc(r.next_action) + '" aria-label="Next action for ' + esc(r.role) + '">';
       var du = '<input type="date" data-i="' + x.i + '" data-k="next_action_due" value="' + (due ? iso(due) : "") + '" aria-label="Due date for ' + esc(r.role) + '"' + (od ? ' class="overdue"' : "") + ">";
-      return "<tr><td>" + role + "</td><td>" + esc(r.company) + '</td><td class="v ' + verdictClass(r.verdict) + '">' + esc(r.verdict) + "</td><td>" + sel + "</td><td>" + na + "</td><td>" + du + "</td><td>" + esc(payText(r.pay)) + '</td><td class="acts-cell"><button type="button" class="pack-btn" data-pack="' + x.i + '" aria-label="Application pack for ' + esc(r.role) + '">Help me apply</button> <button type="button" class="rm" data-rm="' + x.i + '" aria-label="Remove ' + esc(r.role) + (r.company ? " at " + esc(r.company) : "") + '">Remove</button></td></tr>'; }).join("")
+      return "<tr><td>" + role + "</td><td>" + esc(r.company) + '</td><td class="v ' + verdictClass(r.verdict) + '">' + esc(r.verdict) + "</td><td>" + sel + "</td><td>" + na + "</td><td>" + du + "</td><td>" + esc(payText(r.pay)) + '</td><td class="acts-cell">' + helpBtn(r, x.i) + ' <button type="button" class="rm" data-rm="' + x.i + '" aria-label="Remove ' + esc(r.role) + (r.company ? " at " + esc(r.company) : "") + '">Remove</button></td></tr>'; }).join("")
       : '<tr><td colspan="8">No jobs here yet.</td></tr>';
     $("lede").textContent = demo ? "This is example data, so you can see how it works." : "Your whole search at a glance. Add jobs as you find them and update them as things move.";
   }
@@ -563,10 +585,55 @@ footer strong{color:var(--ink);font-weight:500}
       markApplied(r); save(); render(); afterApplied(); count("job-stage-changed"); return;
     }
     r[k] = el.value;
-    if(k === "stage"){ count("job-stage-changed"); r.last_update = iso(today()); }
+    if(k === "stage"){ count("job-stage-changed"); r.last_update = iso(today());
+      if(/^interview$/i.test(el.value)) toast("An interview. That took real work. Press Practise interview when you're ready.");
+      else if(/^offer$/i.test(el.value)) toast("An offer. Well done. Press Help with offer before you reply."); }
     save(); render();
   });
   $("rows").addEventListener("click", function(e){ var b = e.target.closest("[data-pack]"); if(b) openPack(+b.getAttribute("data-pack")); });
+  $("rows").addEventListener("click", function(e){ var b = e.target.closest("[data-coach]"); if(b) openCoach(b.getAttribute("data-coach"), +b.getAttribute("data-i")); });
+  var COACH = {
+    practise: {
+      title: "Practise for your interview: ",
+      lede: "Copy this and paste it into your AI helper. It asks you one question at a time, tells you honestly how each answer went, and shows a tighter version using only your own facts.",
+      tipsTitle: "To get the most from it",
+      tips: ["Say each answer out loud first, then type or speak it in. Most AI helpers have a microphone button.", "Aim for answers of about two minutes: what was going on, what you had to do, what you did, and how it turned out.", "Do it once the day before, not five times. Rest helps more than cramming.", "Afterwards, send a short thank-you within a day. Your AI helper can draft it: type draft."],
+      body: function(r){ return ["practise", "Role: " + (r.role || ""), "Company: " + (r.company || ""), r.link ? "Advert: " + r.link : "Advert: (I'll paste it below)", "",
+        "Run a practice interview with me for this role, using my rules and my proof points.",
+        "1. First ask me what kind of interview it is (a phone call, the hiring manager, a panel) and who I'm meeting, if I know.",
+        "2. Then ask one question at a time and wait for my answer. Ask 6 in total: one opener about me, three about the main things this job needs, one about why I want this role and this company, and one about my biggest gap for it.",
+        "3. After each answer, tell me one thing that worked, one thing to improve, and a tighter version of my answer in under 120 words.",
+        "4. Check each answer covers four parts: the situation, what I had to do, what I did, and the result.",
+        "5. At the end, give me the 3 points to lead with, 2 things to practise, and 3 good questions to ask them.",
+        "Use only what I say and my proof points. Never invent facts or numbers; leave [add a number] where one would help. Be honest, with no false praise. Use short sentences and everyday words. If you can't open the advert, ask me to paste it."].join("\n"); }
+    },
+    pay: {
+      title: "Help with your offer: ",
+      lede: "First type what they offered on the line that starts \"The offer\". Then copy it all and paste it into your AI helper. It tells you plainly whether to accept, ask for more or ask a question, and writes your reply.",
+      tipsTitle: "Before you reply",
+      tips: ["You don't have to answer on the spot. \"Thank you, can I come back to you tomorrow?\" is a normal thing to say.", "Look at the whole offer, not only the pay: hours, holiday, pension, working from home and start date.", "Ask for the offer in writing, and wait for it before you resign from anything.", "Asking politely for a little more is normal and rarely costs you the offer."],
+      body: function(r){ return ["pay", "Role: " + (r.role || ""), "Company: " + (r.company || ""), r.pay ? "Pay in the advert: " + payText(r.pay) : "Pay in the advert: not stated",
+        "The offer: [type what they offered: pay, hours, holiday, pension, start date, anything else]", "",
+        "Help me reply to this offer, using my rules.",
+        "1. If anything above is missing, ask me for it, one question at a time. Ask whether I have the offer in writing.",
+        "2. Never suggest I accept less than the lowest pay in my rules.",
+        "3. Look at the whole offer, not only the pay.",
+        "4. Tell me plainly: accept, ask for more, or ask a question first. Give the reason in two lines.",
+        "5. Write the exact words for my reply in under 120 words: thank them, make one clear ask, and give one reason from my real results. Polite and firm.",
+        "Don't guess what the market pays. If you can't look it up, tell me to check three current adverts for similar jobs. Never say I have other offers unless I've told you so. Remind me to get the final offer in writing before I resign from anything. Use short sentences and everyday words."].join("\n"); }
+    }
+  };
+  function openCoach(kind, i){
+    var c = COACH[kind], r = data[i]; if(!c || !r) return;
+    $("coach-h").textContent = c.title + (r.role || "Role") + (r.company ? ", " + r.company : "");
+    $("coach-lede").textContent = c.lede; $("coach-prompt").value = c.body(r);
+    $("coach-tips-h").textContent = c.tipsTitle;
+    $("coach-tips").innerHTML = c.tips.map(function(x){ return "<li>" + esc(x) + "</li>"; }).join("");
+    $("coach").showModal(); count(kind === "pay" ? "offer-help-opened" : "practise-opened");
+  }
+  $("coach").addEventListener("click", function(e){ var b = e.target.closest("[data-copy]"); if(b) copyText($(b.getAttribute("data-copy")).value, b); });
+  $("coach-copy").addEventListener("click", function(){ copyText($("coach-prompt").value, this); });
+  $("coach-close").addEventListener("click", function(){ $("coach").close(); });
   $("aim").addEventListener("change", function(e){ if(e.target.id !== "aim-sel") return; aim = parseInt(e.target.value, 10) || 3; try{ localStorage.setItem(AIMKEY, String(aim)); }catch(err){} render(); });
 
   function markApplied(r){ r.stage = "Applied"; r.last_update = iso(today()); if(!r.date_applied) r.date_applied = iso(today()); }

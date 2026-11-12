@@ -129,6 +129,8 @@ applysteward/
 ├── skills/
 │   ├── scan/SKILL.md           # Screen job emails against your fit rules
 │   ├── outreach/SKILL.md       # Recruiter, hiring-manager, referral and follow-up drafts
+│   ├── practise/SKILL.md           # Practice interview for a specific role, with feedback
+│   ├── pay/SKILL.md                # What to say about pay, and how to reply to an offer
 │   └── rejection-review/SKILL.md  # Weekly look at what is and isn't working
 ├── templates/
 │   ├── fit-rules.md            # Blank rules file, if you'd rather not use the wizard
