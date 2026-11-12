@@ -4,7 +4,7 @@
    Nothing a visitor types, and nothing about their jobs, is ever sent.
    Leave ID empty to switch counting off completely. */
 (function(){
-  var ID = "";                                   // the website ID from the Umami dashboard
+  var ID = "75d38a62-5181-49aa-9b05-238a6c6fce5a";                                   // the website ID from the Umami dashboard
   var SRC = "https://cloud.umami.is/script.js";  // the script address Umami gives for this site
   var HOST = "applysteward.com";                 // only count on the live site
 
