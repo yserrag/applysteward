@@ -82,10 +82,13 @@ This repository is the free core. It is enough to see how ApplySteward thinks an
 | Manual `/scan` skill (paste emails, get verdicts) | Yes | Yes |
 | Outreach drafts skill | Yes | Yes |
 | Weekly rejection review | Yes | Yes |
+| Interview practice for a specific role, with feedback | Yes | Yes |
+| Help with pay questions and replying to an offer | Yes | Yes |
+| Rule changes suggested when a verdict is wrong | Yes | Yes |
 | Calibration interview that tunes your rules from your first scans | | Yes |
 | Scheduled daily scan and morning brief | | Yes |
 | CV tailoring to Word and PDF | | Yes |
-| Interview practice and story bank | | Yes |
+| Story bank for interviews | | Yes |
 | Career lane packs (sales, product, engineering, finance, HR, operations, healthcare, education) | | Yes |
 | Setup guide and video walkthroughs | | Yes |
 | 12 months of updates | | Yes |
