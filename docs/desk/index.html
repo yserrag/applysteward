@@ -138,6 +138,8 @@ td a{font-weight:500}
 .aim b{color:var(--ink)}
 .aim select{font:inherit;font-size:14px;color:var(--ink);background:var(--field);border:1px solid var(--line);border-radius:5px;padding:2px 4px}
 td.acts-cell{white-space:nowrap}
+.swipe{display:none;font-size:14px;color:var(--muted);margin:8px 0 0}
+@media (max-width:900px){.swipe{display:block}}
 td .pack-btn{font:inherit;font-size:14px;color:var(--green);background:none;border:1px solid var(--line);border-radius:5px;padding:4px 10px;cursor:pointer;white-space:nowrap}
 dialog{border:0;border-radius:8px;padding:0;max-width:640px;width:calc(100% - 32px);max-height:calc(100% - 32px);background:var(--field);color:var(--ink);box-shadow:0 30px 60px -20px rgba(0,0,0,.45)}
 dialog::backdrop{background:rgba(20,26,23,.5)}
@@ -249,7 +251,8 @@ footer strong{color:var(--ink);font-weight:500}
   <section class="roles" id="roles" hidden aria-labelledby="roles-h">
     <h2 id="roles-h">All your jobs</h2>
     <div class="filters" id="filters" role="group" aria-label="Filter roles"></div>
-    <div class="tablewrap"><table><thead><tr><th>Job</th><th>Company</th><th>Verdict</th><th>Where it stands</th><th>Next step</th><th>Due</th><th>Pay</th><th><span class="sr">Pack and remove</span></th></tr></thead><tbody id="rows"></tbody></table></div>
+    <div class="tablewrap"><table><thead><tr><th>Job</th><th>Company</th><th>Verdict</th><th>Where it stands</th><th>Next step</th><th>Due</th><th>Pay</th><th><span class="sr">Help me apply, and remove</span></th></tr></thead><tbody id="rows"></tbody></table></div>
+    <p class="swipe">Swipe the table sideways to see every column.</p>
   </section>
 </main>
 
@@ -264,9 +267,9 @@ footer strong{color:var(--ink);font-weight:500}
 
 <dialog id="pack" aria-labelledby="pack-h"><div class="dlg">
   <h2 id="pack-h"></h2>
-  <p>Everything you need for a long application form, Workday and Taleo included. Copy each part as you go. You check it and submit it yourself.</p>
+  <p>Everything you need for a long online application form. Copy each part as you go. You check it and send it yourself.</p>
   <h3>1. The parts written for this role</h3>
-  <p>Copy this into your AI, in the chat or project that has your rules. It writes a tailored summary, answers and a cover note, using only your own facts.</p>
+  <p>Copy this and paste it into your AI helper, in the same chat where you pasted your setup. It writes a summary, answers and a cover note for this job, using only your own facts.</p>
   <div class="row"><span></span><button class="copy" type="button" data-copy="pack-prompt">Copy for my AI</button></div>
   <textarea id="pack-prompt" readonly aria-label="Request to copy into your AI"></textarea>
   <h3>2. Your standard answers</h3>
@@ -344,7 +347,7 @@ footer strong{color:var(--ink);font-weight:500}
     }
     // An AI may write a link as [words](address) or <address>: keep just the address.
     var bare = function(l){ var m = /\((https?:\/\/[^)\s]+)\)/.exec(l) || /(https?:\/\/[^\s<>"]+)/.exec(l); return m ? m[1] : l; };
-    var out = body.map(function(r){ var o = {}; head.forEach(function(h, j){ if(h && !(h in o)) o[h] = (r[j] || "").trim(); }); if(o.link) o.link = bare(o.link); return o; })
+    var out = body.map(function(r){ var o = {}; head.forEach(function(h, j){ if(h && !(h in o)) o[h] = (r[j] || "").trim().replace(/^'(?=[=+@-])/, ""); }); if(o.link) o.link = bare(o.link); return o; })
       .filter(function(o){ return o.role || o.company; });
     if(!out.length) throw new Error(NOTHING);
     return out;
@@ -449,7 +452,7 @@ footer strong{color:var(--ink);font-weight:500}
       var sel = '<select data-i="' + x.i + '" data-k="stage" aria-label="Stage for ' + esc(r.role) + '">' + opts.map(function(o){ return "<option" + (o.toLowerCase() === cur.toLowerCase() ? " selected" : "") + ">" + esc(o) + "</option>"; }).join("") + "</select>";
       var na = '<input type="text" data-i="' + x.i + '" data-k="next_action" value="' + esc(r.next_action) + '" aria-label="Next action for ' + esc(r.role) + '">';
       var du = '<input type="date" data-i="' + x.i + '" data-k="next_action_due" value="' + (due ? iso(due) : "") + '" aria-label="Due date for ' + esc(r.role) + '"' + (od ? ' class="overdue"' : "") + ">";
-      return "<tr><td>" + role + "</td><td>" + esc(r.company) + '</td><td class="v ' + verdictClass(r.verdict) + '">' + esc(r.verdict) + "</td><td>" + sel + "</td><td>" + na + "</td><td>" + du + "</td><td>" + esc(payText(r.pay)) + '</td><td class="acts-cell"><button type="button" class="pack-btn" data-pack="' + x.i + '" aria-label="Application pack for ' + esc(r.role) + '">Pack</button> <button type="button" class="rm" data-rm="' + x.i + '" aria-label="Remove ' + esc(r.role) + (r.company ? " at " + esc(r.company) : "") + '">Remove</button></td></tr>'; }).join("")
+      return "<tr><td>" + role + "</td><td>" + esc(r.company) + '</td><td class="v ' + verdictClass(r.verdict) + '">' + esc(r.verdict) + "</td><td>" + sel + "</td><td>" + na + "</td><td>" + du + "</td><td>" + esc(payText(r.pay)) + '</td><td class="acts-cell"><button type="button" class="pack-btn" data-pack="' + x.i + '" aria-label="Application pack for ' + esc(r.role) + '">Help me apply</button> <button type="button" class="rm" data-rm="' + x.i + '" aria-label="Remove ' + esc(r.role) + (r.company ? " at " + esc(r.company) : "") + '">Remove</button></td></tr>'; }).join("")
       : '<tr><td colspan="8">No jobs here yet.</td></tr>';
     $("lede").textContent = demo ? "This is example data, so you can see how it works." : "Your whole search at a glance. Add jobs as you find them and update them as things move.";
   }
@@ -532,15 +535,16 @@ footer strong{color:var(--ink);font-weight:500}
   ["file-label","file-label2"].forEach(function(id){ $(id).addEventListener("keydown", function(e){ if(e.key === "Enter" || e.key === " "){ e.preventDefault(); $("file").click(); } }); });
   $("download").addEventListener("click", function(){
     var cols = COLS.slice(); data.forEach(function(r){ Object.keys(r).forEach(function(k){ if(cols.indexOf(k) < 0) cols.push(k); }); });
-    var q = function(v){ v = String(v || ""); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
+    var q = function(v){ v = String(v || ""); if(/^[=+@\t\r]/.test(v) || /^-(?!\d+([.,]\d+)?$)/.test(v)) v = "'" + v; return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
     var csv = [cols.join(",")].concat(data.map(function(r){ return cols.map(function(c){ return q(r[c]); }).join(","); })).join("\n");
     var a = document.createElement("a"); a.href = URL.createObjectURL(new Blob(["﻿" + csv + "\n"], {type:"text/csv"}));
     a.download = "applysteward-tracker-" + iso(today()) + ".csv"; document.body.appendChild(a); a.click(); a.remove();
     msg("ok", "Saved to your downloads. It opens in Excel or Google Sheets."); count("desk-saved");
   });
   $("clear").addEventListener("click", function(){
-    if(!demo && data && data.length && !window.confirm("Remove your list from this device? Press Save a copy first if you want to keep it.")) return;
-    try{ localStorage.removeItem(KEY); localStorage.removeItem(OLDKEY); }catch(e){}
+    if(!demo && data && data.length && !window.confirm("Remove your list and your saved standard answers from this device? Press Save a copy first if you want to keep your list.")) return;
+    try{ [KEY, OLDKEY, AIMKEY, ANSKEY].forEach(function(k){ localStorage.removeItem(k); }); }catch(e){}
+    aim = 3;
     exitDemo(); data = null; $("board").hidden = true; $("roles").hidden = true; $("tools").hidden = true; $("start").hidden = false; $("paste").hidden = true; $("hand").hidden = true; msg("ok"); msg("err");
     $("lede").textContent = "Cleared from this device. Start again whenever you're ready.";
   });
@@ -612,14 +616,14 @@ footer strong{color:var(--ink);font-weight:500}
   function saveAnswers(){ var a = {}; ANS.forEach(function(f){ a[f[0]] = $("ans-" + f[0]).value; }); try{ localStorage.setItem(ANSKEY, JSON.stringify(a)); }catch(e){} }
   function openPack(i){
     packIdx = i; var r = data[i]; if(!r) return;
-    $("pack-h").textContent = "Application pack: " + (r.role || "Role") + (r.company ? ", " + r.company : "");
+    $("pack-h").textContent = "Help with your application: " + (r.role || "Role") + (r.company ? ", " + r.company : "");
     $("pack-prompt").value = [
       "pack",
       "Role: " + (r.role || ""),
       "Company: " + (r.company || ""),
       r.link ? "Advert: " + r.link : "Advert: (I'll paste it below)",
       "",
-      "Using my rules file, including how to position me, write these ready to paste into an application form:",
+      "Using my rules, including how to position me, write these ready to paste into an application form:",
       "1. A 3-line summary tailored to this role",
       "2. The 3 results from my proof points most relevant to this role, one line each",
       "3. Why this role? Under 80 words",
