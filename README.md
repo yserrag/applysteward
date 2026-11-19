@@ -55,13 +55,13 @@ flowchart LR
 - **Never invent.** Tailoring only rearranges and rephrases what is true. Gaps are flagged, not filled.
 - **Low noise.** Three actions a day beats a dashboard of fifty rows.
 - **Your data stays yours.** Everything runs inside your own AI account and your own spreadsheet. ApplySteward has no servers and never sees your inbox or CV.
-- **One fee, no subscription.**
+- **Free while in testing.** No account, no card, no subscription.
 
 ## Requirements
 
 To start, you only need an AI assistant. Claude, ChatGPT, Gemini and Microsoft Copilot all work, and free plans are enough. Your tracker lives on [your desk](https://applysteward.com/desk/) in your browser, so no spreadsheet is needed.
 
-For the automatic daily scan and morning brief (Pro), you also need:
+The automatic daily scan and morning brief are on the roadmap. When they arrive, they will also need:
 
 - A paid Claude plan (scheduled tasks and connectors need one)
 - A Gmail account for job alerts (other providers can forward alerts to Gmail)
@@ -69,32 +69,30 @@ For the automatic daily scan and morning brief (Pro), you also need:
 
 Feature availability on AI plans changes often. The setup guide lists what to check before you start.
 
-## Free and Pro
+## What's included
 
-This repository is the free core. It is enough to see how ApplySteward thinks and to run the screening loop by hand.
+Everything here is free for personal use while ApplySteward is being tested.
 
-| | Free (this repo) | Pro |
-|---|---|---|
-| Setup wizard and fit-rules file | Yes | Yes |
-| Tracker template | Yes | Yes |
-| Any-AI guide for ChatGPT, Gemini and Copilot | Yes | Yes |
-| Your desk: today's actions, follow-ups due and pipeline | Yes | Yes |
-| Manual `/scan` skill (paste emails, get verdicts) | Yes | Yes |
-| Outreach drafts skill | Yes | Yes |
-| Weekly rejection review | Yes | Yes |
-| Interview practice for a specific role, with feedback | Yes | Yes |
-| Help with pay questions and replying to an offer | Yes | Yes |
-| Rule changes suggested when a verdict is wrong | Yes | Yes |
-| Calibration interview that tunes your rules from your first scans | | Yes |
-| Scheduled daily scan and morning brief | | Yes |
-| CV tailoring to Word and PDF | | Yes |
-| Story bank for interviews | | Yes |
-| Career lane packs (sales, product, engineering, finance, HR, operations, healthcare, education) | | Yes |
-| Setup guide and video walkthroughs | | Yes |
-| 12 months of updates | | Yes |
+- Setup wizard and your fit-rules file
+- Any-AI guide for ChatGPT, Gemini and Copilot
+- Your desk: your tracker, today's actions, follow-ups due, daily aim and application packs
+- `/scan`: paste job alerts, get Sendworthy, Not yet or Skip with reasons
+- Outreach drafts and application packs for long online forms
+- Weekly review of how your search is going
+- Interview practice for a specific role, with feedback
+- Help with pay questions and replying to an offer
+- Rule changes suggested when a verdict is wrong
 
-**Pro is a one-time £49.** A £129 option adds a 45-minute screen-share setup call.
-Link: _coming soon_
+### On the roadmap
+
+Ideas being explored, with no dates or prices yet. Tell me which would help you most.
+
+- A calibration interview that tunes your rules from your first scans
+- An automatic daily scan and morning brief (needs a paid Claude plan)
+- CV tailoring to Word and PDF
+- A story bank for interviews
+- Career packs for sales, product, engineering, finance, HR, operations, healthcare and education
+- Video walkthroughs
 
 ## Install the free core
 
@@ -167,8 +165,8 @@ The setup wizard suggests the main boards for your country and any specialist on
 **I'm new to AI. Is this for me?**
 Yes. You type in plain English and stay in charge of every decision. Free plans are enough to start.
 
-**Can I get a refund?**
-Pro comes with a 14-day "it didn't work for me" refund.
+**Is it really free?**
+Yes, while I test it. No account, no card and no subscription. Honest feedback is all I ask for.
 
 ## Licence and permitted use
 
@@ -184,11 +182,12 @@ Pro comes with a 14-day "it didn't work for me" refund.
 
 The full terms are in [LICENSE](LICENSE). For permission, including coaching, outplacement or team licences, contact Yousef Serrag at [yserrag@yahoo.com](mailto:yserrag@yahoo.com) or via [LinkedIn](https://linkedin.com/in/yserrag).
 
-ApplySteward Pro is sold separately under its own licence.
 
 ## Why I built this
 
-I built ApplySteward for my own job search, and it has helped me look for work with less noise and more focus. I'm sharing it at a low, one-off price because it works out well three ways: you get calm, practical help without another monthly subscription; the income supports my family while I search; and more people get comfortable using AI, at a time when so many employers already are and it can all feel overwhelming.
+I've been learning to build with AI, and I wanted to put it to work on something that genuinely helps people. Job hunting is stressful, and wading through endless job alerts makes it harder, so I built ApplySteward.
+
+It's free while I test it. That's my win/win/win: you get calm, practical help at a hard time, more people get comfortable using AI in their own way, and I keep learning from what you tell me.
 
 Feedback is welcome: [yserrag@yahoo.com](mailto:yserrag@yahoo.com).
 
