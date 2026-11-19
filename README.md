@@ -189,6 +189,6 @@ I've been learning to build with AI, and I wanted to put it to work on something
 
 It's free while I test it. That's my win/win/win: you get calm, practical help at a hard time, more people get comfortable using AI in their own way, and I keep learning from what you tell me.
 
-Feedback is welcome via [LinkedIn](https://www.linkedin.com/in/yserrag).
+If ApplySteward helps you, I would love to hear about it. Please let me know on [LinkedIn](https://www.linkedin.com/in/yserrag), along with anything that could be better.
 
 [Yousef Serrag](https://linkedin.com/in/yserrag)
