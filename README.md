@@ -185,7 +185,7 @@ The full terms are in [LICENSE](LICENSE). For permission, including coaching, ou
 
 ## Why I built this
 
-I've been learning to build with AI, and I wanted to put it to work on something that genuinely helps people. Job hunting is stressful, and wading through endless job alerts makes it harder, so I built ApplySteward.
+Over the past two years I've been learning to build with AI, and I wanted to put it to work on something that genuinely helps people. Job hunting is stressful, and wading through endless job alerts makes it harder, so I built ApplySteward.
 
 It's free while I test it. That's my win/win/win: you get calm, practical help at a hard time, more people get comfortable using AI in their own way, and I keep learning from what you tell me.
 
