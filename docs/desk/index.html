@@ -639,6 +639,8 @@ footer strong{color:var(--ink);font-weight:500}
   function markApplied(r){ r.stage = "Applied"; r.last_update = iso(today()); if(!r.date_applied) r.date_applied = iso(today()); }
   function afterApplied(){
     var n = appliedToday();
+    if(n === aim) count("daily-aim-reached");
+    else if(n > aim) count("past-daily-aim");
     if(n === aim) toast("That's your " + aim + " for today. Well chosen. Anything else can wait until tomorrow.");
     else if(n > aim) toast("That's " + n + " today, past your aim of " + aim + ". Fewer, stronger applications usually go further. Tomorrow is fine for the rest.");
     else toast("Marked as applied. A follow-up reminder will appear here after 7 working days.");
@@ -658,11 +660,11 @@ footer strong{color:var(--ink);font-weight:500}
   }
   $("gate-reason").addEventListener("input", function(){ if($("gate").getAttribute("data-skip")) $("gate-go").disabled = !this.value.trim(); });
   $("gate-reason").addEventListener("keydown", function(e){ if(e.key === "Enter" && !$("gate-go").disabled){ e.preventDefault(); $("gate-go").click(); } });
-  $("gate-keep").addEventListener("click", function(){ $("gate").close(); });
+  $("gate-keep").addEventListener("click", function(){ count("rules-respected"); $("gate").close(); });
   $("gate-go").addEventListener("click", function(){
     var r = data[gateIdx]; if(!r) return; var why = $("gate-reason").value.trim(), skip = !!$("gate").getAttribute("data-skip");
     if(skip && !why) return;
-    markApplied(r);
+    markApplied(r); count(skip ? "applied-despite-skip" : "applied-despite-not-yet");
     if(why) r.notes = (r.notes ? r.notes + "; " : "") + "Applied despite " + (skip ? "Skip" : "Not yet") + ": " + why;
     $("gate").close(); save(); render(); afterApplied();
   });
@@ -682,7 +684,7 @@ footer strong{color:var(--ink);font-weight:500}
   }
   function saveAnswers(){ var a = {}; ANS.forEach(function(f){ a[f[0]] = $("ans-" + f[0]).value; }); try{ localStorage.setItem(ANSKEY, JSON.stringify(a)); }catch(e){} }
   function openPack(i){
-    packIdx = i; var r = data[i]; if(!r) return;
+    packIdx = i; var r = data[i]; if(!r) return; count("pack-opened");
     $("pack-h").textContent = "Help with your application: " + (r.role || "Role") + (r.company ? ", " + r.company : "");
     $("pack-prompt").value = [
       "pack",
@@ -709,7 +711,7 @@ footer strong{color:var(--ink);font-weight:500}
     try{ navigator.clipboard.writeText(text).then(done, fallback); }catch(e){ fallback(); }
   }
   $("pack").addEventListener("input", function(e){ if(e.target.id && e.target.id.indexOf("ans-") === 0) saveAnswers(); });
-  $("pack").addEventListener("click", function(e){ var b = e.target.closest("[data-copy]"); if(b) copyText($(b.getAttribute("data-copy")).value, b); });
+  $("pack").addEventListener("click", function(e){ var b = e.target.closest("[data-copy]"); if(b){ count(b.getAttribute("data-copy") === "pack-prompt" ? "pack-ai-request-copied" : "pack-answer-copied"); } if(b) copyText($(b.getAttribute("data-copy")).value, b); });
   $("pack-all").addEventListener("click", function(){
     var txt = ANS.map(function(f){ var v = $("ans-" + f[0]).value.trim(); return v ? f[1].replace(/ \(.*\)|, one per line/, "") + ":\n" + v : ""; }).filter(Boolean).join("\n\n");
     copyText(txt, this);
