@@ -180,7 +180,7 @@ Yes, while I test it. No account, no card and no subscription. Honest feedback i
 - offer it, or anything derived from it, to clients, employees or customers;
 - use the ApplySteward name or anything confusingly similar.
 
-The full terms are in [LICENSE](LICENSE). For permission, including coaching, outplacement or team licences, contact Yousef Serrag at [yserrag@yahoo.com](mailto:yserrag@yahoo.com) or via [LinkedIn](https://linkedin.com/in/yserrag).
+The full terms are in [LICENSE](LICENSE). For permission, including coaching, outplacement or team licences, contact Yousef Serrag via [LinkedIn](https://linkedin.com/in/yserrag).
 
 
 ## Why I built this
@@ -189,6 +189,6 @@ I've been learning to build with AI, and I wanted to put it to work on something
 
 It's free while I test it. That's my win/win/win: you get calm, practical help at a hard time, more people get comfortable using AI in their own way, and I keep learning from what you tell me.
 
-Feedback is welcome: [yserrag@yahoo.com](mailto:yserrag@yahoo.com).
+Feedback is welcome via [LinkedIn](https://www.linkedin.com/in/yserrag).
 
 [Yousef Serrag](https://linkedin.com/in/yserrag)
