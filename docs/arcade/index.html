@@ -1,0 +1,507 @@
+<!doctype html>
+<!-- © 2026 Yousef Serrag. All rights reserved. ApplySteward™. Personal use only; copying, adapting, reselling or redistributing is not permitted without written permission. -->
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rejection Invaders: a free 80s arcade break | ApplySteward</title>
+<meta name="description" content="Blast 'Unfortunately...' emails, ATS bots and ghosting recruiters with your CV cannon, then thaw the Hiring Freeze. A free 80s arcade game from ApplySteward.">
+<meta name="copyright" content="© 2026 Yousef Serrag. All rights reserved.">
+<meta name="author" content="Yousef Serrag">
+<link rel="canonical" href="https://applysteward.com/arcade/">
+<meta name="theme-color" content="#05010c">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ApplySteward">
+<meta property="og:locale" content="en_GB">
+<meta property="og:url" content="https://applysteward.com/arcade/">
+<meta property="og:title" content="Rejection Invaders: the 80s arcade game for job seekers">
+<meta property="og:description" content="1986: you saved Earth one 10p coin at a time. 2026: you run the AI. Now blast the rejections and thaw the Hiring Freeze. Free, no sign-up.">
+<meta property="og:image" content="https://applysteward.com/arcade/og-arcade.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Rejection Invaders: pixel-art rejection emails, ATS bots and ghost recruiters above a CV cannon">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Rejection Invaders: the 80s arcade game for job seekers">
+<meta name="twitter:description" content="Blast the rejections and thaw the Hiring Freeze. Free, no sign-up.">
+<meta name="twitter:image" content="https://applysteward.com/arcade/og-arcade.png">
+<link rel="preload" href="fonts/press-start-2p.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/vt323.woff2" as="font" type="font/woff2" crossorigin>
+<script src="/count.js" defer></script>
+<style>
+@font-face{font-family:"Press Start 2P";font-style:normal;font-weight:400;font-display:swap;src:url("fonts/press-start-2p.woff2") format("woff2")}
+@font-face{font-family:"VT323";font-style:normal;font-weight:400;font-display:swap;src:url("fonts/vt323.woff2") format("woff2")}
+:root{--pink:#ff4fd8;--cyan:#36f9f6;--yellow:#fede5d;--green:#72f1b8;--coral:#ff8b5c;--ice:#bdf3ff;--bg:#05010c}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:radial-gradient(ellipse at top,#3a0f5c 0%,#12042a 45%,#05010c 100%);color:#fff;font-family:'VT323',monospace;overflow:hidden;-webkit-tap-highlight-color:transparent}
+body{display:flex;align-items:center;justify-content:center}
+#cabinet{display:flex;flex-direction:column;align-items:center;gap:8px;padding:8px;width:100%}
+#marquee{font-family:'Press Start 2P',monospace;font-size:clamp(12px,3.2vw,20px);letter-spacing:2px;text-align:center;background:linear-gradient(90deg,var(--pink),var(--yellow),var(--cyan));-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 6px rgba(255,79,216,.7))}
+#screen{position:relative;container-type:inline-size;width:min(100%,calc((100vh - 100px) * .8));aspect-ratio:4/5;border:4px solid var(--pink);border-radius:14px;box-shadow:0 0 0 4px #1a0630,0 0 28px rgba(255,79,216,.55),0 0 60px rgba(54,249,246,.25);overflow:hidden;background:var(--bg)}
+@media (pointer:coarse){#screen{width:min(100%,calc((100vh - 190px) * .8))}}
+#screen::before{content:'';position:absolute;inset:0;pointer-events:none;z-index:5;background:radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,.55) 100%)}
+#screen::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:6;background:repeating-linear-gradient(0deg,rgba(0,0,0,.22) 0 1px,transparent 1px 3px)}
+canvas{width:100%;height:100%;display:block;image-rendering:pixelated}
+.overlay{position:absolute;inset:0;z-index:3;display:none;flex-direction:column;align-items:center;justify-content:flex-start;gap:2.2cqw;padding:5cqw 6cqw;text-align:center;background:rgba(5,1,12,.9);overflow-y:auto}
+.overlay.show{display:flex}
+.logo{font-family:'Press Start 2P',monospace;font-size:7.4cqw;line-height:1.25;background:linear-gradient(180deg,#fff 0%,var(--yellow) 35%,var(--pink) 75%,#a02bff 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 1.4cqw rgba(255,79,216,.8));margin-top:1cqw}
+.tag{font-family:'Press Start 2P',monospace;font-size:2.3cqw;line-height:1.7;color:var(--cyan);letter-spacing:.3cqw;text-shadow:0 0 1.5cqw rgba(54,249,246,.8)}
+.story{font-size:5.6cqw;line-height:1;color:#e9ddff;max-width:90cqw}
+.story p{margin:.6cqw 0}
+.y{color:var(--yellow)}.c{color:var(--cyan)}.p{color:var(--pink)}.g{color:var(--green)}
+.sect{font-family:'Press Start 2P',monospace;font-size:2.4cqw;color:var(--yellow);margin-top:.5cqw}
+.legend{display:grid;grid-template-columns:auto 1fr auto;gap:.6cqw 2.5cqw;align-items:center;font-size:5.4cqw;text-align:left;width:82cqw}
+.legend img{image-rendering:pixelated;height:5cqw;justify-self:center}
+.legend .pts{font-family:'Press Start 2P',monospace;font-size:2.3cqw;color:var(--yellow)}
+.legend .ice{font-size:5cqw;justify-self:center;color:var(--ice)}
+.powers{display:grid;grid-template-columns:1fr 1fr;gap:1cqw 3cqw;width:84cqw;font-size:5cqw;line-height:1;text-align:left}
+.chip{display:inline-flex;align-items:center;justify-content:center;width:4.6cqw;height:4.6cqw;border:.5cqw solid;border-radius:1cqw;font-family:'Press Start 2P',monospace;font-size:2.3cqw;margin-right:1.5cqw;vertical-align:middle}
+.btn{font-family:'Press Start 2P',monospace;font-size:3.4cqw;padding:2.6cqw 4.5cqw;margin-top:1cqw;color:#05010c;background:var(--yellow);border:none;border-radius:1cqw;box-shadow:0 .9cqw 0 #b88a00,0 0 3cqw rgba(254,222,93,.6);cursor:pointer}
+.btn:active{transform:translateY(.6cqw);box-shadow:0 .3cqw 0 #b88a00}
+.btn.alt{background:transparent;color:var(--cyan);border:.5cqw solid var(--cyan);box-shadow:0 0 2cqw rgba(54,249,246,.4);font-size:2.6cqw}
+.blink{animation:blink 1s steps(2,start) infinite}
+@keyframes blink{to{visibility:hidden}}
+.ctrl{font-family:'Press Start 2P',monospace;font-size:2.1cqw;color:#a99bd1;line-height:1.8}
+.hiline{font-family:'Press Start 2P',monospace;font-size:2.4cqw;color:var(--pink)}
+.wavedone{font-family:'Press Start 2P',monospace;font-size:2.6cqw;color:var(--cyan);margin-top:2cqw}
+.big{font-family:'Press Start 2P',monospace;font-size:6cqw;line-height:1.3;color:var(--yellow);text-shadow:0 0 2cqw rgba(254,222,93,.8),.6cqw .6cqw 0 #a02bff}
+.big.red{color:#ff5470;text-shadow:0 0 2cqw rgba(255,84,112,.8),.6cqw .6cqw 0 #3a0f5c}
+.big2{font-family:'Press Start 2P',monospace;font-size:3.6cqw;color:var(--green);text-shadow:0 0 1.5cqw rgba(114,241,184,.8)}
+.quip{font-size:6.4cqw;line-height:1;margin:0;color:#fff;max-width:86cqw}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:1.4cqw;width:84cqw}
+.stats div{border:.4cqw solid #4b2a7a;border-radius:1cqw;padding:1.4cqw;background:rgba(58,15,92,.35)}
+.stats span{display:block;font-family:'Press Start 2P',monospace;font-size:1.8cqw;color:#a99bd1;margin-bottom:.8cqw}
+.stats b{font-family:'Press Start 2P',monospace;font-size:3cqw;color:var(--green);font-weight:normal}
+.box{width:84cqw;border-left:1cqw solid var(--pink);background:rgba(255,79,216,.08);padding:1.4cqw 2.4cqw;text-align:left}
+.box.tip{border-color:var(--cyan);background:rgba(54,249,246,.08)}
+.box span{font-family:'Press Start 2P',monospace;font-size:2cqw;color:var(--pink)}
+.box.tip span{color:var(--cyan)}
+.box p{margin:.6cqw 0 0;font-size:5.6cqw;line-height:1}
+.foot{font-size:5cqw;color:#a99bd1}
+.scoreline{font-family:'Press Start 2P',monospace;font-size:3cqw;line-height:1.8}
+.rank{font-family:'Press Start 2P',monospace;font-size:2.6cqw;color:var(--cyan);line-height:1.7}
+.rank b{display:block;color:var(--yellow);font-size:3.4cqw;font-weight:normal}
+.sharebox{display:none;font-size:5cqw;color:#e9ddff;background:#12042a;border:.4cqw dashed #4b2a7a;padding:1.5cqw;width:84cqw;user-select:all}
+.cta{color:var(--green);font-size:5.4cqw;text-decoration:none;border-bottom:.3cqw dotted var(--green)}
+#bar{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;font-family:'Press Start 2P',monospace;font-size:9px;color:#a99bd1}
+#bar button{font-family:inherit;font-size:9px;background:transparent;color:var(--cyan);border:2px solid #4b2a7a;border-radius:6px;padding:6px 8px;cursor:pointer}
+#bar a{color:var(--green);text-decoration:none}
+#touch{display:none;gap:10px;width:min(100%,520px);justify-content:space-between;touch-action:none;user-select:none}
+@media (pointer:coarse){#touch{display:flex}}
+#touch button{flex:1;height:64px;font-family:'Press Start 2P',monospace;font-size:14px;border-radius:12px;border:3px solid var(--cyan);background:rgba(54,249,246,.1);color:var(--cyan);touch-action:none}
+#touch #tFire{flex:1.4;border-color:var(--pink);color:var(--pink);background:rgba(255,79,216,.12)}
+</style>
+</head>
+<body>
+<div id="cabinet">
+  <div id="marquee">★ REJECTION INVADERS ★</div>
+  <div id="screen">
+    <canvas id="game"></canvas>
+
+    <div class="overlay show" id="titleOv">
+      <div class="logo">REJECTION<br>INVADERS</div>
+      <div class="tag">FOR THE ARCADE KIDS WHO NOW RUN THE AI</div>
+      <div class="story">
+        <p><b class="y">1986.</b> You saved Earth one 10p coin at a time.</p>
+        <p><b class="c">2026.</b> You run the AI, the budgets and the board deck.</p>
+        <p>Then the job market sent a fleet of <b class="p">REJECTIONS</b>. Grab your <b class="g">CV cannon</b>. Your career needs you.</p>
+      </div>
+      <div class="sect">MEET THE INVADERS</div>
+      <div class="legend" id="legend"></div>
+      <div class="sect">POWER-UPS (CATCH THEM)</div>
+      <div class="powers" id="powers"></div>
+      <button class="btn" id="startBtn"><span class="blink">INSERT COIN ▶</span></button>
+      <div class="ctrl">← → MOVE &nbsp;·&nbsp; SPACE FIRE CVs<br>P PAUSE &nbsp;·&nbsp; M SOUND &nbsp;·&nbsp; HIDE BEHIND YOUR NETWORK</div>
+      <div class="hiline" id="titleHi">HI-SCORE 000000</div>
+    </div>
+
+    <div class="overlay" id="clearOv">
+      <div class="wavedone" id="cWave">WAVE 1 COMPLETE</div>
+      <div class="big" id="cTitle">INBOX ZERO!</div>
+      <p class="quip" id="cQuip"></p>
+      <div class="stats" id="cStats"></div>
+      <div class="box"><span>80s FLASHBACK</span><p id="cFlash"></p></div>
+      <div class="box tip"><span>REAL-LIFE PRO TIP</span><p id="cTip"></p></div>
+      <button class="btn" id="nextBtn">NEXT WAVE ▶</button>
+      <div class="foot">Tip: ApplySteward tailors the real CVs while you play.</div>
+    </div>
+
+    <div class="overlay" id="overOv">
+      <div class="big red" style="margin-top:4cqw">GAME OVER?</div>
+      <div class="big2">NAH. PLOT TWIST.</div>
+      <p class="quip" id="oReason"></p>
+      <div class="scoreline" id="oScore"></div>
+      <div class="rank">YOUR RANK<b id="oRank"></b></div>
+      <p class="quip" id="oLine" style="color:#e9ddff"></p>
+      <button class="btn" id="againBtn"><span class="blink">INSERT COIN ▶</span></button>
+      <button class="btn alt" id="shareBtn">COPY MY SCORE TO SHARE</button>
+      <div class="sharebox" id="shareBox"></div>
+      <a class="cta" href="/" id="ctaLink">Want the real job hunt on autopilot? ApplySteward →</a>
+    </div>
+
+    <div class="overlay" id="pauseOv" style="justify-content:center">
+      <div class="big">PAUSED</div>
+      <p class="quip">Coffee break. Even legends need one.</p>
+      <button class="btn" id="resumeBtn">RESUME ▶</button>
+    </div>
+  </div>
+
+  <div id="touch">
+    <button id="tLeft" aria-label="Move left">◀</button>
+    <button id="tFire" aria-label="Fire">FIRE</button>
+    <button id="tRight" aria-label="Move right">▶</button>
+  </div>
+  <div id="bar">
+    <button id="muteBtn">SOUND: ON</button>
+    <button id="pauseBtn">PAUSE</button>
+    <span>A free arcade break from <a href="/">ApplySteward</a></span>
+  </div>
+</div>
+
+<script>
+(()=>{
+'use strict';
+const cv=document.getElementById('game'),ctx=cv.getContext('2d');
+const W=480,H=600,R=2;cv.width=W*R;cv.height=H*R;ctx.scale(R,R);ctx.imageSmoothingEnabled=false;
+const S=3,FONT="'Press Start 2P', monospace";
+const $=id=>document.getElementById(id);
+const rnd=(a,b)=>a+Math.random()*(b-a),pick=a=>a[Math.floor(Math.random()*a.length)],clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const pad=n=>String(n).padStart(6,'0');
+
+/* ---------- SPRITES ---------- */
+const SPR={
+ env:[["XXXXXXXXXXX","XWXXXXXXXWX","XXWXXXXXWXX","XXXWXXXWXXX","XXXXWWWXXXX","XXKKXXXKKXX","XXXXXXXXXXX",".X.......X."],
+      ["XXXXXXXXXXX","XWXXXXXXXWX","XXWXXXXXWXX","XXXWXXXWXXX","XXXXWWWXXXX","XXKKXXXKKXX","XXXXXXXXXXX","..X.....X.."]],
+ bot:[["..X.....X..","...X...X...","..XXXXXXX..",".XXRXXXRXX.","XXXXXXXXXXX","X.XXXXXXX.X","X.X.....X.X","...XX.XX..."],
+      ["..X.....X..","X..X...X..X","X.XXXXXXX.X","XXXRXXXRXXX","XXXXXXXXXXX",".XXXXXXXXX.","..X.....X..",".X.......X."]],
+ ghost:[["...XXXXX...",".XXXXXXXXX.","XXXXXXXXXXX","XXWWXXXWWXX","XXWKXXXWKXX","XXXXXXXXXXX","XXXXXXXXXXX","XX.XX.XX.XX"],
+        ["...XXXXX...",".XXXXXXXXX.","XXXXXXXXXXX","XXWWXXXWWXX","XXKWXXXKWXX","XXXXXXXXXXX","XXXXXXXXXXX",".XX.XX.XX.X"]],
+ player:[["......W......",".....WWW.....",".....WWW.....",".XXXXXXXXXXX.","XXXXXXXXXXXXX","XXXXXXXXXXXXX","XXXXXXXXXXXXX","XXXXXXXXXXXXX"]],
+ ufo:[[".....XXXXXX.....","...XXXXXXXXXX...","..XXXXXXXXXXXX..",".XXWXXWXXWXXWXX.","XXXXXXXXXXXXXXXX","..XXX..XX..XXX..","...X........X..."]],
+ heart:[[".XX.XX.","XXXXXXX","XXXXXXX",".XXXXX.","..XXX..","...X..."]]
+};
+const PAL={env:{X:'#ff4fd8',W:'#ffffff',K:'#1a0630'},bot:{X:'#36f9f6',R:'#ff3b3b'},ghost:{X:'#c9b6ff',W:'#ffffff',K:'#1a0630'},player:{X:'#72f1b8',W:'#ffffff'},ufo:{X:'#ffb000',W:'#ffffff'},heart:{X:'#ff5470'}};
+function build(rows,pal,sc){sc=sc||S;const h=rows.length,w=rows[0].length,c=document.createElement('canvas');c.width=w*sc;c.height=h*sc;const x=c.getContext('2d');
+ for(let j=0;j<h;j++)for(let i=0;i<w;i++){const ch=rows[j][i];if(ch!=='.'&&pal[ch]){x.fillStyle=pal[ch];x.fillRect(i*sc,j*sc,sc,sc);}}return c;}
+const IMG={};for(const k in SPR)IMG[k]=SPR[k].map(r=>build(r,PAL[k],k==='heart'?2:S));
+
+const TYPES={
+ env:{pts:10,color:'#ff4fd8',kill:['DELETED!','ARCHIVED!','UNSUBSCRIBED!','MARKED AS SPAM!']},
+ bot:{pts:20,color:'#36f9f6',kill:['PARSED!','KEYWORDS MATCHED!','SYSTEM ERROR!','BEEP BOOP... HIRED?']},
+ ghost:{pts:30,color:'#c9b6ff',kill:['FOUND YOU!','SEEN 3 WEEKS AGO!','NO MORE GHOSTING!','"PER MY LAST EMAIL"']}
+};
+const PW={R:{name:'REFERRAL',desc:'Triple shot',color:'#fede5d'},K:{name:'KEYWORD MATCH',desc:'Rapid fire',color:'#36f9f6'},W:{name:'WARM INTRO',desc:'Blocks one hit',color:'#ff4fd8'},C:{name:'COFFEE',desc:'+1 morale',color:'#72f1b8'}};
+
+/* ---------- COPY ---------- */
+const WAVES=[
+ {t:'THE INBOX',s:"55 'Unfortunately...' emails incoming. Not one of them read your cover letter."},
+ {t:'THE ATS',s:"Applicant Tracking Bots online. They're scanning for keywords. Give them some."},
+ {t:'THE GHOSTING',s:"The recruiters who said 'I'll be in touch'. Well, they're in touch now."},
+ {t:'THE FINAL ROUND',s:"A seven-person panel. No agenda. Luckily you brought shoulder pads."},
+ {t:'HIRING FREEZE',s:"BOSS WAVE. Cold, corporate, and it's paused all headcount until Q3. Melt it with CVs."}
+];
+const CLEARS=[
+ {t:'INBOX ZERO!',q:"You cleared 55 rejections faster than a 1986 fax machine could print one.",tip:"Rejections are data, not verdicts. Delete, learn, reload."},
+ {t:'ATS DEFEATED!',q:"The robots parsed your CV and found... a legend.",tip:"Mirror 5 keywords from the job ad. The bots love an echo."},
+ {t:'GHOSTS BUSTED!',q:"Every recruiter who ghosted you has been located. They send their warmest regards.",tip:"Follow up once after 5 working days. Polite persistence wins."},
+ {t:'PANEL SURVIVED!',q:"Seven interviewers. One question each. Zero sweat. The shoulder pads did the heavy lifting.",tip:"Lead with your biggest number. Quantified wins stick in the debrief."},
+ {t:'OFFER LETTER RECEIVED!',q:"You thawed the Hiring Freeze with pure 1986 determination and a well-tailored CV.",tip:"Negotiate. The first number is an opening bid, not a verdict."}
+];
+const FLASH=[
+ "In 1986 you rewound cassettes with a biro. You can absolutely handle a job hunt.",
+ "You programmed a VCR without the manual. AI was never going to scare you.",
+ "You survived dial-up screeching. A slow recruiter is nothing.",
+ "You typed BASIC to make your name scroll forever. That was prompt engineering, really.",
+ "You beat the arcade on three lives and 10p. Same energy, bigger stakes.",
+ "You once waited a week to get holiday photos developed. You have the patience for any hiring process.",
+ "You refolded a paper road map correctly. A career pivot is easy by comparison."
+];
+const HIT_LINES=["UNFORTUNATELY...","OVERQUALIFIED!","NOT A CULTURE FIT","FILLED INTERNALLY","WE'VE GONE ANOTHER WAY","CV KEPT ON FILE"];
+const BOUNCE=["SHAKE IT OFF. RESPAWNING...","THEIR LOSS. RELOADING...","NEXT! (THEM, NOT YOU)","PLOT ARMOUR ENGAGED..."];
+const OVER_LINES=["Every exec you admire has a drawer full of rejections.","The 1986 you never quit after one Game Over. Neither will this one.","Rejection is just redirection with worse graphics.","Somewhere, a hiring manager is about to love your CV."];
+const BOSS_Q=["WE'RE PAUSING ALL HIRING!","LET'S CIRCLE BACK IN Q3!","BUDGET UNDER REVIEW!","LET'S TAKE THIS OFFLINE!","NEED SIGN-OFF FROM FINANCE!","IS THIS ROLE EVEN NEEDED?"];
+const BOSS_LOW=["OK... MAYBE Q2?","FINE! ONE HEADCOUNT!","WHO APPROVED THIS?!","I'M MELTING... THE BUDGET!"];
+const RANKS=[[0,'WORK EXPERIENCE KID'],[1500,'JUNIOR ASSOCIATE'],[4000,'MIDDLE MANAGER WITH WALKMAN'],[8000,'VP OF SYNERGY'],[15000,'CHIEF AI OFFICER'],[30000,'ARCADE LEGEND & BOARD CHAIR']];
+const rankOf=s=>{let r=RANKS[0][1];for(const [m,n] of RANKS)if(s>=m)r=n;return r;};
+
+/* ---------- AUDIO ---------- */
+let ac=null,muted=false,noiseBuf=null;
+function initAudio(){try{if(!ac){ac=new (window.AudioContext||window.webkitAudioContext)();const n=ac.sampleRate;noiseBuf=ac.createBuffer(1,n,n);const d=noiseBuf.getChannelData(0);for(let i=0;i<n;i++)d[i]=Math.random()*2-1;}
+ if(ac.state==='suspended')ac.resume().catch(()=>{});}catch(e){ac=null;}}
+function tone(f,d,type,v,f2,delay){if(!ac||muted)return;try{const t=ac.currentTime+(delay||0),o=ac.createOscillator(),g=ac.createGain();o.type=type||'square';o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(v||0.06,t);g.gain.exponentialRampToValueAtTime(0.0001,t+d);o.connect(g).connect(ac.destination);o.start(t);o.stop(t+d+0.03);}catch(e){}}
+function noise(d,v){if(!ac||muted||!noiseBuf)return;try{const t=ac.currentTime,s=ac.createBufferSource(),g=ac.createGain(),f=ac.createBiquadFilter();f.type='lowpass';f.frequency.value=1200;s.buffer=noiseBuf;g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(0.0001,t+d);s.connect(f).connect(g).connect(ac.destination);s.start(t);s.stop(t+d+0.03);}catch(e){}}
+let marchI=0;const MARCH=[110,98,87,82];
+const sfx={
+ shoot:()=>tone(900,0.09,'square',0.045,240),
+ kill:()=>{noise(0.18,0.13);tone(320,0.12,'square',0.035,70);},
+ march:()=>tone(MARCH[marchI++%4],0.1,'square',0.06),
+ hit:()=>{noise(0.6,0.25);tone(220,0.6,'sawtooth',0.08,40);},
+ power:()=>[523,659,784,1047].forEach((f,i)=>tone(f,0.09,'square',0.05,null,i*0.06)),
+ clear:()=>[523,523,659,784,659,784,1047].forEach((f,i)=>tone(f,0.13,'square',0.055,null,i*0.11)),
+ over:()=>[392,330,262,196].forEach((f,i)=>tone(f,0.25,'triangle',0.09,null,i*0.22)),
+ ufo:()=>tone(520+Math.random()*260,0.09,'sine',0.035),
+ boss:()=>tone(80,0.25,'sawtooth',0.06,45),
+ bossHit:()=>tone(1400,0.04,'square',0.025,900),
+ coin:()=>{tone(988,0.08,'square',0.06);tone(1319,0.35,'square',0.06,null,0.08);}
+};
+
+/* ---------- STATE ---------- */
+let hi=0;try{hi=parseInt(localStorage.getItem('ri_hi')||'0',10)||0;}catch(e){}
+let state='title',paused=false,score=0,wave=1,lives=3,enemies=[],fleet=null,pB=[],eB=[],parts=[],floats=[],pups=[],bunkers=[],ufo=null,ufoT=12,boss=null;
+let player={x:W/2,alive:true,respawnT:0,inv:0},pw={triple:0,rapid:0,shield:false},fireCd=0;
+let shotsW=0,hitsW=0,killsW=0,lastBonus=0,introT=0,clearT=0,endT=0,endReason='morale',shake=0,banner=null,overlayAt=0;
+const keys={},touch={left:false,right:false,fire:false};
+const kOf=w=>(w-1)%5,loopOf=w=>Math.floor((w-1)/5);
+const CW=36,CH=32,EW=33,EH=24,PY=550;
+
+const stars=[];for(let i=0;i<80;i++)stars.push({x:Math.random()*W,y:Math.random()*H,s:Math.random()<.15?2:1,v:rnd(6,22),tw:Math.random()*6});
+
+/* ---------- BUNKERS ---------- */
+const BW=22,BHt=14,BC=3;
+function makeBunker(x,y){const g=new Uint8Array(BW*BHt);for(let j=0;j<BHt;j++)for(let i=0;i<BW;i++){let on=1;
+ if(j<4&&(i<4-j||i>BW-1-(4-j)))on=0;
+ if(j>=9&&i>=7&&i<=14)on=0;
+ if(j===8&&i>=8&&i<=13)on=0;
+ g[j*BW+i]=on;}return{x,y,g};}
+function buildBunkers(){bunkers=[];for(let i=0;i<4;i++){const cx=W/5*(i+1);bunkers.push(makeBunker(Math.round(cx-BW*BC/2),468));}}
+function damage(bk,ci,cj,rad){const r=Math.ceil(rad)+1;for(let dj=-r;dj<=r;dj++)for(let di=-r;di<=r;di++){const i=ci+di,j=cj+dj;if(i<0||j<0||i>=BW||j>=BHt)continue;if(di*di+dj*dj<=rad*rad+Math.random()*3)bk.g[j*BW+i]=0;}}
+function bunkerHit(r,rad,up){for(const bk of bunkers){if(r.x+r.w<bk.x||r.x>bk.x+BW*BC||r.y+r.h<bk.y||r.y>bk.y+BHt*BC)continue;
+ const i0=Math.max(0,Math.floor((r.x-bk.x)/BC)),i1=Math.min(BW-1,Math.floor((r.x+r.w-bk.x)/BC)),j0=Math.max(0,Math.floor((r.y-bk.y)/BC)),j1=Math.min(BHt-1,Math.floor((r.y+r.h-bk.y)/BC));
+ if(up){for(let j=j1;j>=j0;j--)for(let i=i0;i<=i1;i++)if(bk.g[j*BW+i]){damage(bk,i,j,rad);return true;}}
+ else{for(let j=j0;j<=j1;j++)for(let i=i0;i<=i1;i++)if(bk.g[j*BW+i]){damage(bk,i,j,rad);return true;}}}return false;}
+function bunkerErase(r){for(const bk of bunkers){if(r.x+r.w<bk.x||r.x>bk.x+BW*BC||r.y+r.h<bk.y||r.y>bk.y+BHt*BC)continue;
+ const i0=Math.max(0,Math.floor((r.x-bk.x)/BC)),i1=Math.min(BW-1,Math.floor((r.x+r.w-bk.x)/BC)),j0=Math.max(0,Math.floor((r.y-bk.y)/BC)),j1=Math.min(BHt-1,Math.floor((r.y+r.h-bk.y)/BC));
+ for(let j=j0;j<=j1;j++)for(let i=i0;i<=i1;i++)bk.g[j*BW+i]=0;}}
+
+/* ---------- HELPERS ---------- */
+const ov=(a,b)=>a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;
+const ex=e=>fleet.x+e.c*CW,ey=e=>fleet.y+e.r*CH;
+function explode(x,y,color,n,spd){spd=spd||140;for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,v=Math.random()*spd;parts.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,life:rnd(.35,.8),color:Math.random()<.25?'#ffffff':color,s:Math.random()<.5?3:2});}}
+function addFloat(x,y,text,color,size,life){floats.push({x,y,text,color,size:size||8,life:life||.8,max:life||.8});}
+function dropPower(x,y){const r=Math.random();const t=r<.36?'R':r<.72?'K':r<.92?'W':'C';pups.push({x:x-10,y,w:20,h:20,t,ph:0});}
+
+/* ---------- FLOW ---------- */
+const track=n=>{try{window.asCount&&window.asCount(n);}catch(e){}};
+function startGame(){if(state!=='title'&&state!=='over')return;track(state==='title'?'arcade-start':'arcade-replay');initAudio();sfx.coin();score=0;wave=1;lives=3;hideAll();setupWave();}
+function setupWave(){const k=kOf(wave),loop=loopOf(wave);pB=[];eB=[];pups=[];parts=[];floats=[];ufo=null;ufoT=rnd(10,16);boss=null;banner=null;
+ pw={triple:0,rapid:0,shield:pw.shield&&wave>1};buildBunkers();shotsW=0;hitsW=0;killsW=0;
+ enemies=[];
+ const comps=[['env','env','env','env','env'],['bot','bot','env','env','env'],['ghost','bot','bot','env','env'],['ghost','ghost','bot','bot','env']];
+ if(k<4){const comp=comps[k];for(let r=0;r<5;r++)for(let c=0;c<11;c++)enemies.push({r,c,type:comp[r],alive:true});}
+ else{const hp=50+loop*30;const cracks=[];for(let i=0;i<10;i++){const sx=rnd(10,134),sy=rnd(6,78);cracks.push([sx,sy,sx+rnd(-18,18),sy+rnd(-14,14),sx+rnd(-26,26),sy+rnd(-20,20)].map((v,j)=>j%2?clamp(v,4,80):clamp(v,4,140)));}
+  boss={x:W/2-72,y:-110,w:144,h:84,hp,max:hp,vx:75*(1+loop*.2),fireT:1.4,bigT:4,quipT:1.2,quip:'',quipLife:0,flash:0,enter:true,cracks};}
+ fleet={x:(W-(10*CW+EW))/2,y:92+Math.min(loop,3)*16,dir:1,stepT:500,fireT:1.6,frame:0};
+ player.x=W/2;player.alive=true;player.inv=0;introT=2.8;state='intro';}
+function beginClear(){state='clearing';clearT=1.5;eB=[];ufo=null;lastBonus=100*wave+lives*50;score+=lastBonus;addFloat(W/2,300,'WAVE BONUS +'+lastBonus,'#fede5d',12,1.4);sfx.clear();}
+function showClear(){state='clear';if(kOf(wave)===4)track('arcade-boss-beaten');const k=kOf(wave),loop=loopOf(wave),C=CLEARS[k];
+ $('cWave').textContent='WAVE '+wave+' COMPLETE';
+ $('cTitle').textContent=loop>0&&k<4?C.t.replace('!',' AGAIN!'):C.t;
+ $('cQuip').textContent=C.q;
+ const acc=shotsW?Math.min(100,Math.round(hitsW/shotsW*100)):0;
+ const first=k===4?['FREEZES THAWED','1']:['REJECTIONS DEFLECTED',String(killsW)];
+ $('cStats').innerHTML=`<div><span>${first[0]}</span><b>${first[1]}</b></div><div><span>CV ACCURACY</span><b>${acc}%</b></div><div><span>WAVE BONUS</span><b>+${lastBonus}</b></div><div><span>MORALE</span><b style="color:#ff5470">${'♥'.repeat(Math.max(0,lives))}</b></div>`;
+ $('cFlash').textContent=pick(FLASH);$('cTip').textContent=C.tip;
+ $('nextBtn').textContent=k===4?'NEW GAME+ ▶ (IT GETS FASTER)':'NEXT WAVE ▶';
+ showOv('clearOv');}
+function nextWave(){if(state!=='clear')return;hideAll();wave++;setupWave();}
+function endGame(reason){state='ending';endT=1.8;endReason=reason;}
+function showOver(){state='over';if(score>hi){hi=score;try{localStorage.setItem('ri_hi',String(hi));}catch(e){}}
+ $('oReason').textContent=endReason==='invaded'?"The rejections reached your desk. Grab a fresh coffee and go again.":"Your morale ran out (temporarily). Happens to the best of us.";
+ const best=score>=hi&&score>0?' ★ NEW HI-SCORE!':'';
+ $('oScore').innerHTML=`<span style="color:#ff4fd8">SCORE</span> ${pad(score)}<br><span style="color:#36f9f6">HI</span> ${pad(hi)}<span style="color:#fede5d">${best}</span><br><span style="color:#a99bd1">REACHED WAVE ${wave}</span>`;
+ $('oRank').textContent=rankOf(score);$('oLine').textContent=pick(OVER_LINES);
+ $('shareBox').style.display='none';$('shareBtn').textContent='COPY MY SCORE TO SHARE';
+ $('titleHi').textContent='HI-SCORE '+pad(hi);
+ sfx.over();showOv('overOv');}
+function showOv(id){$(id).classList.add('show');$(id).scrollTop=0;overlayAt=performance.now();}
+function hideAll(){['titleOv','clearOv','overOv','pauseOv'].forEach(i=>$(i).classList.remove('show'));}
+function togglePause(){if(state!=='play'&&state!=='intro'&&!paused)return;paused=!paused;if(paused)showOv('pauseOv');else $('pauseOv').classList.remove('show');$('pauseBtn').textContent=paused?'RESUME':'PAUSE';}
+
+/* ---------- UPDATE ---------- */
+function movePlayer(dt){if(!player.alive)return;let mv=0;if(keys.ArrowLeft||keys.KeyA||touch.left)mv-=1;if(keys.ArrowRight||keys.KeyD||touch.right)mv+=1;player.x=clamp(player.x+mv*250*dt,22,W-22);}
+function hitPlayer(){
+ if(pw.shield){pw.shield=false;player.inv=1.2;addFloat(player.x,520,'WARM INTRO SAVED YOU!','#ff4fd8',9,1.4);sfx.power();return;}
+ lives--;player.alive=false;explode(player.x,PY+12,'#72f1b8',46,180);shake=.45;sfx.hit();eB=[];pw.triple=0;pw.rapid=0;
+ banner={a:pick(HIT_LINES),b:lives>0?pick(BOUNCE):'OUT OF MORALE...',life:1.9};
+ if(lives<=0)endGame('morale');else player.respawnT=1.7;}
+function killEnemy(e){e.alive=false;const T=TYPES[e.type];score+=T.pts;hitsW++;killsW++;const x=ex(e)+EW/2,y=ey(e)+EH/2;explode(x,y,T.color,14);sfx.kill();
+ if(Math.random()<.22)addFloat(x,y,pick(T.kill),T.color,8,1);else addFloat(x,y,'+'+T.pts,T.color,8,.6);
+ if(Math.random()<.09)dropPower(x,y);}
+
+function updatePlay(dt){
+ const k=kOf(wave),loop=loopOf(wave),speed=1+loop*.35+(k===3?.2:0);
+ movePlayer(dt);
+ if(player.alive){if(player.inv>0)player.inv-=dt;fireCd-=dt;
+  const firing=keys.Space||keys.ArrowUp||keys.KeyZ||touch.fire;
+  if(firing&&fireCd<=0){const tri=pw.triple>0,max=(pw.rapid>0?5:2)*(tri?3:1);
+   if(pB.length<max){const vs=tri?[-110,0,110]:[0];vs.forEach(vx=>pB.push({x:player.x-3,y:PY-6,vx,vy:-500,w:6,h:10}));shotsW+=vs.length;fireCd=pw.rapid>0?.13:.36;sfx.shoot();}}}
+ else if(state==='play'){player.respawnT-=dt;if(player.respawnT<=0){player.alive=true;player.inv=2;player.x=W/2;}}
+ if(pw.triple>0)pw.triple-=dt;if(pw.rapid>0)pw.rapid-=dt;
+
+ // fleet
+ const alive=enemies.filter(e=>e.alive);
+ if(alive.length){
+  fleet.stepT-=dt*1000;
+  if(fleet.stepT<=0){fleet.stepT=(28+640*(alive.length/enemies.length))/speed;
+   let minX=1e9,maxX=-1e9;alive.forEach(e=>{const x=ex(e);if(x<minX)minX=x;if(x+EW>maxX)maxX=x+EW;});
+   const nx=fleet.dir*7;if(maxX+nx>W-8||minX+nx<8){fleet.y+=14;fleet.dir*=-1;}else fleet.x+=nx;
+   fleet.frame^=1;sfx.march();
+   let maxY=0;alive.forEach(e=>{const r={x:ex(e),y:ey(e),w:EW,h:EH};if(r.y+r.h>maxY)maxY=r.y+r.h;bunkerErase(r);});
+   if(maxY>=PY){player.alive&&explode(player.x,PY+12,'#72f1b8',40,180);player.alive=false;shake=.45;sfx.hit();banner={a:'THE REJECTIONS',b:'REACHED YOUR DESK!',life:1.9};lives=0;endGame('invaded');return;}}
+  fleet.fireT-=dt;
+  const maxEB=3+k+loop*2;
+  if(fleet.fireT<=0&&player.alive){fleet.fireT=Math.max(.3,1.15-k*.12-loop*.2)*rnd(.6,1.4);
+   if(eB.length<maxEB){const cols={};alive.forEach(e=>{if(!cols[e.c]||e.r>cols[e.c].r)cols[e.c]=e;});const arr=Object.values(cols);
+    const sh=Math.random()<.4?arr.reduce((a,b)=>Math.abs(ex(a)+EW/2-player.x)<Math.abs(ex(b)+EW/2-player.x)?a:b):pick(arr);
+    eB.push({x:ex(sh)+EW/2-3,y:ey(sh)+EH,vx:0,vy:170+loop*40+k*12,w:6,h:12,kind:sh.type,t:0});}}}
+
+ // ufo
+ if(!boss){ufoT-=dt;if(!ufo&&ufoT<=0){const d=Math.random()<.5?1:-1;ufo={x:d>0?-50:W+2,y:64,vx:d*105,snd:0};}
+  if(ufo){ufo.x+=ufo.vx*dt;ufo.snd-=dt;if(ufo.snd<=0){ufo.snd=.13;sfx.ufo();}if(ufo.x<-60||ufo.x>W+60){ufo=null;ufoT=rnd(14,24);}}}
+
+ // boss
+ if(boss)updateBoss(dt,loop);
+
+ // player bullets
+ for(const b of pB){b.x+=b.vx*dt;b.y+=b.vy*dt;if(b.y<-20||b.x<-10||b.x>W+10){b.dead=true;continue;}
+  for(const q of eB){if(!q.dead&&ov(b,q)){b.dead=q.dead=true;explode(b.x+3,b.y,'#ffffff',6,80);break;}}if(b.dead)continue;
+  for(const e of alive){if(e.alive&&ov(b,{x:ex(e),y:ey(e),w:EW,h:EH})){b.dead=true;killEnemy(e);break;}}if(b.dead)continue;
+  if(ufo&&ov(b,{x:ufo.x,y:ufo.y,w:48,h:21})){b.dead=true;const p=pick([50,100,150,300]);score+=p;hitsW++;explode(ufo.x+24,ufo.y+10,'#ffb000',30,170);addFloat(ufo.x+24,ufo.y+8,'DREAM JOB! +'+p,'#ffb000',10,1.4);dropPower(ufo.x+24,ufo.y+20);sfx.power();ufo=null;ufoT=rnd(14,24);continue;}
+  if(boss&&!boss.enter&&ov(b,boss)){b.dead=true;boss.hp--;hitsW++;score+=5;boss.flash=.06;explode(b.x+3,b.y,'#bdf3ff',5,90);sfx.bossHit();
+   if(boss.hp<=0){const bx=boss.x+72,by=boss.y+42;for(let i=0;i<7;i++)explode(bx+rnd(-60,60),by+rnd(-35,35),pick(['#bdf3ff','#ffffff','#5fc9f8','#fede5d']),26,220);
+    const bonus=1000+loop*500;score+=bonus;hitsW++;addFloat(W/2,230,'HIRING FREEZE THAWED!','#bdf3ff',12,2);addFloat(W/2,256,'+'+bonus,'#fede5d',12,2);shake=.5;sfx.hit();boss=null;beginClear();return;}
+   continue;}
+  if(bunkerHit(b,1.6,true))b.dead=true;}
+ pB=pB.filter(b=>!b.dead);
+
+ // enemy bullets
+ const pr={x:player.x-19,y:PY+2,w:38,h:22};
+ for(const q of eB){if(q.dead)continue;q.x+=q.vx*dt;q.y+=q.vy*dt;q.t+=dt;if(q.y>H||q.x<-20||q.x>W+20){q.dead=true;continue;}
+  if(bunkerHit(q,2.4,false)){q.dead=true;continue;}
+  if(player.alive&&player.inv<=0&&ov(q,pr)){q.dead=true;hitPlayer();break;}}
+ eB=eB.filter(q=>!q.dead);
+
+ // powerups
+ for(const u of pups){u.y+=85*dt;u.ph+=dt;if(player.alive&&ov(u,pr)){u.dead=true;const P=PW[u.t];sfx.power();
+   if(u.t==='R')pw.triple=10;else if(u.t==='K')pw.rapid=10;else if(u.t==='W')pw.shield=true;else lives=Math.min(5,lives+1);
+   addFloat(player.x,PY-24,P.name+'! '+P.desc.toUpperCase(),P.color,8,1.5);}
+  if(u.y>H)u.dead=true;}
+ pups=pups.filter(u=>!u.dead);
+
+ if(state==='play'&&!boss&&k<4&&enemies.every(e=>!e.alive))beginClear();}
+
+function updateBoss(dt,loop){const b=boss;if(b.flash>0)b.flash-=dt;
+ if(b.enter){b.y+=70*dt;if(b.y>=104){b.y=104;b.enter=false;}return;}
+ const enr=b.hp<b.max/2;
+ b.x+=b.vx*(enr?1.35:1)*dt;if(b.x<10){b.x=10;b.vx=Math.abs(b.vx);}if(b.x+b.w>W-10){b.x=W-10-b.w;b.vx=-Math.abs(b.vx);}
+ const cx=b.x+b.w/2,cy=b.y+b.h+8;
+ if(player.alive){b.fireT-=dt;if(b.fireT<=0){b.fireT=(enr?.75:1.1)/(1+loop*.2);[-70,0,70].forEach(vx=>eB.push({x:cx-3,y:cy,vx,vy:215,w:6,h:12,kind:'ice',t:0}));sfx.boss();}
+  b.bigT-=dt;if(b.bigT<=0){b.bigT=enr?3:4.5;for(let i=-2;i<=2;i++)eB.push({x:cx-4,y:cy,vx:i*58,vy:150,w:9,h:9,kind:'memo',t:0});}}
+ b.quipT-=dt;if(b.quipT<=0){b.quip=pick(enr?BOSS_LOW:BOSS_Q);b.quipLife=2.2;b.quipT=rnd(3.5,5);}
+ if(b.quipLife>0)b.quipLife-=dt;}
+
+function updateFx(dt){for(const p of parts){p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=40*dt;p.life-=dt;}parts=parts.filter(p=>p.life>0);
+ for(const f of floats){f.y-=22*dt;f.life-=dt;}floats=floats.filter(f=>f.life>0);
+ if(banner){banner.life-=dt;if(banner.life<=0)banner=null;}}
+
+function update(dt){for(const s of stars){s.y+=s.v*dt;s.tw+=dt*3;if(s.y>H){s.y=0;s.x=Math.random()*W;}}
+ if(paused)return;
+ if(state==='intro'){introT-=dt;movePlayer(dt);if(boss&&boss.enter)updateBoss(dt,loopOf(wave));updateFx(dt);if(introT<=0)state='play';}
+ else if(state==='play'){updatePlay(dt);updateFx(dt);}
+ else if(state==='clearing'){clearT-=dt;updateFx(dt);if(clearT<=0)showClear();}
+ else if(state==='ending'){endT-=dt;updateFx(dt);if(endT<=0)showOver();}
+ if(shake>0)shake-=dt;}
+
+/* ---------- DRAW ---------- */
+function txt(s,x,y,size,color,align,glow){ctx.font=size+'px '+FONT;ctx.textAlign=align||'left';ctx.fillStyle=color;if(glow){ctx.shadowColor=color;ctx.shadowBlur=glow;}ctx.fillText(s,x,y);ctx.shadowBlur=0;}
+function wrap(s,maxW,size){ctx.font=size+'px '+FONT;const words=s.split(' '),lines=[];let l='';for(const w of words){const t=l?l+' '+w:w;if(ctx.measureText(t).width>maxW&&l){lines.push(l);l=w;}else l=t;}if(l)lines.push(l);return lines;}
+function drawStars(){for(const s of stars){ctx.globalAlpha=.35+.65*Math.abs(Math.sin(s.tw));ctx.fillStyle=s.s>1?'#c9b6ff':'#ffffff';ctx.fillRect(s.x|0,s.y|0,s.s,s.s);}ctx.globalAlpha=1;}
+function drawBunkers(){ctx.fillStyle='#ff8b5c';for(const bk of bunkers)for(let j=0;j<BHt;j++)for(let i=0;i<BW;i++)if(bk.g[j*BW+i])ctx.fillRect(bk.x+i*BC,bk.y+j*BC,BC,BC);
+ ctx.globalAlpha=.7;for(const bk of bunkers)txt('NETWORK',bk.x+BW*BC/2,bk.y+BHt*BC+12,7,'#ff8b5c','center');ctx.globalAlpha=1;}
+function drawEnemies(){if(!fleet)return;for(const e of enemies)if(e.alive)ctx.drawImage(IMG[e.type][fleet.frame],ex(e),ey(e));}
+function drawUfo(){ctx.drawImage(IMG.ufo[0],ufo.x,ufo.y);txt('DREAM JOB',ufo.x+24,ufo.y-5,7,'#ffb000','center',6);}
+function drawBoss(b){const {x,y,w,h}=b;
+ txt('THE HIRING FREEZE',W/2,50,8,'#bdf3ff','center',6);
+ ctx.fillStyle='#1a0630';ctx.fillRect(W/2-151,57,302,9);ctx.fillStyle='#bdf3ff';ctx.fillRect(W/2-150,58,300*(b.hp/b.max),7);
+ ctx.fillStyle='#bdf3ff';for(let i=0;i<8;i++){const ix=x+8+i*17;ctx.beginPath();ctx.moveTo(ix,y+h);ctx.lineTo(ix+10,y+h);ctx.lineTo(ix+5,y+h+10+(i%3)*6);ctx.fill();}
+ const g=ctx.createLinearGradient(x,y,x,y+h);g.addColorStop(0,'#e8fdff');g.addColorStop(1,'#5fc9f8');ctx.fillStyle=g;ctx.fillRect(x,y,w,h);
+ ctx.strokeStyle='#ffffff';ctx.lineWidth=3;ctx.strokeRect(x+1.5,y+1.5,w-3,h-3);
+ ctx.fillStyle='rgba(255,255,255,.65)';ctx.fillRect(x+9,y+9,24,6);ctx.fillRect(x+9,y+18,6,16);
+ ctx.strokeStyle='#1d5f8a';ctx.lineWidth=2;const n=Math.floor((1-b.hp/b.max)*b.cracks.length);for(let i=0;i<n;i++){const c=b.cracks[i];ctx.beginPath();ctx.moveTo(x+c[0],y+c[1]);ctx.lineTo(x+c[2],y+c[3]);ctx.lineTo(x+c[4],y+c[5]);ctx.stroke();}
+ ctx.fillStyle='#0b2a44';ctx.beginPath();ctx.moveTo(x+28,y+22);ctx.lineTo(x+62,y+31);ctx.lineTo(x+62,y+37);ctx.lineTo(x+28,y+28);ctx.fill();
+ ctx.beginPath();ctx.moveTo(x+w-28,y+22);ctx.lineTo(x+w-62,y+31);ctx.lineTo(x+w-62,y+37);ctx.lineTo(x+w-28,y+28);ctx.fill();
+ ctx.fillStyle='#ffffff';ctx.fillRect(x+34,y+38,26,16);ctx.fillRect(x+w-60,y+38,26,16);
+ const off=clamp((player.x-(x+w/2))/40,-1,1)*7;ctx.fillStyle='#d62c2c';ctx.fillRect(x+44+off,y+42,8,10);ctx.fillRect(x+w-50+off,y+42,8,10);
+ ctx.fillStyle='#0b2a44';ctx.fillRect(x+52,y+64,40,6);ctx.fillRect(x+46,y+70,8,6);ctx.fillRect(x+90,y+70,8,6);
+ ctx.fillStyle='#ff3b3b';ctx.fillRect(x+w/2-5,y+h-12,10,6);ctx.beginPath();ctx.moveTo(x+w/2-6,y+h-6);ctx.lineTo(x+w/2+6,y+h-6);ctx.lineTo(x+w/2+3,y+h+16);ctx.lineTo(x+w/2,y+h+20);ctx.lineTo(x+w/2-3,y+h+16);ctx.fill();
+ if(b.flash>0){ctx.fillStyle='rgba(255,255,255,.7)';ctx.fillRect(x,y,w,h);}
+ if(b.quipLife>0&&!b.enter){ctx.font='8px '+FONT;const tw=ctx.measureText(b.quip).width+14;const bx=clamp(x+w/2-tw/2,6,W-6-tw),by=y-28;
+  ctx.fillStyle='#ffffff';ctx.fillRect(bx,by,tw,18);ctx.beginPath();ctx.moveTo(x+w/2-5,by+18);ctx.lineTo(x+w/2+5,by+18);ctx.lineTo(x+w/2,by+25);ctx.fill();
+  txt(b.quip,bx+tw/2,by+13,8,'#0b2a44','center');}}
+function drawBullets(){
+ for(const b of pB){ctx.fillStyle='#ffffff';ctx.fillRect(b.x,b.y,6,10);ctx.fillStyle='#8a7fb8';ctx.fillRect(b.x+1,b.y+2,4,1);ctx.fillRect(b.x+1,b.y+5,4,1);ctx.fillRect(b.x+1,b.y+7,3,1);}
+ for(const q of eB){const z=Math.floor(q.t*12)%2;
+  if(q.kind==='env'){ctx.fillStyle='#ff4fd8';for(let i=0;i<4;i++)ctx.fillRect(q.x+((i+z)%2?0:3),q.y+i*3,3,3);}
+  else if(q.kind==='bot'){ctx.fillStyle=z?'#ffffff':'#36f9f6';ctx.fillRect(q.x+1,q.y,4,5);ctx.fillStyle=z?'#36f9f6':'#ffffff';ctx.fillRect(q.x+1,q.y+7,4,5);}
+  else if(q.kind==='ghost'){ctx.fillStyle='#c9b6ff';const o=Math.sin(q.t*22)*2;ctx.fillRect(q.x+1+o,q.y,4,6);ctx.fillRect(q.x+1-o,q.y+6,4,6);}
+  else if(q.kind==='ice'){ctx.fillStyle='#bdf3ff';ctx.beginPath();ctx.moveTo(q.x,q.y);ctx.lineTo(q.x+6,q.y);ctx.lineTo(q.x+3,q.y+13);ctx.fill();}
+  else{ctx.fillStyle='#ffffff';ctx.fillRect(q.x,q.y,9,9);ctx.fillStyle='#ff3b3b';ctx.fillRect(q.x+1,q.y+3,7,2);}}}
+function drawPlayer(){if(!player.alive)return;if(player.inv>0&&Math.floor(player.inv*10)%2)return;
+ ctx.drawImage(IMG.player[0],player.x-19.5,PY);
+ if(pw.shield){ctx.strokeStyle='#ff4fd8';ctx.globalAlpha=.55+.3*Math.sin(performance.now()/120);ctx.lineWidth=2;ctx.beginPath();ctx.arc(player.x,PY+12,27,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=1;}}
+function drawPowerups(){for(const u of pups){const P=PW[u.t],gl=.5+.5*Math.sin(u.ph*8);ctx.fillStyle='#12042a';ctx.fillRect(u.x,u.y,20,20);ctx.strokeStyle=P.color;ctx.lineWidth=2;ctx.shadowColor=P.color;ctx.shadowBlur=6+6*gl;ctx.strokeRect(u.x+1,u.y+1,18,18);ctx.shadowBlur=0;txt(u.t,u.x+10,u.y+15,10,P.color,'center');}}
+function drawParticles(){for(const p of parts){ctx.globalAlpha=Math.min(1,p.life*2);ctx.fillStyle=p.color;ctx.fillRect(p.x,p.y,p.s,p.s);}ctx.globalAlpha=1;}
+function drawFloats(){for(const f of floats){ctx.globalAlpha=Math.min(1,f.life/f.max*2);ctx.font=f.size+'px '+FONT;const w=ctx.measureText(f.text).width;txt(f.text,clamp(f.x,w/2+4,W-w/2-4),f.y,f.size,f.color,'center',4);}ctx.globalAlpha=1;}
+function drawHUD(){txt('SCORE',12,16,8,'#ff4fd8');txt(pad(score),12,32,10,'#ffffff');
+ txt('HI-SCORE',W/2,16,8,'#36f9f6','center');txt(pad(Math.max(hi,score)),W/2,32,10,'#ffffff','center');
+ txt('WAVE',W-12,16,8,'#fede5d','right');txt(String(wave),W-12,32,10,'#ffffff','right');
+ ctx.fillStyle='#72f1b8';ctx.fillRect(0,578,W,2);
+ txt('MORALE',10,595,8,'#ff5470');for(let i=0;i<lives;i++)ctx.drawImage(IMG.heart[0],66+i*17,584);
+ const st=[];if(pw.triple>0)st.push(['REFERRAL '+Math.ceil(pw.triple),'#fede5d']);if(pw.rapid>0)st.push(['KEYWORDS '+Math.ceil(pw.rapid),'#36f9f6']);if(pw.shield)st.push(['WARM INTRO','#ff4fd8']);
+ let xx=W-10;for(let i=st.length-1;i>=0;i--){ctx.font='7px '+FONT;txt(st[i][0],xx,595,7,st[i][1],'right');xx-=ctx.measureText(st[i][0]).width+12;}}
+function drawIntro(){const k=kOf(wave),loop=loopOf(wave),wv=WAVES[k];ctx.fillStyle='rgba(5,1,12,.72)';ctx.fillRect(0,236,W,150);
+ ctx.fillStyle='#ff4fd8';ctx.fillRect(0,236,W,2);ctx.fillRect(0,384,W,2);
+ txt('WAVE '+wave+(loop>0?'  ·  NEW GAME+':''),W/2,262,10,'#36f9f6','center',6);
+ txt(wv.t,W/2,296,k===4?16:18,k===4?'#bdf3ff':'#fede5d','center',10);
+ const lines=wrap(wv.s,410,8);lines.forEach((l,i)=>txt(l,W/2,324+i*15,8,'#ffffff','center'));
+ if(Math.floor(introT*3)%2)txt('GET READY!',W/2,372,9,'#72f1b8','center',6);}
+function drawBanner(){if(!banner)return;ctx.globalAlpha=Math.min(1,banner.life/.3);ctx.fillStyle='rgba(5,1,12,.7)';ctx.fillRect(0,276,W,62);
+ txt(banner.a,W/2,302,14,'#ff5470','center',10);txt(banner.b,W/2,326,9,'#72f1b8','center',6);ctx.globalAlpha=1;}
+function draw(){ctx.save();if(shake>0)ctx.translate((Math.random()-.5)*10*shake,(Math.random()-.5)*10*shake);
+ ctx.fillStyle='#05010c';ctx.fillRect(-12,-12,W+24,H+24);drawStars();
+ if(state!=='title'){drawBunkers();drawEnemies();if(ufo)drawUfo();if(boss)drawBoss(boss);drawPowerups();drawBullets();drawPlayer();drawParticles();drawFloats();drawHUD();if(state==='intro')drawIntro();drawBanner();}
+ ctx.restore();}
+
+let last=performance.now();
+function loop(t){const dt=Math.min(.05,(t-last)/1000);last=t;update(dt);draw();requestAnimationFrame(loop);}
+requestAnimationFrame(loop);
+
+/* ---------- TITLE LEGEND ---------- */
+const L=[[IMG.env[0],"'UNFORTUNATELY...' EMAILS",'10 PTS'],[IMG.bot[0],'ATS BOTS','20 PTS'],[IMG.ghost[0],'GHOSTING RECRUITERS','30 PTS'],[IMG.ufo[0],'DREAM JOB (BONUS UFO)','???'],[null,'THE HIRING FREEZE','BOSS']];
+$('legend').innerHTML=L.map(([im,n,p])=>(im?`<img src="${im.toDataURL()}" alt="">`:'<span class="ice">❄</span>')+`<span>${n}</span><span class="pts">${p}</span>`).join('');
+$('powers').innerHTML=Object.entries(PW).map(([k,P])=>`<div><span class="chip" style="color:${P.color};border-color:${P.color}">${k}</span><b style="color:${P.color}">${P.name}</b> ${P.desc}</div>`).join('');
+$('titleHi').textContent='HI-SCORE '+pad(hi);
+
+/* ---------- INPUT ---------- */
+const BLOCK=['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Space'];
+addEventListener('keydown',e=>{if(BLOCK.includes(e.code))e.preventDefault();keys[e.code]=true;if(e.repeat)return;
+ const act=e.code==='Space'||e.code==='Enter';const ready=performance.now()-overlayAt>700;
+ if(act){if(state==='title')startGame();else if(state==='clear'&&ready)nextWave();else if(state==='over'&&ready)startGame();else if(paused)togglePause();}
+ if(e.code==='KeyP'||e.code==='Escape')togglePause();
+ if(e.code==='KeyM')toggleMute();},{passive:false});
+addEventListener('keyup',e=>{if(BLOCK.includes(e.code)||e.code==='Enter')e.preventDefault();keys[e.code]=false;});
+addEventListener('blur',()=>{for(const k in keys)keys[k]=false;});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&(state==='play'||state==='intro')&&!paused)togglePause();});
+function btn(id,fn){$(id).addEventListener('click',e=>{e.currentTarget.blur();initAudio();fn();});}
+btn('startBtn',startGame);btn('nextBtn',nextWave);btn('againBtn',startGame);btn('resumeBtn',togglePause);btn('pauseBtn',togglePause);btn('muteBtn',toggleMute);
+function toggleMute(){muted=!muted;$('muteBtn').textContent='SOUND: '+(muted?'OFF':'ON');}
+$('shareBtn').addEventListener('click',e=>{e.currentTarget.blur();const t=`I reached ${rankOf(score)} with ${score} pts in REJECTION INVADERS 👾 Can you thaw the Hiring Freeze? Play free: applysteward.com/arcade`;
+ track('arcade-share');const box=$('shareBox');box.textContent=t;box.style.display='block';
+ try{navigator.clipboard.writeText(t).then(()=>{$('shareBtn').textContent='COPIED! ✓ PASTE IT ANYWHERE';},()=>{$('shareBtn').textContent='SELECT THE TEXT BELOW TO COPY';});}catch(err){$('shareBtn').textContent='SELECT THE TEXT BELOW TO COPY';}});
+$('ctaLink').addEventListener('click',()=>track('arcade-to-applysteward'));
+[['tLeft','left'],['tRight','right'],['tFire','fire']].forEach(([id,k])=>{const el=$(id);
+ const on=e=>{e.preventDefault();initAudio();touch[k]=true;if(k==='fire'){if(state==='title')startGame();}};const off=e=>{e.preventDefault();touch[k]=false;};
+ el.addEventListener('pointerdown',on);['pointerup','pointercancel','pointerleave'].forEach(ev=>el.addEventListener(ev,off));el.addEventListener('contextmenu',e=>e.preventDefault());});
+})();
+</script>
+</body>
+</html>
